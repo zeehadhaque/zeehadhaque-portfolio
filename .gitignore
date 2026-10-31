@@ -1,0 +1,25 @@
+
+# Additional source project ignore rules
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+
+# Private environment and generated files
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+.vercel/
+coverage/
+*.db
+*.sqlite
+*.sqlite3
+*.pem
+*.key
