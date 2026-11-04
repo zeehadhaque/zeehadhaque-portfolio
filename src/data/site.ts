@@ -7,6 +7,14 @@ export const siteIdentity: SiteIdentity = {
   email: "zeehadhaque@gmail.com",
   whatsapp: "+8801629851155",
   statement: "I DON'T JUST CAPTURE FRAMES. I CREATE WORLDS.",
+  biography: "An independent filmmaker based in Gazipur, Bangladesh, working across writing, directing, cinematography and editing. His stories explore psychological suspense, mystery and poetic tragedy, often using visual silence, deliberate framing, camera movement, atmosphere and sound to carry emotion.",
+  creativeFocus: [
+    "Psychological suspense & mystery",
+    "Visual silence & visual storytelling",
+    "Cinematic framing & camera movement",
+    "Editing, colour grading & sound design",
+  ],
+  workingMethod: "From the first visual idea to the final cut, the focus stays on purposeful composition, atmosphere and story-led craft.",
 };
 
 export const identityPortraitAsset = "/assets/images/profile/haque-identity.jpg";
