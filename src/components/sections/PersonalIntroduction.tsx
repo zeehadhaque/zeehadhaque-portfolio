@@ -1,31 +1,45 @@
-import { siteIdentity } from "../../data/site";
+import { filmProjects, siteIdentity } from "../../data/site";
 
 export function PersonalIntroduction() {
+  const collage = filmProjects.slice(0, 5);
+
   return (
-    <section className="personal-introduction section-light" id="introduction" aria-labelledby="introduction-title">
-      <div className="page-width personal-introduction__grid">
-        <div className="personal-introduction__label">
-          <span className="section-kicker">The filmmaker / Identity</span>
-          <span className="vertical-rule" aria-hidden="true" />
+    <section className="message-from-zee section-light" id="introduction" aria-labelledby="introduction-title">
+      <div className="page-width message-from-zee__grid">
+        <div className="message-from-zee__collage" aria-label="Selected stills from the film archive">
+          {collage.map((film, index) => (
+            <a
+              className={`message-from-zee__image message-from-zee__image--${index + 1}`}
+              href={film.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              key={film.id}
+              aria-label={`Open film archive source ${index + 1}`}
+            >
+              <img
+                src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`}
+                alt={`Still from Zeehad Haque film archive item ${index + 1}`}
+                loading="lazy"
+                width="480"
+                height="360"
+              />
+              <span>Archive / 0{index + 1}</span>
+            </a>
+          ))}
+          <span className="message-from-zee__collage-mark" aria-hidden="true">ZH</span>
         </div>
-        <div className="personal-introduction__content">
-          <p className="section-kicker personal-introduction__eyebrow">Zeehad Haque Identity</p>
-          <h2 id="introduction-title">The person<br />behind the <em>frame.</em></h2>
-          <p className="personal-introduction__statement">{siteIdentity.statement}</p>
-          <p className="personal-introduction__bio">{siteIdentity.biography}</p>
-          <div className="personal-introduction__details">
-            <p>{siteIdentity.roles}</p>
-            <p>{siteIdentity.location}</p>
+
+        <div className="message-from-zee__copy">
+          <p className="section-kicker">A message from Zeehad</p>
+          <h2 id="introduction-title">The frame is only<br />the <em>beginning.</em></h2>
+          <p className="message-from-zee__statement">{siteIdentity.statement}</p>
+          <p className="message-from-zee__bio">{siteIdentity.biography}</p>
+          <div className="message-from-zee__credits">
+            <span>{siteIdentity.roles}</span>
+            <span>{siteIdentity.location}</span>
           </div>
-          <div className="personal-introduction__focus">
-            <span className="section-kicker">Creative focus</span>
-            <ul>
-              {siteIdentity.creativeFocus.map((focus) => <li key={focus}>{focus}</li>)}
-            </ul>
-          </div>
-          <p className="personal-introduction__method">{siteIdentity.workingMethod}</p>
+          <a className="message-from-zee__link" href="#on-set">Explore the process <span aria-hidden="true">↗</span></a>
         </div>
-        <div className="personal-introduction__mark" aria-hidden="true">ZH<span>IDENTITY / 01</span></div>
       </div>
     </section>
   );
