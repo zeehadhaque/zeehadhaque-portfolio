@@ -15,6 +15,31 @@ export const siteIdentity: SiteIdentity = {
     "Editing, colour grading & sound design",
   ],
   workingMethod: "From the first visual idea to the final cut, the focus stays on purposeful composition, atmosphere and story-led craft.",
+  filmmakingApproach: "An independent, mobile-first approach to filmmaking: making the most of available tools, locations and natural light. The camera is treated as a storytelling instrument; framing, movement, blocking, rhythm, silence and sound are chosen to serve the emotion of a scene.",
+  productionWorkflow: [
+    { number: "01", title: "Concept & writing", description: "Developing an idea into a visual concept, screenplay, scene structure and shot plan." },
+    { number: "02", title: "Direction & camera", description: "Planning performance, composition, camera movement, available light and visual continuity." },
+    { number: "03", title: "Editing & rhythm", description: "Building the narrative through shot selection, pacing, transitions and sound placement." },
+    { number: "04", title: "Colour & finishing", description: "Refining the image, matching shots, shaping atmosphere and preparing the final export." },
+  ],
+  toolsAndCraft: [
+    "Mobile filmmaking — Redmi Note 14 Pro+ 5G",
+    "Camera app — Blackmagic Camera",
+    "Editing — CapCut",
+    "Colour grading & finishing — DaVinci Resolve",
+    "Encoding & media workflow — FFmpeg",
+    "Sound design — ambience, silence, rhythm and detail",
+  ],
+  creativeProjects: [
+    { title: "SHADOW / III", category: "Psychological thriller · Short film", description: "A psychological and supernatural suspense experiment built around visual silence, repetition, loops and uncertainty.", status: "Short film" },
+    { title: "CHAKRA", category: "Silent thriller · Short film", description: "A no-dialogue visual narrative using stillness, location transitions and match-cut thinking to carry the story.", status: "Short film" },
+    { title: "TUKRE: THE TRAGIC TERRITORIES", category: "Poetic tragedy · Short film", description: "A personal, introspective piece shaped by memory, fragmented emotion, visual motifs and carefully designed sound.", status: "Short film" },
+    { title: "DON'T GO THERE", category: "Mystery · Survival · Action · Psychological suspense", description: "A suspense-driven project introduced through its teaser.", status: "Teaser", href: "https://youtu.be/Zoqn6CyBIzU" },
+    { title: "AUTOPSY", category: "Psychological · Supernatural thriller", description: "A morgue-and-corridor setting explored through atmosphere, psychological tension and visual unease.", status: "Teaser / project" },
+    { title: "ILLUSION: FACE OF REALITY", category: "Psychological · Double-role concept", description: "A dialogue-free concept exploring duality and the uncertain boundary between perception and reality.", status: "Film concept" },
+    { title: "GHURPAK", category: "Dark comedy", description: "A dark-comedy screenplay project.", status: "In development" },
+    { title: "WAQT: WHERE WE WERE", category: "Poetic tragedy", description: "A time-and-memory driven screenplay built around aftermath, objects, silence and sound.", status: "Screenplay" },
+  ],
 };
 
 export const identityPortraitAsset = "/assets/images/profile/haque-identity.jpg";
