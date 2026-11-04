@@ -14,7 +14,8 @@
   display: block;
   width: 100%;
   height: 100%;
-  opacity: .9;
+  opacity: .92;
+  filter: drop-shadow(0 0 7px rgba(87,190,235,.42)) drop-shadow(0 0 25px rgba(38,124,177,.2));
 }
 .cinematic-universe__vignette {
   position: absolute;
