@@ -40,6 +40,7 @@ export function SiteNavigation({ activeSection, theme, onThemeToggle, isOpen, on
             key={item.href}
             className={activeSection === item.href.slice(1) ? "is-active" : ""}
             href={item.href}
+            aria-current={activeSection === item.href.slice(1) ? "location" : undefined}
           >
             {item.label}
           </a>
@@ -55,6 +56,7 @@ export function SiteNavigation({ activeSection, theme, onThemeToggle, isOpen, on
         className="main-navigation__toggle"
         type="button"
         aria-expanded={isOpen}
+        aria-label={isOpen ? "Close navigation" : "Open navigation"}
         aria-controls="mobile-navigation"
         onClick={onToggle}
       >
@@ -78,7 +80,7 @@ export function SiteNavigation({ activeSection, theme, onThemeToggle, isOpen, on
             <ol>
               {navigationItems.map((item, index) => (
                 <li key={item.href}>
-                  <a ref={index === 0 ? firstLinkRef : undefined} href={item.href} onClick={handleNavigate}>
+                  <a ref={index === 0 ? firstLinkRef : undefined} href={item.href} onClick={handleNavigate} aria-current={activeSection === item.href.slice(1) ? "location" : undefined}>
                     <span>0{index + 1}</span>
                     <strong>{item.label}</strong>
                   </a>

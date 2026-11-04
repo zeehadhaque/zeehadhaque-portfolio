@@ -57,7 +57,7 @@ export function ContactSection() {
             <div><span className="contact__label">WhatsApp</span><a href="https://wa.me/8801629851155" target="_blank" rel="noreferrer">{siteIdentity.whatsapp}</a></div>
             <div><span className="contact__label">Based in</span><span>{siteIdentity.location}</span></div>
           </div>
-          <form className="contact-form" onSubmit={submitContact} noValidate>
+          <form className="contact-form" onSubmit={submitContact}>
             <label><span>Name</span><input name="name" type="text" autoComplete="name" required maxLength={100} /></label>
             <label><span>Email</span><input name="email" type="email" autoComplete="email" required maxLength={200} /></label>
             <label><span>Subject</span><input name="subject" type="text" maxLength={160} /></label>

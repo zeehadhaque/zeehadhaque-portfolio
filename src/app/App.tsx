@@ -28,7 +28,7 @@ export function App() {
   const [theme, setTheme] = useState<"dark" | "light">(() => {
     try {
       const saved = window.localStorage.getItem("zee-theme");
-      return saved === "dark" ? "dark" : "light";
+      return saved === "light" ? "light" : "dark";
     } catch { return "light"; }
   });
 
