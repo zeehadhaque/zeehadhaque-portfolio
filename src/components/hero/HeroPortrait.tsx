@@ -1,5 +1,5 @@
 import { useState, type CSSProperties, type PointerEvent } from "react";
-import { portraitAsset, siteIdentity } from "../../data/site";
+import { identityPortraitAsset, siteIdentity } from "../../data/site";
 
 export function HeroPortrait() {
   const [entered, setEntered] = useState(false);
@@ -33,7 +33,7 @@ export function HeroPortrait() {
 
       <div className="hero-portrait__inner page-width">
         <div className="hero-portrait__copy">
-          <p className="section-kicker hero-portrait__kicker"><span /> The personal cinematic identity</p>
+          <p className="section-kicker hero-portrait__kicker"><span /> Zeehad Haque Identity</p>
           <h1 id="hero-title" className="hero-portrait__title">
             <span>Zeehad</span>
             <span>Haque</span>
@@ -53,7 +53,7 @@ export function HeroPortrait() {
           <div className="hero-portrait__visual-meta" aria-hidden="true"><span>Portrait study / 01</span><span>Original image</span></div>
           <figure className={`hero-portrait__frame ${portraitFailed ? "is-unavailable" : ""}`}>
             {!portraitFailed ? (
-              <img src={portraitAsset} alt="Portrait of Zeehad Haque" width="1565" height="2400" fetchPriority="high" decoding="async" onError={() => setPortraitFailed(true)} />
+              <img src={identityPortraitAsset} alt="Portrait of Zeehad Haque" width="1565" height="2400" fetchPriority="high" decoding="async" onError={() => setPortraitFailed(true)} />
             ) : (
               <div className="hero-portrait__fallback" role="img" aria-label="Portrait unavailable">
                 <strong>Portrait asset unavailable</strong>
