@@ -6,6 +6,7 @@ import "./styles/theme.css";
 import "./styles/trackside-cinema.css";
 import "./styles/academy.css";
 import "./styles/cinematic-motion.css";
+import "./styles/ui-refresh.css";
 import { App } from "./app/App";
 
 const root = document.getElementById("root");
