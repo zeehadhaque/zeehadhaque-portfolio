@@ -93,6 +93,14 @@ create trigger on_academy_auth_user_created
 after insert on auth.users
 for each row execute procedure public.academy_bootstrap_profile();
 
+-- Backfill accounts created before the Academy was installed.
+insert into public.academy_profiles(user_id, display_name, email)
+select id,
+       coalesce(nullif(trim(raw_user_meta_data->>'display_name'), ''), 'Filmmaker'),
+       coalesce(email, '')
+from auth.users
+on conflict (user_id) do nothing;
+
 alter table public.academy_profiles enable row level security;
 alter table public.academy_answer_key enable row level security;
 alter table public.academy_day_progress enable row level security;
