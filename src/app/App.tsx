@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { HeroPortrait } from "../components/hero/HeroPortrait";
 import { LoadingCurtain } from "../components/motion/LoadingCurtain";
+import { CinematicScrollMotion } from "../components/motion/CinematicScrollMotion";
 import { MainFooter } from "../components/layout/MainFooter";
 import { SkipLink } from "../components/layout/SkipLink";
 import { SiteNavigation } from "../components/navigation/SiteNavigation";
@@ -66,6 +67,7 @@ export function App() {
     <div className="app-shell" data-reduced-motion={reducedMotion} data-theme={theme}>
       <SkipLink />
       <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} />
+      <CinematicScrollMotion reducedMotion={reducedMotion} />
       <SiteNavigation
         activeSection={activeSection}
         theme={theme}
