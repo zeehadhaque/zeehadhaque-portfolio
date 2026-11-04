@@ -462,9 +462,9 @@ export function AcademySection() {
               {selectedLocked ? (
                 <div className="academy-lock-screen">
                   <div className="academy-lock-screen__symbol">⌑</div>
-                  <span className="academy-eyebrow">DAY {String(selectedLesson.day).padStart(2,"0")} / FULL PROGRAMME</span>
-                  <h3>{copy("The next chapter is waiting.", "পরের অধ্যায় তোমার অপেক্ষায়।")}</h3>
-                  <p>{copy("Days 01–07 are open for everyone. Days 08–30, advanced practice and the complete capstone are released by Academy admin through a learner entitlement.", "দিন ০১–০৭ সবার জন্য উন্মুক্ত। দিন ০৮–৩০, advanced practice এবং সম্পূর্ণ capstone Academy admin learner entitlement-এর মাধ্যমে চালু করেন।")}</p>
+                  <span className="academy-eyebrow">DAY {String(selectedLesson.day).padStart(2,"0")} / {prerequisiteLocked ? "SEQUENTIAL LEARNING" : "FULL PROGRAMME"}</span>
+                  <h3>{prerequisiteLocked ? copy("One frame at a time.", "একটি frame করে এগিয়ে চলো।") : copy("The next chapter is waiting.", "পরের অধ্যায় তোমার অপেক্ষায়।")}</h3>
+                  <p>{prerequisiteLocked ? copy("Complete the previous day first. Each technique builds on the lesson before it.", "আগের দিনটি আগে সম্পন্ন করো। প্রতিটি technique আগের lesson-এর ওপর তৈরি হয়।") : copy("Days 01–07 are open for everyone. Days 08–30 and the complete capstone are released by Academy admin through a learner entitlement.", "দিন ০১–০৭ সবার জন্য উন্মুক্ত। দিন ০৮–৩০ এবং complete capstone Academy admin learner entitlement-এর মাধ্যমে চালু করেন।")}</p>
                   <div className="academy-lock-screen__list"><span>✓ {copy("Seven open foundation lessons", "সাতটি উন্মুক্ত foundation lesson")}</span><span>⌑ {copy("23 guided programme days", "২৩টি guided programme day")}</span><span>⌑ {copy("Final filmmaking capstone", "Final filmmaking capstone")}</span></div>
                   <button className="academy-outline-button" type="button" onClick={() => setAuthOpen(true)}>{copy("Sign in to check your access", "Access দেখতে sign in করো")} ↗</button>
                   <span className="academy-lock-screen__note">{copy("Programme access is assigned by the verified Academy administrator.", "Programme access verified Academy administrator প্রদান করেন।")}</span>
