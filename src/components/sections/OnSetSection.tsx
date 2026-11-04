@@ -9,10 +9,15 @@ export function OnSetSection() {
   return (
     <section className="on-set section-dark" id="on-set" aria-labelledby="on-set-title">
       <div className="page-width">
-        <div className="section-heading section-heading--light">
-          <p className="section-kicker">01 / Professional practice</p>
-          <h2 id="on-set-title">On <em>set.</em></h2>
-          <p>The work begins with a frame, a decision and a reason to move the camera.</p>
+        <div className="on-set__intro">
+          <div>
+            <p className="section-kicker">01 / The work in motion</p>
+            <h2 id="on-set-title"><span>ON</span><em>SET.</em></h2>
+          </div>
+          <div className="on-set__description">
+            <p>Behind every frame is a choice. Behind every scene, a reason.</p>
+            <span>Writing / Direction / Camera / Edit</span>
+          </div>
         </div>
         <div className="on-set__grid">
           {onSetAreas.map((area, index) => (
@@ -24,7 +29,7 @@ export function OnSetSection() {
             </article>
           ))}
         </div>
-        <div className="section-tail section-tail--light"><span>ON SET</span><span>Writing / Direction / Camera / Edit</span></div>
+        <a className="on-set__archive-link" href="#films">Explore the film archive <span aria-hidden="true">↗</span></a>
       </div>
     </section>
   );

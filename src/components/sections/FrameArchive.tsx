@@ -1,29 +1,32 @@
-import { portraitAsset } from "../../data/site";
+import { filmProjects } from "../../data/site";
 
 export function FrameArchive() {
   return (
     <section className="frame-archive section-dark" id="frame-archive" aria-labelledby="frame-archive-title">
       <div className="page-width">
-        <div className="section-heading section-heading--light section-heading--split">
-          <div><p className="section-kicker">04 / Visual archive</p><h2 id="frame-archive-title">Frame <em>archive.</em></h2></div>
-          <p>Images are not decoration. They are evidence of a way of seeing.</p>
-        </div>
-        <div className="frame-archive__layout">
-          <figure className="frame-archive__portrait">
-            <img src={portraitAsset} alt="Portrait of Zeehad Haque" loading="lazy" width="1565" height="2400" />
-            <figcaption><span>Portrait study</span><span>Supplied original</span></figcaption>
-          </figure>
-          <div className="frame-archive__empty">
-            <span className="frame-archive__cross" aria-hidden="true">+</span>
-            <p className="section-kicker">Archive awaiting material</p>
-            <h3>Frames, light, movement, composition.</h3>
-            <p>Approved cinematography stills, personal visual studies and behind-the-lens material will be added here when supplied.</p>
-            <div className="frame-archive__categories" aria-label="Planned visual archive categories">
-              <span>Frames</span><span>Light</span><span>Movement</span><span>Composition</span><span>Behind the lens</span>
-            </div>
+        <div className="frame-archive__heading">
+          <div>
+            <p className="section-kicker">04 / A study of images</p>
+            <h2 id="frame-archive-title">FRAME<br /><em>ARCHIVE.</em></h2>
           </div>
+          <p>Fragments from the work. A visual record of atmosphere, composition and the moments between action and stillness.</p>
         </div>
-        <div className="section-tail section-tail--light"><span>FRAME ARCHIVE</span><span>Only approved original material</span></div>
+
+        <div className="frame-archive__gallery">
+          {filmProjects.map((film, index) => (
+            <a className={`frame-archive__tile frame-archive__tile--${(index % 4) + 1}`} href={film.sourceUrl} target="_blank" rel="noreferrer" key={film.id}>
+              <img
+                src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`}
+                alt={film.title ? `${film.title} — film still` : `Film archive still ${index + 1}`}
+                loading="lazy"
+                width="480"
+                height="360"
+              />
+              <span className="frame-archive__tile-meta"><span>Frame / 0{index + 1}</span><span>Open source ↗</span></span>
+            </a>
+          ))}
+        </div>
+        <div className="section-tail section-tail--light"><span>FRAME ARCHIVE</span><span>Selected film sources</span></div>
       </div>
     </section>
   );
