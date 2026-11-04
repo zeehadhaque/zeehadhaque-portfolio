@@ -303,9 +303,11 @@ export function AcademySection() {
   const completeAnswer = async () => {
     if (selectedAnswer === null) return;
     setAnswerChecked(true);
-    if (selectedAnswer !== selectedLesson.question.answerIndex) return;
+    const locallyCorrect = selectedAnswer === selectedLesson.question.answerIndex;
     if (!session) {
-      setAuthNotice(copy("Correct. Create a free account to save your lesson completion and earn XP.", "সঠিক! Lesson completion save ও XP earn করতে free account তৈরি করো।"));
+      if (locallyCorrect) {
+        setAuthNotice(copy("Correct. Create a free account to save your lesson completion and earn XP.", "সঠিক! Lesson completion save ও XP earn করতে free account তৈরি করো।"));
+      }
       return;
     }
     if (selectedCompleted) {
@@ -315,6 +317,10 @@ export function AcademySection() {
     setSaving(true); setApiError("");
     try {
       const result = await academyApi({ action: "complete_day", day: selectedLesson.day, answerIndex: selectedAnswer, reflection }, session.access_token);
+      if (!result.correct) {
+        setAuthNotice(copy("Attempt saved. Review the explanation and try again.", "তোমার attempt save হয়েছে। Explanation দেখে আবার চেষ্টা করো।"));
+        return;
+      }
       const awarded = Number(result.xp_awarded ?? 0);
       await loadSnapshot(session.access_token);
       setAuthNotice(awarded > 0
