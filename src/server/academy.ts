@@ -202,6 +202,7 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
     if (!response.ok) {
       const details = await response.text();
       if (details.includes("entitlement_required")) return json({ message: "This lesson requires the 30-day programme entitlement." }, 403);
+      if (details.includes("prerequisite_required")) return json({ message: "Complete the previous lesson first to keep the 30-day learning path in sequence." }, 409);
       return json({ message: "Progress could not be saved. Make sure the Academy database migration is applied." }, 502);
     }
     return json(await response.json());
