@@ -8,6 +8,7 @@ on:
       - main
       - feature/zee-filmmaking-academy
       - design/true-3d-cinematic-portfolio
+      - motion/complete-cinematic-motion-system
 
 permissions:
   contents: read
