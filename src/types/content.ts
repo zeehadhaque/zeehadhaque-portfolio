@@ -5,6 +5,9 @@ export interface SiteIdentity {
   email: string;
   whatsapp: string;
   statement: string;
+  biography: string;
+  creativeFocus: readonly string[];
+  workingMethod: string;
 }
 
 export interface NavigationItem {
