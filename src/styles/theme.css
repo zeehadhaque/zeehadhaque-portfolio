@@ -405,3 +405,51 @@ body::before {
     font-size: .52rem;
   }
 }
+
+
+/* Expanded Zeehad Haque Identity profile */
+.personal-introduction__eyebrow {
+  color: var(--cobalt);
+  letter-spacing: .2em;
+}
+
+.personal-introduction__bio {
+  max-width: 58rem;
+  margin: 1.5rem 0;
+  color: var(--charcoal);
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.9;
+}
+
+.personal-introduction__focus {
+  margin-top: 2rem;
+}
+
+.personal-introduction__focus ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem 2rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.personal-introduction__focus li {
+  padding: .8rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: .9rem;
+}
+
+.personal-introduction__method {
+  max-width: 48rem;
+  margin-top: 1.5rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+  .personal-introduction__focus ul {
+    grid-template-columns: 1fr;
+  }
+}
