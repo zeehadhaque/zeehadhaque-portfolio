@@ -7,13 +7,14 @@ import { SiteNavigation } from "../components/navigation/SiteNavigation";
 import { AcademySection } from "../components/sections/AcademySection";
 import { ContactSection } from "../components/sections/ContactSection";
 import { FilmArchive } from "../components/sections/FilmArchive";
+import { FilmmakingPractice } from "../components/sections/FilmmakingPractice";
 import { FrameArchive } from "../components/sections/FrameArchive";
 import { FutureProjects } from "../components/sections/FutureProjects";
 import { OffSetSection } from "../components/sections/OffSetSection";
 import { OnSetSection } from "../components/sections/OnSetSection";
 import { PersonalIntroduction } from "../components/sections/PersonalIntroduction";
 import { ZeeAIAssistant } from "../components/zee-ai/ZeeAIAssistant";
-import { navigationItems, portraitAsset } from "../data/site";
+import { identityPortraitAsset, navigationItems } from "../data/site";
 import { useActiveSection } from "../hooks/useActiveSection";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
@@ -23,6 +24,15 @@ export function App() {
   const activeSection = useActiveSection(sectionIds);
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    try { return window.localStorage.getItem("zee-theme") === "light" ? "light" : "dark"; }
+    catch { return "dark"; }
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try { window.localStorage.setItem("zee-theme", theme); } catch { /* storage may be unavailable */ }
+  }, [theme]);
 
   useEffect(() => {
     let finished = false;
@@ -35,7 +45,7 @@ export function App() {
     const portrait = new Image();
     portrait.onload = finishLoading;
     portrait.onerror = finishLoading;
-    portrait.src = portraitAsset;
+    portrait.src = identityPortraitAsset;
 
     const maximumWait = window.setTimeout(finishLoading, reducedMotion ? 180 : 900);
     return () => {
@@ -51,11 +61,13 @@ export function App() {
   }, [isNavigationOpen]);
 
   return (
-    <div className="app-shell" data-reduced-motion={reducedMotion}>
+    <div className="app-shell" data-reduced-motion={reducedMotion} data-theme={theme}>
       <SkipLink />
       <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} />
       <SiteNavigation
         activeSection={activeSection}
+        theme={theme}
+        onThemeToggle={() => setTheme((current) => current === "dark" ? "light" : "dark")}
         isOpen={isNavigationOpen}
         onToggle={() => setIsNavigationOpen((open) => !open)}
         onClose={() => setIsNavigationOpen(false)}
@@ -64,6 +76,7 @@ export function App() {
         <HeroPortrait />
         <PersonalIntroduction />
         <OnSetSection />
+        <FilmmakingPractice />
         <OffSetSection />
         <FilmArchive />
         <FrameArchive />

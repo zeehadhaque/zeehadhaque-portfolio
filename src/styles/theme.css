@@ -1,0 +1,623 @@
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #050810;
+  --white: #f7faff;
+  --ink: #edf3ff;
+  --charcoal: #bdc9dd;
+  --cobalt: #7dbbff;
+  --ice: #a9d4ff;
+  --muted: #8c9bb2;
+  --line: rgba(169, 212, 255, .17);
+  --line-light: rgba(169, 212, 255, .19);
+  --surface-dark: #0a1220;
+  --surface-dark-foreground: #edf3ff;
+  --surface-cobalt: #102039;
+  --surface-cobalt-foreground: #edf3ff;
+  --surface-raised: #101c2e;
+  --text-soft: rgba(218, 230, 249, .68);
+  --shadow-glow: 0 24px 80px rgba(0, 0, 0, .32);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --paper: #f2f0eb;
+  --white: #ffffff;
+  --ink: #101114;
+  --charcoal: #24252a;
+  --cobalt: #315cff;
+  --ice: #7dbbff;
+  --muted: #85858b;
+  --line: rgba(16, 17, 20, .16);
+  --line-light: rgba(242, 240, 235, .2);
+  --surface-dark: #101114;
+  --surface-dark-foreground: #f2f0eb;
+  --surface-cobalt: #315cff;
+  --surface-cobalt-foreground: #101114;
+  --surface-raised: #ffffff;
+  --text-soft: rgba(242, 240, 235, .62);
+  --shadow-glow: 0 20px 60px rgba(16, 17, 20, .12);
+}
+
+html, body, .app-shell, .main-footer, .mobile-navigation__drawer,
+.site-loader, .film-modal__dialog, .zee-assistant__panel,
+.zee-assistant__toggle {
+  transition:
+    background-color 420ms cubic-bezier(.22, 1, .36, 1),
+    color 420ms cubic-bezier(.22, 1, .36, 1),
+    border-color 420ms cubic-bezier(.22, 1, .36, 1),
+    box-shadow 420ms cubic-bezier(.22, 1, .36, 1);
+}
+
+body::before {
+  opacity: .045;
+  mix-blend-mode: screen;
+}
+
+.section-dark {
+  background: var(--surface-dark);
+  color: var(--surface-dark-foreground);
+}
+
+.section-cobalt {
+  background: var(--surface-cobalt);
+  color: var(--surface-cobalt-foreground);
+}
+
+.section-kicker--dark {
+  color: var(--muted);
+}
+
+.section-heading--light h2,
+.practice-item h3,
+.frame-archive__empty h3,
+.contact h2 {
+  color: var(--surface-dark-foreground);
+}
+
+.section-heading--light.section-heading--split > p,
+.practice-item p,
+.frame-archive__empty > p:not(.section-kicker),
+.contact__intro > p:last-child,
+.contact-form label > span,
+.form-status {
+  color: var(--text-soft);
+}
+
+.section-tail--light {
+  color: var(--text-soft);
+}
+
+/* Glass navigation */
+.main-navigation {
+  top: .8rem;
+  width: min(calc(100% - (var(--page-gutter) * 1.3)), var(--page-max));
+  padding: .65rem .85rem .65rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  box-shadow: var(--shadow-glow);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  backdrop-filter: blur(22px) saturate(145%);
+}
+
+.main-navigation__actions {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+}
+
+.main-navigation__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.35rem;
+  padding: .45rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.main-navigation__theme:hover {
+  border-color: var(--cobalt);
+  background: var(--surface-raised);
+  transform: translateY(-1px);
+}
+
+.main-navigation__theme-icon {
+  color: var(--cobalt);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.main-navigation__monogram {
+  border-radius: 50%;
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+}
+
+.main-navigation__brand:hover .main-navigation__monogram {
+  border-color: var(--cobalt);
+  background: var(--cobalt);
+  color: #06101d;
+}
+
+.main-navigation__desktop a {
+  letter-spacing: .1em;
+}
+
+.mobile-navigation__drawer {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.mobile-navigation__backdrop {
+  background: rgba(0, 0, 0, .62);
+}
+
+/* Atmospheric hero */
+.hero-portrait {
+  background:
+    radial-gradient(ellipse at 78% 43%, rgba(68, 128, 196, .14), transparent 39%),
+    radial-gradient(ellipse at 12% 86%, rgba(43, 79, 129, .1), transparent 36%),
+    var(--paper);
+}
+
+.hero-portrait::before {
+  opacity: .36;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 8rem,
+    color-mix(in srgb, var(--cobalt) 12%, transparent) 8.05rem,
+    transparent 8.1rem
+  );
+}
+
+.hero-portrait__frame {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--surface-raised);
+  box-shadow: 1rem 1rem 0 color-mix(in srgb, var(--cobalt) 38%, transparent);
+}
+
+.hero-portrait__frame::before {
+  background: linear-gradient(180deg, transparent 48%, rgba(3, 8, 17, .34));
+  mix-blend-mode: normal;
+}
+
+.hero-portrait__visual-meta {
+  color: var(--muted);
+}
+
+.hero-portrait__identity-tag {
+  border-radius: 2px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .25);
+}
+
+.hero-portrait__contours span {
+  border-color: color-mix(in srgb, var(--cobalt) 22%, transparent);
+}
+
+/* Depth, borders and cards */
+.personal-introduction__statement {
+  color: var(--charcoal);
+}
+
+.off-set__portrait-wrap {
+  border: 1px solid var(--line);
+  box-shadow: 1rem 1rem 0 color-mix(in srgb, var(--cobalt) 35%, transparent);
+}
+
+.off-set__visual::after {
+  border-color: color-mix(in srgb, var(--cobalt) 58%, transparent);
+}
+
+.film-card__image-wrap {
+  border: 1px solid var(--line);
+  background: var(--surface-raised);
+}
+
+.film-card__image-wrap img {
+  filter: saturate(.82) contrast(1.08);
+}
+
+.film-card__button:hover .film-card__image-wrap {
+  border-color: color-mix(in srgb, var(--cobalt) 70%, transparent);
+}
+
+.film-card__meta strong {
+  color: var(--ink);
+}
+
+.film-modal__dialog {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-dark);
+  color: var(--surface-dark-foreground);
+  box-shadow: var(--shadow-glow);
+}
+
+.close-button {
+  color: var(--ink);
+}
+
+.frame-archive__portrait img {
+  border-color: var(--line);
+}
+
+.frame-archive__portrait figcaption {
+  color: var(--text-soft);
+}
+
+.frame-archive__empty {
+  border-color: var(--line);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--surface-raised) 45%, transparent);
+}
+
+.future-projects__list li:hover {
+  background: var(--surface-raised);
+}
+
+.future-projects__list li:hover h3 {
+  color: var(--cobalt);
+}
+
+/* Academy colour contrast */
+.academy__status {
+  border-color: color-mix(in srgb, var(--surface-cobalt-foreground) 45%, transparent);
+  color: color-mix(in srgb, var(--surface-cobalt-foreground) 72%, transparent);
+}
+
+.academy__features {
+  border-color: color-mix(in srgb, var(--surface-cobalt-foreground) 42%, transparent);
+}
+
+.academy__features-head {
+  color: color-mix(in srgb, var(--surface-cobalt-foreground) 72%, transparent);
+}
+
+.academy__features li {
+  border-color: color-mix(in srgb, var(--surface-cobalt-foreground) 25%, transparent);
+}
+
+.academy__features li span {
+  color: color-mix(in srgb, var(--surface-cobalt-foreground) 65%, transparent);
+}
+
+.academy__features li i {
+  color: var(--surface-cobalt-foreground);
+}
+
+/* Contact and assistant */
+.contact {
+  background:
+    radial-gradient(ellipse at 82% 14%, rgba(63, 118, 184, .13), transparent 38%),
+    var(--surface-dark);
+}
+
+.contact__details a,
+.contact__details > div > span:last-child {
+  color: var(--surface-dark-foreground);
+}
+
+.contact-form input,
+.contact-form textarea {
+  color: var(--surface-dark-foreground);
+}
+
+.zee-assistant__toggle {
+  border-color: var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-raised) 86%, transparent);
+  color: var(--ink);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .24), 0 0 0 1px color-mix(in srgb, var(--cobalt) 14%, transparent);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.zee-assistant__panel {
+  border-color: var(--line);
+  border-radius: 12px;
+  background: var(--surface-dark);
+  color: var(--surface-dark-foreground);
+  box-shadow: var(--shadow-glow);
+}
+
+.zee-assistant__messages {
+  background: var(--paper);
+}
+
+.zee-message--assistant {
+  border: 1px solid var(--line);
+  border-radius: 10px 10px 10px 2px;
+  background: var(--surface-raised);
+  color: var(--ink);
+}
+
+.zee-message--user {
+  border-radius: 10px 10px 2px 10px;
+  background: var(--cobalt);
+  color: #06101d;
+}
+
+.zee-assistant__quick-prompts button {
+  border-radius: 999px;
+  color: var(--charcoal);
+}
+
+.zee-assistant__form input {
+  color: var(--ink);
+}
+
+.zee-assistant__form button {
+  background: var(--cobalt);
+  color: #06101d;
+}
+
+.main-footer {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.skip-link {
+  background: var(--cobalt);
+  color: #06101d;
+}
+
+/* Light theme keeps the original editorial paper direction */
+:root[data-theme="light"] .hero-portrait {
+  background:
+    radial-gradient(ellipse at 78% 43%, rgba(49, 92, 255, .07), transparent 39%),
+    var(--paper);
+}
+
+:root[data-theme="light"] .hero-portrait__frame {
+  box-shadow: 1.25rem 1.25rem 0 var(--ice);
+}
+
+:root[data-theme="light"] .main-navigation__theme {
+  background: rgba(255, 255, 255, .72);
+}
+
+@media (max-width: 760px) {
+  .main-navigation {
+    top: .55rem;
+    width: calc(100% - 1.1rem);
+    padding: .55rem .65rem .55rem .8rem;
+  }
+
+  .main-navigation__actions {
+    gap: .45rem;
+  }
+
+  .main-navigation__theme {
+    min-height: 2.15rem;
+    padding: .35rem .6rem;
+    font-size: .52rem;
+  }
+}
+
+
+/* Expanded Zeehad Haque Identity profile */
+.personal-introduction__eyebrow {
+  color: var(--cobalt);
+  letter-spacing: .2em;
+}
+
+.personal-introduction__bio {
+  max-width: 58rem;
+  margin: 1.5rem 0;
+  color: var(--charcoal);
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.9;
+}
+
+.personal-introduction__focus {
+  margin-top: 2rem;
+}
+
+.personal-introduction__focus ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem 2rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.personal-introduction__focus li {
+  padding: .8rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: .9rem;
+}
+
+.personal-introduction__method {
+  max-width: 48rem;
+  margin-top: 1.5rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+  .personal-introduction__focus ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Filmmaking practice — editorial production dossier */
+.filmmaking-practice {
+  padding: clamp(5rem, 10vw, 9rem) 0;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 12% 16%, rgba(64, 119, 184, .12), transparent 34%),
+    linear-gradient(180deg, var(--surface-dark), #050810 75%);
+  color: var(--surface-dark-foreground);
+}
+
+.filmmaking-practice .section-heading > p:last-child {
+  max-width: 52rem;
+  color: var(--text-soft);
+  line-height: 1.85;
+}
+
+.filmmaking-practice__workflow,
+.filmmaking-practice__tools,
+.filmmaking-practice__projects {
+  margin-top: clamp(3rem, 7vw, 6rem);
+}
+
+.filmmaking-practice__steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 1.4rem;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.filmmaking-practice__step {
+  min-height: 13rem;
+  padding: clamp(1.1rem, 2.5vw, 2rem);
+  background: var(--surface-dark);
+}
+
+.filmmaking-practice__step > span,
+.filmmaking-practice__project-number {
+  color: var(--cobalt);
+  font-size: .65rem;
+  letter-spacing: .18em;
+}
+
+.filmmaking-practice__step h3 {
+  margin: 2.2rem 0 .65rem;
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
+.filmmaking-practice__step p,
+.filmmaking-practice__project p {
+  color: var(--text-soft);
+  font-size: .9rem;
+  line-height: 1.8;
+}
+
+.filmmaking-practice__tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 7vw, 7rem);
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(125, 187, 255, .09), rgba(10, 18, 32, .4));
+}
+
+.filmmaking-practice__tools h3 {
+  margin: 1rem 0;
+  color: var(--ink);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+}
+
+.filmmaking-practice__tools h3 em,
+.filmmaking-practice__projects h3 em {
+  color: var(--cobalt);
+  font-family: Georgia, serif;
+  font-weight: 400;
+}
+
+.filmmaking-practice__note {
+  max-width: 28rem;
+  color: var(--text-soft);
+  line-height: 1.8;
+}
+
+.filmmaking-practice__tools ul {
+  align-self: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.filmmaking-practice__tools li {
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: .92rem;
+}
+
+.filmmaking-practice__projects .section-heading h3 {
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+}
+
+.filmmaking-practice__project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 1.5rem;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.filmmaking-practice__project {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+  background: var(--surface-dark);
+}
+
+.filmmaking-practice__project h4 {
+  margin: .55rem 0;
+  color: var(--ink);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  letter-spacing: .025em;
+}
+
+.filmmaking-practice__status {
+  display: inline-block;
+  margin-top: .5rem;
+  padding: .35rem .6rem;
+  border: 1px solid var(--line);
+  color: var(--cobalt);
+  font-size: .65rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.filmmaking-practice__project a {
+  display: inline-block;
+  margin: .8rem 0 0 .7rem;
+  color: var(--ink);
+  font-size: .75rem;
+  text-decoration: underline;
+  text-underline-offset: .25rem;
+}
+
+@media (max-width: 760px) {
+  .filmmaking-practice__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .filmmaking-practice__tools {
+    grid-template-columns: 1fr;
+  }
+  .filmmaking-practice__project-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 440px) {
+  .filmmaking-practice__steps {
+    grid-template-columns: 1fr;
+  }
+}

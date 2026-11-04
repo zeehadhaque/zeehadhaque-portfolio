@@ -1,4 +1,9 @@
-const onSetAreas = ["Directing", "Cinematography", "Visual storytelling", "Editing & colour"] as const;
+const onSetAreas = [
+  { title: "Direction", description: "Shaping the idea, performance, visual language and rhythm behind each scene." },
+  { title: "Cinematography", description: "Purposeful framing, camera movement, perspective and the use of available light." },
+  { title: "Visual storytelling", description: "Building emotion through visual silence, composition, atmosphere and recurring motifs." },
+  { title: "Post-production", description: "Editing, colour grading and sound design to bring the final cinematic experience together." },
+] as const;
 
 export function OnSetSection() {
   return (
@@ -11,15 +16,15 @@ export function OnSetSection() {
         </div>
         <div className="on-set__grid">
           {onSetAreas.map((area, index) => (
-            <article className="practice-item" key={area}>
+            <article className="practice-item" key={area.title}>
               <span className="practice-item__number">0{index + 1}</span>
-              <h3>{area}</h3>
+              <h3>{area.title}</h3>
               <span className="practice-item__line" aria-hidden="true" />
-              <p>Original work and production material will appear here when supplied.</p>
+              <p>{area.description}</p>
             </article>
           ))}
         </div>
-        <div className="section-tail section-tail--light"><span>ON SET</span><span>Authentic work only / Archive in progress</span></div>
+        <div className="section-tail section-tail--light"><span>ON SET</span><span>Writing / Direction / Camera / Edit</span></div>
       </div>
     </section>
   );

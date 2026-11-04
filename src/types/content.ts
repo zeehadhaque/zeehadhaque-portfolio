@@ -5,6 +5,13 @@ export interface SiteIdentity {
   email: string;
   whatsapp: string;
   statement: string;
+  biography: string;
+  creativeFocus: readonly string[];
+  workingMethod: string;
+  filmmakingApproach: string;
+  productionWorkflow: readonly FilmmakingWorkflowStep[];
+  toolsAndCraft: readonly string[];
+  creativeProjects: readonly CreativeProject[];
 }
 
 export interface NavigationItem {
@@ -24,4 +31,19 @@ export interface FilmProject {
 export interface FutureProject {
   title: string;
   genre: string;
+}
+
+
+export interface FilmmakingWorkflowStep {
+  number: string;
+  title: string;
+  description: string;
+}
+
+export interface CreativeProject {
+  title: string;
+  category: string;
+  description: string;
+  status: string;
+  href?: string;
 }
