@@ -7,6 +7,7 @@ import { SiteNavigation } from "../components/navigation/SiteNavigation";
 import { AcademySection } from "../components/sections/AcademySection";
 import { ContactSection } from "../components/sections/ContactSection";
 import { FilmArchive } from "../components/sections/FilmArchive";
+import { FilmmakingPractice } from "../components/sections/FilmmakingPractice";
 import { FrameArchive } from "../components/sections/FrameArchive";
 import { FutureProjects } from "../components/sections/FutureProjects";
 import { OffSetSection } from "../components/sections/OffSetSection";
@@ -75,6 +76,7 @@ export function App() {
         <HeroPortrait />
         <PersonalIntroduction />
         <OnSetSection />
+        <FilmmakingPractice />
         <OffSetSection />
         <FilmArchive />
         <FrameArchive />
