@@ -31,16 +31,16 @@ main section[id] {
 /* Scroll reveals are opt-in only after the observer is ready; content stays visible without JS. */
 .has-cinematic-motion .motion-reveal {
   opacity: 0;
-  transform: translate3d(0, 28px, 0);
+  translate: 0 28px;
   transition:
     opacity 760ms cubic-bezier(.2, .7, .2, 1),
-    transform 900ms cubic-bezier(.2, .7, .2, 1);
+    translate 900ms cubic-bezier(.2, .7, .2, 1);
   transition-delay: var(--motion-delay, 0ms);
 }
 
 .has-cinematic-motion .motion-reveal.is-motion-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  translate: 0 0;
 }
 
 /* 3D lens architecture around the hero portrait. */
@@ -225,6 +225,6 @@ main section[id] {
   .has-cinematic-motion .motion-reveal,
   .has-cinematic-motion .motion-reveal.is-motion-visible {
     opacity: 1;
-    transform: none;
+    translate: none;
   }
 }
