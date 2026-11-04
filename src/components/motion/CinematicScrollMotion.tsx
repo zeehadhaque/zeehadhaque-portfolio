@@ -182,8 +182,9 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
         );
         target.style.removeProperty("--motion-delay");
         target.style.removeProperty("--motion-order");
-        target.style.removeProperty("--motion-rotate-x");
-        target.style.removeProperty("--motion-rotate-y");
+        target.style.removeProperty("--motion-axis-x");
+      target.style.removeProperty("--motion-angle");
+        target.style.removeProperty("--motion-axis-y");
         target.style.removeProperty("--motion-pointer-x");
         target.style.removeProperty("--motion-pointer-y");
       });
@@ -200,8 +201,9 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
 
     const resetTilt = (target: HTMLElement | null) => {
       if (!target) return;
-      target.style.removeProperty("--motion-rotate-x");
-      target.style.removeProperty("--motion-rotate-y");
+      target.style.removeProperty("--motion-axis-x");
+      target.style.removeProperty("--motion-angle");
+      target.style.removeProperty("--motion-axis-y");
       target.style.removeProperty("--motion-pointer-x");
       target.style.removeProperty("--motion-pointer-y");
       target.classList.remove("is-pointer-active");
@@ -217,8 +219,9 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
         activeTilt = target;
       }
       if (!target) return;
-      target.style.setProperty("--motion-rotate-y", `${x * 5.2}deg`);
-      target.style.setProperty("--motion-rotate-x", `${-y * 5.2}deg`);
+      target.style.setProperty("--motion-axis-y", String(x));
+      target.style.setProperty("--motion-axis-x", String(-y));
+      target.style.setProperty("--motion-angle", `${Math.min(6, Math.hypot(x, y) * 4.2)}deg`);
       target.style.setProperty("--motion-pointer-x", `${(x + 1) * 50}%`);
       target.style.setProperty("--motion-pointer-y", `${(y + 1) * 50}%`);
       target.classList.add("is-pointer-active");
@@ -250,11 +253,12 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
       if (!pointerFrame) pointerFrame = window.requestAnimationFrame(applyPendingPointer);
     };
 
+    const handlePointerOut = (event: PointerEvent) => {
+      if (event.relatedTarget === null) handlePointerLeave();
+    };
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("blur", handlePointerLeave);
-    window.addEventListener("pointerout", (event) => {
-      if (event instanceof PointerEvent && event.relatedTarget === null) handlePointerLeave();
-    }, { passive: true });
+    window.addEventListener("pointerout", handlePointerOut, { passive: true });
 
     return () => {
       observer?.disconnect();
@@ -262,6 +266,7 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
       motionPreference.removeEventListener("change", onMotionChange);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("blur", handlePointerLeave);
+      window.removeEventListener("pointerout", handlePointerOut);
       if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
       resetTilt(activeTilt);
       root.classList.remove("has-cinematic-motion", "has-native-scroll-motion");
