@@ -23,6 +23,15 @@ export function App() {
   const activeSection = useActiveSection(sectionIds);
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    try { return window.localStorage.getItem("zee-theme") === "light" ? "light" : "dark"; }
+    catch { return "dark"; }
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try { window.localStorage.setItem("zee-theme", theme); } catch { /* storage may be unavailable */ }
+  }, [theme]);
 
   useEffect(() => {
     let finished = false;
@@ -51,11 +60,13 @@ export function App() {
   }, [isNavigationOpen]);
 
   return (
-    <div className="app-shell" data-reduced-motion={reducedMotion}>
+    <div className="app-shell" data-reduced-motion={reducedMotion} data-theme={theme}>
       <SkipLink />
       <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} />
       <SiteNavigation
         activeSection={activeSection}
+        theme={theme}
+        onThemeToggle={() => setTheme((current) => current === "dark" ? "light" : "dark")}
         isOpen={isNavigationOpen}
         onToggle={() => setIsNavigationOpen((open) => !open)}
         onClose={() => setIsNavigationOpen(false)}
