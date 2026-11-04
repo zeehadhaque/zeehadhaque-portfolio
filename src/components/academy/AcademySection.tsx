@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import {
   academyArcadeGames,
   academyDays,
@@ -70,7 +70,7 @@ function rankFor(xp: number) {
 function ProgressRing({ completed, total }: { completed: number; total: number }) {
   const percent = total ? Math.round((completed / total) * 100) : 0;
   return (
-    <div className="academy-ring" style={{ "--ring-progress": `${percent * 3.6}deg` } as React.CSSProperties}>
+    <div className="academy-ring" style={{ "--ring-progress": `${percent * 3.6}deg` } as CSSProperties}>
       <div><strong>{percent}%</strong><span>COMPLETE</span></div>
     </div>
   );
@@ -520,9 +520,9 @@ export function AcademySection() {
               <div className="academy-arcade-play">
                 <button type="button" className="academy-text-button" onClick={() => setArcadeGame(null)}>← {copy("All challenges", "সব challenge")}</button>
                 <div className="academy-exam__meta"><span>{text(language, currentGame.title)}</span><span>ROUND {arcadeIndex + 1} / {currentGame.questions.length}</span><span>SCORE {arcadeScore}</span></div>
-                <QuestionCard question={currentArcadeQuestion} language={language} selected={arcadeAnswer} checked={arcadeChecked} onSelect={(value) => { setArcadeAnswer(value); setArcadeChecked(false); }} onCheck={() => { if (arcadeAnswer === null) return; setArcadeChecked(true); if (arcadeAnswer === currentArcadeQuestion.question.answerIndex) setArcadeScore((score) => score + 1); }} />
+                <QuestionCard question={currentArcadeQuestion} language={language} selected={arcadeAnswer} checked={arcadeChecked} onSelect={(value) => { setArcadeAnswer(value); setArcadeChecked(false); }} onCheck={() => { if (arcadeAnswer === null) return; setArcadeChecked(true); if (arcadeAnswer === currentArcadeQuestion.answerIndex) setArcadeScore((score) => score + 1); }} />
                 {arcadeChecked && <button type="button" className="academy-primary-button" onClick={() => {
-                  if (arcadeIndex + 1 >= currentGame.questions.length) { setArcadeGame(null); setAuthNotice(copy(`Challenge complete · score ${arcadeScore + (arcadeAnswer === currentArcadeQuestion.question.answerIndex ? 0 : 0)}. Replay to improve.`, "Challenge সম্পন্ন। উন্নতি করতে আবার খেলো।")); }
+                  if (arcadeIndex + 1 >= currentGame.questions.length) { setArcadeGame(null); setAuthNotice(copy(`Challenge complete · score ${arcadeScore}. Replay to improve.`, "Challenge সম্পন্ন। উন্নতি করতে আবার খেলো।")); }
                   else { setArcadeIndex((index) => index + 1); setArcadeAnswer(null); setArcadeChecked(false); }
                 }}>{arcadeIndex + 1 >= currentGame.questions.length ? copy("Finish challenge", "Challenge শেষ") : copy("Next round", "পরের round")} ↗</button>}
               </div>
