@@ -1,21 +1,3 @@
-  ".hero-portrait__visual",
-  ".hero-portrait__copy > *",
-  ".message-from-zee__collage",
-  ".message-from-zee__copy > *",
-  ".on-set__intro > *",
-  ".on-set__grid",
-  ".off-set__visual",
-  ".off-set__content > *",
-  ".film-archive__grid",
-  ".frame-archive__heading > *",
-  ".frame-archive__gallery",
-  ".filmmaking-practice__steps",
-  ".filmmaking-practice__tools",
-  ".filmmaking-practice__project-grid",
-  ".future-projects__list",
-  ".contact__intro > *",
-  ".contact__details",
-  ".contact-form",
 import { useEffect, useRef } from "react";
 
 interface CinematicScrollMotionProps {
