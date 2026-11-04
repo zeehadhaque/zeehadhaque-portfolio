@@ -99,14 +99,24 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
     }
 
     let students: unknown[] | undefined;
+    let studentEntitlements: unknown[] | undefined;
     if (isAdmin(user)) {
-      const studentResponse = await supabaseFetch(
-        config,
-        "/rest/v1/academy_profiles?select=user_id,display_name,email,created_at&order=created_at.desc&limit=100",
-        {},
-        token,
-      );
+      const [studentResponse, entitlementResponse] = await Promise.all([
+        supabaseFetch(
+          config,
+          "/rest/v1/academy_profiles?select=user_id,display_name,email,created_at&order=created_at.desc&limit=100",
+          {},
+          token,
+        ),
+        supabaseFetch(
+          config,
+          "/rest/v1/academy_entitlements?select=user_id,entitlement_key,expires_at,granted_at&order=granted_at.desc",
+          {},
+          token,
+        ),
+      ]);
       students = await restJson<unknown[]>(studentResponse) ?? [];
+      studentEntitlements = await restJson<unknown[]>(entitlementResponse) ?? [];
     }
 
     return json({
@@ -117,7 +127,7 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
       progress,
       attempts,
       entitlements: entitlements.filter((entry) => !entry.expires_at || Date.parse(entry.expires_at) > Date.now()),
-      ...(students ? { students } : {}),
+      ...(students ? { students, studentEntitlements } : {}),
     });
   }
 
