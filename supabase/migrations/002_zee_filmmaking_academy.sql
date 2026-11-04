@@ -33,9 +33,11 @@ create table if not exists public.academy_attempts (
   attempted_at timestamptz not null default now()
 );
 
+create index if not exists academy_attempts_user_time_idx on public.academy_attempts(user_id, attempted_at desc);
+
 create table if not exists public.academy_entitlements (
   user_id uuid not null references auth.users(id) on delete cascade,
-  entitlement_key text not null check (entitlement_key in ('program.30day','track.advanced','arcade.pro','certificate.issue')),
+  entitlement_key text not null check (entitlement_key in ('program.30day','track.advanced','arcade.pro')),
   granted_by uuid not null references auth.users(id),
   granted_at timestamptz not null default now(),
   expires_at timestamptz,
@@ -55,7 +57,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = public, auth
+set search_path = ''
 as $$
   select exists (
     select 1 from auth.users u
@@ -72,7 +74,7 @@ create or replace function public.academy_bootstrap_profile()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   insert into public.academy_profiles(user_id, display_name, email)
@@ -118,22 +120,22 @@ grant select on public.academy_profiles, public.academy_day_progress, public.aca
 drop policy if exists "Academy profiles own or owner read" on public.academy_profiles;
 create policy "Academy profiles own or owner read" on public.academy_profiles
 for select to authenticated
-using (user_id = auth.uid() or public.academy_is_verified_owner());
+using (user_id = (select auth.uid()) or (select public.academy_is_verified_owner()));
 
 drop policy if exists "Academy progress own or owner read" on public.academy_day_progress;
 create policy "Academy progress own or owner read" on public.academy_day_progress
 for select to authenticated
-using (user_id = auth.uid() or public.academy_is_verified_owner());
+using (user_id = (select auth.uid()) or (select public.academy_is_verified_owner()));
 
 drop policy if exists "Academy attempts own or owner read" on public.academy_attempts;
 create policy "Academy attempts own or owner read" on public.academy_attempts
 for select to authenticated
-using (user_id = auth.uid() or public.academy_is_verified_owner());
+using (user_id = (select auth.uid()) or (select public.academy_is_verified_owner()));
 
 drop policy if exists "Academy entitlements own or owner read" on public.academy_entitlements;
 create policy "Academy entitlements own or owner read" on public.academy_entitlements
 for select to authenticated
-using (user_id = auth.uid() or public.academy_is_verified_owner());
+using (user_id = (select auth.uid()) or (select public.academy_is_verified_owner()));
 
 create or replace function public.academy_complete_day(
   p_day smallint,
@@ -143,7 +145,7 @@ create or replace function public.academy_complete_day(
 returns jsonb
 language plpgsql
 security definer
-set search_path = public, auth
+set search_path = ''
 as $$
 declare
   v_user uuid := auth.uid();
@@ -157,6 +159,13 @@ begin
   if p_day is null or p_day < 1 or p_day > 30 then raise exception 'invalid_day'; end if;
   if p_answer_index is null or p_answer_index < 0 or p_answer_index > 5 then raise exception 'invalid_answer'; end if;
   if char_length(coalesce(p_reflection,'')) > 2000 then raise exception 'reflection_too_long'; end if;
+
+  if p_day > 1 and not exists (
+    select 1 from public.academy_day_progress p
+    where p.user_id=v_user and p.day=p_day-1
+  ) then
+    raise exception 'prerequisite_required';
+  end if;
 
   if p_day > 7 and not exists (
     select 1 from public.academy_entitlements e
@@ -201,13 +210,13 @@ create or replace function public.academy_grant_entitlement(
 returns jsonb
 language plpgsql
 security definer
-set search_path = public, auth
+set search_path = ''
 as $$
 declare
   v_expiry timestamptz;
 begin
   if not public.academy_is_verified_owner() then raise exception 'admin_required'; end if;
-  if p_entitlement_key not in ('program.30day','track.advanced','arcade.pro','certificate.issue') then raise exception 'invalid_entitlement'; end if;
+  if p_entitlement_key not in ('program.30day','track.advanced','arcade.pro') then raise exception 'invalid_entitlement'; end if;
   if p_days is not null and (p_days < 1 or p_days > 3650) then raise exception 'invalid_duration'; end if;
   if not exists (select 1 from auth.users where id=p_user_id and email_confirmed_at is not null) then raise exception 'verified_user_not_found'; end if;
   v_expiry := case when p_days is null then null else now() + make_interval(days => p_days) end;
@@ -228,7 +237,7 @@ create or replace function public.academy_revoke_entitlement(
 returns jsonb
 language plpgsql
 security definer
-set search_path = public, auth
+set search_path = ''
 as $$
 begin
   if not public.academy_is_verified_owner() then raise exception 'admin_required'; end if;
