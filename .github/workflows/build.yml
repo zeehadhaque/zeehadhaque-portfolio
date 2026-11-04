@@ -9,6 +9,7 @@ on:
       - feature/zee-filmmaking-academy
       - design/true-3d-cinematic-portfolio
       - motion/complete-cinematic-motion-system
+      - fix/complete-motion-build
 
 permissions:
   contents: read
