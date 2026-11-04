@@ -4,29 +4,57 @@ interface CinematicScrollMotionProps {
   reducedMotion: boolean;
 }
 
+/**
+ * Progressive enhancement for the full interface.
+ * The page is visible by default; reveal classes are only added after the
+ * IntersectionObserver is available. A MutationObserver catches Academy
+ * panels and modal content that are mounted after the initial page render.
+ */
 const revealSelector = [
-  ".hero-portrait__copy > *",
+  "main section h1",
+  "main section h2",
+  "main section h3",
+  "main section h4",
+  "main section p",
+  "main section figure",
+  "main section img",
+  "main section article",
+  "main section li",
+  "main section a",
+  "main section button",
+  "main section input",
+  "main section textarea",
+  "main section select",
+  "main section iframe",
+  "main section form",
+  "main section .section-kicker",
+  "main section .section-tail",
   ".hero-portrait__visual",
-  ".message-from-zee__collage > *",
-  ".message-from-zee__copy > *",
-  ".on-set__intro > *",
-  ".practice-item",
+  ".message-from-zee__collage",
+  ".on-set__grid",
   ".off-set__visual",
-  ".off-set__content > *",
-  ".section-heading > *",
-  ".film-card",
-  ".frame-archive__heading > *",
-  ".frame-archive__tile",
-  ".filmmaking-practice__step",
-  ".filmmaking-practice__tools > *",
-  ".filmmaking-practice__project",
-  ".future-projects__list > li",
-  ".academy__intro > *",
-  ".academy__features",
-  ".contact__intro > *",
-  ".contact__details > div",
-  ".contact-form > label",
-  ".contact-form__submit",
+  ".film-archive__grid",
+  ".frame-archive__gallery",
+  ".filmmaking-practice__steps",
+  ".filmmaking-practice__tools",
+  ".filmmaking-practice__project-grid",
+  ".future-projects__list",
+  ".academy-experience .academy-masthead",
+  ".academy-experience .academy-hero__copy",
+  ".academy-experience .academy-hero__art",
+  ".academy-experience .academy-nav",
+  ".academy-experience .academy-stat",
+  ".academy-experience .academy-roadmap",
+  ".academy-experience .academy-lesson",
+  ".academy-experience .academy-exam-question",
+  ".academy-experience .academy-game-card",
+  ".academy-experience .academy-admin__student",
+  ".academy-experience .academy-auth__card",
+  ".contact__details",
+  ".contact-form",
+  ".main-footer__top",
+  ".main-footer__bottom > *",
+  ".zee-assistant__toggle",
 ].join(",");
 
 export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionProps) {
@@ -35,17 +63,13 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
   useEffect(() => {
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reducedMotion || motionPreference.matches || !("IntersectionObserver" in window)) {
+      document.documentElement.classList.remove("has-cinematic-motion");
       return;
     }
 
-    const targets = Array.from(document.querySelectorAll<HTMLElement>(revealSelector));
-    if (!targets.length) return;
-
-    document.documentElement.classList.add("has-cinematic-motion");
-    targets.forEach((target, index) => {
-      target.classList.add("motion-reveal");
-      target.style.setProperty("--motion-delay", String((index % 5) * 70) + "ms");
-    });
+    const root = document.documentElement;
+    const registered = new Set<HTMLElement>();
+    let sequence = 0;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -55,18 +79,68 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
           observer.unobserve(entry.target);
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+      { threshold: 0.08, rootMargin: "0px 0px -5% 0px" },
     );
 
-    targets.forEach((target) => observer.observe(target));
+    const register = (scope: ParentNode) => {
+      const candidates = scope instanceof HTMLElement && scope.matches(revealSelector)
+        ? [scope, ...Array.from(scope.querySelectorAll<HTMLElement>(revealSelector))]
+        : Array.from(scope.querySelectorAll<HTMLElement>(revealSelector));
+
+      candidates.forEach((target) => {
+        if (registered.has(target) || target.closest("[hidden], [aria-hidden='true']")) return;
+        if (target.closest(".film-modal, .academy-auth") && !target.closest(".film-modal__dialog, .academy-auth__card")) return;
+
+        registered.add(target);
+        target.classList.add("motion-reveal");
+        target.style.setProperty("--motion-delay", `${(sequence % 6) * 58}ms`);
+        target.style.setProperty("--motion-index", String(sequence % 6));
+        sequence += 1;
+        observer.observe(target);
+      });
+    };
+
+    root.classList.add("has-cinematic-motion");
+    register(document);
+
+    const mutations = new MutationObserver((records) => {
+      records.forEach((record) => {
+        record.addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) register(node);
+        });
+      });
+    });
+    mutations.observe(document.getElementById("main-content") ?? document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    const onMotionChange = () => {
+      if (motionPreference.matches) {
+        observer.disconnect();
+        mutations.disconnect();
+        root.classList.remove("has-cinematic-motion");
+        registered.forEach((target) => {
+          target.classList.remove("motion-reveal", "is-motion-visible");
+          target.style.removeProperty("--motion-delay");
+          target.style.removeProperty("--motion-index");
+        });
+        registered.clear();
+      }
+    };
+    motionPreference.addEventListener("change", onMotionChange);
 
     return () => {
       observer.disconnect();
-      document.documentElement.classList.remove("has-cinematic-motion");
-      targets.forEach((target) => {
+      mutations.disconnect();
+      motionPreference.removeEventListener("change", onMotionChange);
+      root.classList.remove("has-cinematic-motion");
+      registered.forEach((target) => {
         target.classList.remove("motion-reveal", "is-motion-visible");
         target.style.removeProperty("--motion-delay");
+        target.style.removeProperty("--motion-index");
       });
+      registered.clear();
     };
   }, [reducedMotion]);
 
