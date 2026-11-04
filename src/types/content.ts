@@ -8,6 +8,10 @@ export interface SiteIdentity {
   biography: string;
   creativeFocus: readonly string[];
   workingMethod: string;
+  filmmakingApproach: string;
+  productionWorkflow: readonly FilmmakingWorkflowStep[];
+  toolsAndCraft: readonly string[];
+  creativeProjects: readonly CreativeProject[];
 }
 
 export interface NavigationItem {
