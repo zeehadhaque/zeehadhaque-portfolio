@@ -587,3 +587,20 @@
 @media (prefers-reduced-motion: reduce) {
   .academy-lens, .academy-lens--core { animation: none !important; }
 }
+
+/* Advanced practice checklist and visible keyboard focus */
+.academy-experience :focus-visible {
+  outline: 2px solid #b9e1ff;
+  outline-offset: 3px;
+}
+
+.academy-advanced-grid { align-items: stretch; }
+.academy-advanced-grid .academy-game-card { min-height: 22rem; cursor: default; }
+.academy-advanced-grid .academy-game-card:hover { transform: none; border-color: var(--academy-border); }
+.academy-advanced-checks { display: grid; gap: .6rem; margin: .4rem 0 0; }
+.academy-advanced-checks label { display: grid; grid-template-columns: 1rem 1fr; align-items: start; gap: .55rem; color: #c6d7e9; font-size: .63rem; line-height: 1.55; cursor: pointer; }
+.academy-advanced-checks input { width: .9rem; height: .9rem; margin: .12rem 0 0; accent-color: #8fd8c0; }
+.academy-advanced-checks input:checked + span { color: #8fd8c0; text-decoration: line-through; text-decoration-color: rgba(143,216,192,.55); }
+@media (max-width: 650px) {
+  .academy-advanced-grid .academy-game-card { min-height: auto; }
+}
