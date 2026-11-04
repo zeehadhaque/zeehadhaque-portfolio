@@ -29,8 +29,10 @@ Add these production variables:
 |---|---|---|
 | `SUPABASE_URL` | Text | Supabase project URL, e.g. `https://<project-ref>.supabase.co` |
 | `SUPABASE_PUBLISHABLE_KEY` | Text | Supabase publishable key (legacy anon key is accepted as fallback) |
+| `GEMINI_API_KEY` | Secret | Gemini API key for the existing ZEE chat assistant |
+| `GEMINI_MODEL` | Text | Optional Gemini model name; the existing chat function has a default |
 
-Do not add a Supabase `service_role` key. The Worker verifies the user's access token with Supabase Auth and uses that user's token for database reads/RPC calls. It never needs the service-role credential.
+Do not add a Supabase `service_role` key. The Worker verifies the user's access token with Supabase Auth and uses that user's token for database reads/RPC calls. It never needs the service-role credential. Keep `GEMINI_API_KEY` as a Cloudflare Secret; never place it in frontend code or Git.
 
 ## 3. Configure Supabase Auth URLs
 
@@ -45,7 +47,7 @@ Supabase's email provider/template and SMTP deliverability are controlled by the
 
 ## 4. Build and deploy
 
-The Worker entrypoint is `src/worker.ts`; static Vite output is `dist/`. The root `wrangler.jsonc` routes `/api/*` through the Worker and serves the SPA assets.
+The Worker entrypoint is `src/worker.ts`; static Vite output is `dist/`. The root `wrangler.jsonc` routes `/api/*` through the Worker and serves the SPA assets. The Worker dispatches `/api/academy`, `/api/chat` and `/api/contact`; unknown API paths return JSON 404.
 
 Cloudflare build settings:
 - Build command: `npm run build`
@@ -74,6 +76,6 @@ Deploy from `main` after merging the Academy pull request. Confirm the build and
 
 The final examination is a practice checkpoint, not a formal qualification. The Cine-Arcade and advanced lab checklists are skill-practice activities; they do not issue professional certification.
 
-## Deployment boundary
+## Worker route compatibility
 
-This repository now deploys the Academy API through the **Cloudflare Worker** entrypoint. The older `functions/api/*` files are Cloudflare Pages Functions and are not invoked by this Worker entrypoint. This Academy activation guide does not migrate the separate legacy ZEE chat/contact endpoints.
+The Worker reuses the existing `functions/api/chat.ts` and `functions/api/contact.ts` request handlers through explicit route dispatch. These handlers are invoked directly by `src/worker.ts`; they are not being treated as automatically executed Pages Functions. Configure the existing Gemini and Supabase variables above before expecting the chat/contact service to work.
