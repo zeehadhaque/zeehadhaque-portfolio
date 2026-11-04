@@ -10,6 +10,11 @@ const targetSelector = [
   "main section h3",
   "main section h4",
   "main section p",
+  "main section span",
+  "main section strong",
+  "main section small",
+  "main section em",
+  "main section b",
   "main section blockquote",
   "main section figcaption",
   "main section label",
@@ -53,7 +58,7 @@ const targetSelector = [
 ].join(",");
 
 const textSelector = [
-  "h1", "h2", "h3", "h4", "p", "blockquote", "figcaption", "label", "li",
+  "h1", "h2", "h3", "h4", "p", "span", "strong", "small", "em", "b", "blockquote", "figcaption", "label", "li",
   ".section-kicker", ".section-tail", ".hero-portrait__roles",
   ".hero-portrait__statement", ".film-card__meta", ".frame-archive__tile-meta",
   ".academy-eyebrow", ".academy-lesson__objective", ".academy-feedback",
@@ -232,83 +237,6 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
       const element = event.target instanceof Element ? event.target : null;
       const target = element?.closest<HTMLElement>(tiltSelector) ?? null;
       if (target && !registered.has(target)) {
-        register(target);
+        target.classList.add("motion-tilt");
+        registered.add(target);
       }
-      if (!target) {
-        if (activeTilt) {
-          pendingPointer = { target: null, x: 0, y: 0 };
-          if (!pointerFrame) pointerFrame = window.requestAnimationFrame(applyPendingPointer);
-        }
-        return;
-      }
-      const bounds = target.getBoundingClientRect();
-      const x = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / Math.max(1, bounds.width) - .5) * 2));
-      const y = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / Math.max(1, bounds.height) - .5) * 2));
-      pendingPointer = { target, x, y };
-      if (!pointerFrame) pointerFrame = window.requestAnimationFrame(applyPendingPointer);
-    };
-
-    const handlePointerLeave = () => {
-      pendingPointer = { target: null, x: 0, y: 0 };
-      if (!pointerFrame) pointerFrame = window.requestAnimationFrame(applyPendingPointer);
-    };
-
-    const handlePointerOut = (event: PointerEvent) => {
-      if (event.relatedTarget === null) handlePointerLeave();
-    };
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    window.addEventListener("blur", handlePointerLeave);
-    window.addEventListener("pointerout", handlePointerOut, { passive: true });
-
-    return () => {
-      observer?.disconnect();
-      mutations.disconnect();
-      motionPreference.removeEventListener("change", onMotionChange);
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("blur", handlePointerLeave);
-      window.removeEventListener("pointerout", handlePointerOut);
-      if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
-      resetTilt(activeTilt);
-      root.classList.remove("has-cinematic-motion", "has-native-scroll-motion");
-      registered.forEach((target) => {
-        target.classList.remove(
-          "motion-target", "motion-reveal", "is-motion-visible",
-          "motion-text-target", "motion-media-target", "motion-tilt",
-          "motion-scroll-text", "motion-scroll-media",
-        );
-        target.style.removeProperty("--motion-delay");
-        target.style.removeProperty("--motion-order");
-      });
-      registered.clear();
-    };
-  }, [reducedMotion]);
-
-  useEffect(() => {
-    let frame = 0;
-    const updateProgress = () => {
-      frame = 0;
-      const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, window.scrollY / scrollRange));
-      progressRef.current?.style.setProperty("--scroll-progress", String(progress));
-      document.documentElement.style.setProperty("--page-scroll-progress", String(progress));
-    };
-    const scheduleUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateProgress);
-    };
-    updateProgress();
-    window.addEventListener("scroll", scheduleUpdate, { passive: true });
-    window.addEventListener("resize", scheduleUpdate);
-    return () => {
-      window.removeEventListener("scroll", scheduleUpdate);
-      window.removeEventListener("resize", scheduleUpdate);
-      if (frame) window.cancelAnimationFrame(frame);
-      document.documentElement.style.removeProperty("--page-scroll-progress");
-    };
-  }, []);
-
-  return (
-    <div className="cinematic-scroll-progress" aria-hidden="true">
-      <span ref={progressRef} />
-    </div>
-  );
-}
