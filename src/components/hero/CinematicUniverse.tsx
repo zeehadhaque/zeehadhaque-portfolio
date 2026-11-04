@@ -193,6 +193,126 @@ function filmFrame(width: number, height: number, z: number): number[] {
   return points;
 }
 
+
+function addBox(points: number[], cx: number, cy: number, cz: number, w: number, h: number, d: number): void {
+  const x0 = cx - w / 2, x1 = cx + w / 2;
+  const y0 = cy - h / 2, y1 = cy + h / 2;
+  const z0 = cz - d / 2, z1 = cz + d / 2;
+  const vertices = [
+    [x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],
+    [x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],
+  ];
+  const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+  for (const [a,b] of edges) points.push(...vertices[a], ...vertices[b]);
+}
+
+function addSpire(points: number[], cx: number, baseY: number, cz: number, w: number, d: number, h: number): void {
+  const corners = [
+    [cx-w/2,baseY,cz-d/2],[cx+w/2,baseY,cz-d/2],
+    [cx+w/2,baseY,cz+d/2],[cx-w/2,baseY,cz+d/2],
+  ];
+  const apex = [cx,baseY+h,cz];
+  for (let i=0;i<4;i+=1) {
+    const a=corners[i], b=corners[(i+1)%4];
+    points.push(...a,...b,...a,...apex);
+  }
+}
+
+function addGothicArch(points: number[], cx: number, baseY: number, z: number, width: number, height: number): void {
+  const half = width / 2;
+  const shoulderY = baseY + height * .66;
+  const left = cx - half;
+  const right = cx + half;
+  points.push(left,baseY,z,left,shoulderY,z);
+  points.push(right,baseY,z,right,shoulderY,z);
+  const segments=18;
+  for(let i=0;i<segments;i+=1) {
+    const t0=i/segments, t1=(i+1)/segments;
+    const x0=left+width*t0, x1=left+width*t1;
+    const y0=shoulderY+(height-shoulderY+baseY)*Math.sin(Math.PI*t0);
+    const y1=shoulderY+(height-shoulderY+baseY)*Math.sin(Math.PI*t1);
+    points.push(x0,y0,z,x1,y1,z);
+  }
+  points.push(left,baseY,z,right,baseY,z);
+  const inner=width*.62;
+  const innerHeight=height*.72;
+  const inLeft=cx-inner/2, inRight=cx+inner/2;
+  points.push(inLeft,baseY+.08,z-.008,inLeft,baseY+innerHeight*.66,z-.008);
+  points.push(inRight,baseY+.08,z-.008,inRight,baseY+innerHeight*.66,z-.008);
+  for(let i=0;i<segments;i+=1) {
+    const t0=i/segments, t1=(i+1)/segments;
+    const y0=baseY+.08+(innerHeight*.34)*Math.sin(Math.PI*t0);
+    const y1=baseY+.08+(innerHeight*.34)*Math.sin(Math.PI*t1);
+    points.push(inLeft+inner*t0,y0,z-.008,inLeft+inner*t1,y1,z-.008);
+  }
+}
+
+function castleGeometry(): { structure: number[]; detail: number[]; arches: number[] } {
+  const structure: number[]=[];
+  const detail: number[]=[];
+  const arches: number[]=[];
+  const shift=.52;
+  const floor=-.92;
+  const front=.44;
+
+  // Grand foundation and stepped plinth.
+  addBox(structure,shift,floor-.11,0,4.85,.22,1.48);
+  addBox(structure,shift,floor+.015,0,4.35,.13,1.26);
+  addBox(structure,shift,floor+.13,-.02,3.82,.12,1.08);
+
+  // Central keep and the two great tower blocks.
+  addBox(structure,shift,floor+.87,0,1.75,1.58,.98);
+  for(const side of [-1,1]) {
+    const x=shift+side*1.48;
+    addBox(structure,x,floor+1.03,0,.91,2.02,.98);
+    addSpire(structure,x,floor+2.04,0,1.13,1.18,1.12);
+    addBox(detail,x,floor+1.95,0,1.02,.12,1.08);
+    addSpire(detail,x,floor+2.16,0,.33,.34,.3);
+    addBox(detail,x,floor+.82,front,.96,.09,.08);
+    addBox(detail,x,floor+1.52,front,.96,.08,.08);
+  }
+
+  // Smaller outer turrets create a layered, fortified skyline.
+  for(const side of [-1,1]) {
+    const x=shift+side*2.02;
+    addBox(structure,x,floor+.62,.04,.48,1.18,.63);
+    addSpire(structure,x,floor+1.21,.04,.64,.76,.7);
+    addBox(detail,x,floor+1.15,.04,.55,.09,.69);
+  }
+
+  // Central roofline, battlements and connecting curtain walls.
+  addSpire(structure,shift,floor+1.66,-.03,1.94,1.14,1.18);
+  addBox(detail,shift-.55,floor+1.68,front,.48,.12,.12);
+  addBox(detail,shift+.55,floor+1.68,front,.48,.12,.12);
+  for(let i=0;i<9;i+=1) {
+    const x=shift-1.06+i*.265;
+    if(Math.abs(x-shift)<.48) continue;
+    addBox(detail,x,floor+1.27,front,.14,.2,.12);
+  }
+  for(const side of [-1,1]) {
+    const x=shift+side*.99;
+    addBox(structure,x,floor+.68,.02,.74,1.2,.78);
+    addBox(detail,x,floor+1.3,.02,.82,.1,.84);
+    for(let i=0;i<3;i+=1) addBox(detail,x+side*(i-1)*.22,floor+1.42,.02,.12,.2,.13);
+  }
+
+  // Pointed gate, tall lancet windows and tower slits.
+  addGothicArch(arches,shift,floor+.04,front+.08,.75,1.05);
+  addGothicArch(arches,shift-.0,floor+.57,front+.09,.31,.64);
+  for(const side of [-1,1]) {
+    addGothicArch(arches,shift+side*1.48,floor+.48,front+.52,.23,.58);
+    addGothicArch(arches,shift+side*2.02,floor+.38,front+.36,.17,.42);
+    addGothicArch(arches,shift+side*.88,floor+.45,front+.43,.2,.5);
+  }
+
+  // Fine vertical tracery and the central keystone.
+  detail.push(shift,floor+.2,front+.1,shift,floor+1.2,front+.1);
+  detail.push(shift-.18,floor+.04,front+.1,shift-.18,floor+.52,front+.1);
+  detail.push(shift+.18,floor+.04,front+.1,shift+.18,floor+.52,front+.1);
+  addSpire(detail,shift,floor+2.7,-.05,.28,.3,.42);
+  return {structure,detail,arches};
+}
+
 function createScene(gl: WebGL2RenderingContext): { program: WebGLProgram; uniforms: Uniforms; geometry: Geometry[] } {
   const program = createProgram(gl);
   const location = (name: string) => {
@@ -222,6 +342,11 @@ function createScene(gl: WebGL2RenderingContext): { program: WebGLProgram; unifo
     closeParticles.push(Math.cos(angle) * radius, (random() - 0.5) * 3.7, random() * 2.1);
   }
   geometry.push(packedGeometry(gl, closeParticles, [0.58, 0.86, 1.0], 4.1, gl.POINTS, 1.4, 0));
+
+  const castle = castleGeometry();
+  geometry.push(packedGeometry(gl, castle.structure, [0.23, 0.58, 0.79], 1, gl.LINES, 0.35, 1));
+  geometry.push(packedGeometry(gl, castle.detail, [0.52, 0.83, 1.0], 1, gl.LINES, 1.15, 1));
+  geometry.push(packedGeometry(gl, castle.arches, [0.65, 0.88, 1.0], 1, gl.LINES, 1.8, 1));
 
   geometry.push(packedGeometry(gl, ring(1.55, 180, 0, 0.93), [0.35, 0.76, 1.0], 1, gl.LINE_STRIP, 0.3, 1));
   geometry.push(packedGeometry(gl, ring(1.23, 180, 0.11, 1.06), [0.56, 0.87, 1.0], 1, gl.LINE_STRIP, 1.2, 1));
