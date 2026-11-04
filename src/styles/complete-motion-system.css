@@ -81,8 +81,8 @@ main section[id] { scroll-margin-top: 6rem; }
   100% { opacity: 1; translate: 0 0; filter: blur(0); }
 }
 @keyframes scroll-media-arrive {
-  0% { opacity: .42; scale: .92; translate: 0 44px; filter: saturate(.55) contrast(.94) blur(2px); }
-  100% { opacity: 1; scale: 1; translate: 0 0; filter: saturate(1) contrast(1.04) blur(0); }
+  0% { opacity: .42; filter: saturate(.55) contrast(.94) blur(2px); }
+  100% { opacity: 1; filter: saturate(1) contrast(1.04) blur(0); }
 }
 
 /* Every image gets a gentle scroll-scrubbed camera move, with hover zoom layered above it. */
@@ -102,7 +102,8 @@ main section[id] { scroll-margin-top: 6rem; }
 }
 @supports (animation-timeline: view()) {
   .has-native-scroll-motion main section img:not(.no-motion) {
-    transform: translateY(var(--image-y,0)) scale(var(--image-scale,1));
+    translate: 0 var(--image-y,0);
+    scale: var(--image-scale,1);
     transform-origin: center;
   }
 }
