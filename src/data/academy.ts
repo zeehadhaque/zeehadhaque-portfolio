@@ -328,7 +328,6 @@ export const academyEntitlements = [
   { key: "program.30day", title: t("30-day complete programme", "সম্পূর্ণ ৩০ দিনের প্রোগ্রাম"), description: t("Unlock days 8–30 and the final capstone.", "৮–৩০ দিন এবং final capstone আনলক করে।") },
   { key: "track.advanced", title: t("Advanced cinematography lab", "Advanced cinematography lab"), description: t("Unlock advanced practice notes and technique drills.", "Advanced practice note ও technique drill আনলক করে।") },
   { key: "arcade.pro", title: t("Cine-Arcade challenge pack", "Cine-Arcade challenge pack"), description: t("Unlock the advanced arcade challenge.", "Advanced arcade challenge আনলক করে।") },
-  { key: "certificate.issue", title: t("Certificate issue permission", "Certificate issue permission"), description: t("Allows an eligible learner to create a completion certificate.", "যোগ্য শিক্ষার্থীকে completion certificate তৈরি করতে দেয়।") },
 ] as const;
 
 export const academyRanks = [
