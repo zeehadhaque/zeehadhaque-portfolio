@@ -4,6 +4,7 @@ import "./styles/tokens.css";
 import "./styles/global.css";
 import "./styles/theme.css";
 import "./styles/trackside-cinema.css";
+import "./styles/academy.css";
 import "./styles/cinematic-motion.css";
 import { App } from "./app/App";
 
