@@ -1,5 +1,6 @@
 import { useState, type CSSProperties, type PointerEvent } from "react";
 import { identityPortraitAsset, siteIdentity } from "../../data/site";
+import { CinematicUniverse } from "./CinematicUniverse";
 
 export function HeroPortrait() {
   const [entered, setEntered] = useState(false);
@@ -23,6 +24,7 @@ export function HeroPortrait() {
 
   return (
     <section className={`hero-portrait ${entered ? "is-entered" : ""}`} id="home" aria-labelledby="hero-title">
+      <CinematicUniverse />
       <div className="hero-portrait__contours" aria-hidden="true">
         <span />
         <span />

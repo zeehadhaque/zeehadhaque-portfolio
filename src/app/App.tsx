@@ -27,14 +27,14 @@ export function App() {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => {
     try {
-      const saved = window.localStorage.getItem("zee-theme");
+      const saved = window.localStorage.getItem("zee-theme-v2");
       return saved === "light" ? "light" : "dark";
-    } catch { return "light"; }
+    } catch { return "dark"; }
   });
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    try { window.localStorage.setItem("zee-theme", theme); } catch { /* storage may be unavailable */ }
+    try { window.localStorage.setItem("zee-theme-v2", theme); } catch { /* storage may be unavailable */ }
   }, [theme]);
 
   useEffect(() => {
