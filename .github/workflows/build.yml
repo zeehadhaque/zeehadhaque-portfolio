@@ -10,6 +10,7 @@ on:
       - design/true-3d-cinematic-portfolio
       - motion/complete-cinematic-motion-system
       - fix/complete-motion-build
+      - fix/motion-build-selector-order
 
 permissions:
   contents: read
