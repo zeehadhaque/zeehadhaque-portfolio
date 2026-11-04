@@ -76,13 +76,13 @@ main section[id] { scroll-margin-top: 6rem; }
   }
 }
 @keyframes scroll-text-arrive {
-  0% { opacity: 0; translate: 0 40px; filter: blur(8px); }
-  72% { opacity: 1; translate: 0 0; filter: blur(0); }
-  100% { opacity: 1; translate: 0 0; filter: blur(0); }
+  0% { opacity: 0; translate: 0 34px; }
+  72% { opacity: 1; translate: 0 0; }
+  100% { opacity: 1; translate: 0 0; }
 }
 @keyframes scroll-media-arrive {
-  0% { opacity: .42; filter: saturate(.55) contrast(.94) blur(2px); }
-  100% { opacity: 1; filter: saturate(1) contrast(1.04) blur(0); }
+  0% { opacity: .42; }
+  100% { opacity: 1; }
 }
 
 /* Every image gets a gentle scroll-scrubbed camera move, with hover zoom layered above it. */
@@ -96,14 +96,14 @@ main section[id] { scroll-margin-top: 6rem; }
   }
 }
 @keyframes image-camera-drift {
-  0% { --image-scale: 1.12; --image-y: 5%; }
-  50% { --image-scale: 1.065; --image-y: 0%; }
-  100% { --image-scale: 1.12; --image-y: -5%; }
+  0% { translate: 0 5%; scale: 1.12; }
+  50% { translate: 0 0; scale: 1.065; }
+  100% { translate: 0 -5%; scale: 1.12; }
 }
 @supports (animation-timeline: view()) {
   .has-native-scroll-motion main section img:not(.no-motion) {
-    translate: 0 var(--image-y,0);
-    scale: var(--image-scale,1);
+
+
     transform-origin: center;
   }
 }
@@ -563,4 +563,10 @@ a:not(.film-card__button):not(.frame-archive__tile) {
   .has-native-scroll-motion .frame-archive__tile-meta {
     animation: none !important;
   }
+}
+
+
+/* Keep large text sets compositor-friendly: only opacity and translate on scroll. */
+.has-cinematic-motion .motion-reveal {
+  filter: none;
 }
