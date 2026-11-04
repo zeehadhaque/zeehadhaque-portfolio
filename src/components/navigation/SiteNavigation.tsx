@@ -3,12 +3,14 @@ import { navigationItems } from "../../data/site";
 
 interface SiteNavigationProps {
   activeSection: string;
+  theme: "dark" | "light";
+  onThemeToggle: () => void;
   isOpen: boolean;
   onToggle: () => void;
   onClose: () => void;
 }
 
-export function SiteNavigation({ activeSection, isOpen, onToggle, onClose }: SiteNavigationProps) {
+export function SiteNavigation({ activeSection, theme, onThemeToggle, isOpen, onToggle, onClose }: SiteNavigationProps) {
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
@@ -44,6 +46,11 @@ export function SiteNavigation({ activeSection, isOpen, onToggle, onClose }: Sit
         ))}
       </nav>
 
+      <div className="main-navigation__actions">
+      <button className="main-navigation__theme" type="button" onClick={onThemeToggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
+        <span className="main-navigation__theme-icon" aria-hidden="true">{theme === "dark" ? "☼" : "☾"}</span>
+        <span>{theme === "dark" ? "Light" : "Dark"}</span>
+      </button>
       <button
         className="main-navigation__toggle"
         type="button"
@@ -57,6 +64,8 @@ export function SiteNavigation({ activeSection, isOpen, onToggle, onClose }: Sit
           <i />
         </span>
       </button>
+
+      </div>
 
       <div className={`mobile-navigation ${isOpen ? "is-open" : ""}`} id="mobile-navigation" aria-hidden={!isOpen}>
         <button className="mobile-navigation__backdrop" type="button" aria-label="Close menu" onClick={onClose} />
