@@ -13,7 +13,7 @@ import { OffSetSection } from "../components/sections/OffSetSection";
 import { OnSetSection } from "../components/sections/OnSetSection";
 import { PersonalIntroduction } from "../components/sections/PersonalIntroduction";
 import { ZeeAIAssistant } from "../components/zee-ai/ZeeAIAssistant";
-import { navigationItems, portraitAsset } from "../data/site";
+import { identityPortraitAsset, navigationItems } from "../data/site";
 import { useActiveSection } from "../hooks/useActiveSection";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
@@ -44,7 +44,7 @@ export function App() {
     const portrait = new Image();
     portrait.onload = finishLoading;
     portrait.onerror = finishLoading;
-    portrait.src = portraitAsset;
+    portrait.src = identityPortraitAsset;
 
     const maximumWait = window.setTimeout(finishLoading, reducedMotion ? 180 : 900);
     return () => {
