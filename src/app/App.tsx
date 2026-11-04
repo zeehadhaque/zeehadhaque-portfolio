@@ -5,7 +5,7 @@ import { CinematicScrollMotion } from "../components/motion/CinematicScrollMotio
 import { MainFooter } from "../components/layout/MainFooter";
 import { SkipLink } from "../components/layout/SkipLink";
 import { SiteNavigation } from "../components/navigation/SiteNavigation";
-import { AcademySection } from "../components/sections/AcademySection";
+import { AcademySection } from "../components/academy/AcademySection";
 import { ContactSection } from "../components/sections/ContactSection";
 import { FilmArchive } from "../components/sections/FilmArchive";
 import { FilmmakingPractice } from "../components/sections/FilmmakingPractice";
