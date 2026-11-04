@@ -1,0 +1,360 @@
+/* TRUE 3D CINEMATIC SYSTEM — WebGL scene + layered spatial surfaces */
+.cinematic-universe {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  perspective: 1400px;
+  isolation: isolate;
+}
+.cinematic-universe__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: .9;
+}
+.cinematic-universe__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 48%, transparent 0%, rgba(3,8,14,.1) 48%, rgba(3,8,14,.74) 100%),
+    linear-gradient(90deg, rgba(3,8,14,.54), transparent 50%, rgba(3,8,14,.22));
+}
+.cinematic-universe__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: min(72vw, 70rem);
+  aspect-ratio: 1;
+  border: 1px solid rgba(94,197,239,.11);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2.7rem rgba(73,166,213,.018), 0 0 0 6rem rgba(73,166,213,.012), inset 0 0 5rem rgba(73,166,213,.025);
+  transform: translate(-50%,-50%) rotateX(72deg) rotateZ(-24deg);
+  animation: universe-ring-drift 54s linear infinite;
+}
+.cinematic-universe__ring--two {
+  width: min(52vw, 48rem);
+  border-style: dashed;
+  border-color: rgba(135,219,255,.17);
+  transform: translate(-50%,-50%) rotateX(61deg) rotateY(28deg);
+  animation: universe-ring-drift-reverse 39s linear infinite;
+}
+@keyframes universe-ring-drift {
+  from { rotate: 0deg; }
+  to { rotate: 360deg; }
+}
+@keyframes universe-ring-drift-reverse {
+  from { rotate: 360deg; }
+  to { rotate: 0deg; }
+}
+
+.hero-portrait {
+  isolation: isolate;
+  perspective: 1600px;
+  transform-style: preserve-3d;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(20,94,137,.17), transparent 40rem),
+    linear-gradient(115deg,#03070c,#09141e 54%,#04090f);
+}
+.hero-portrait__inner,
+.hero-portrait__footer { position: relative; z-index: 3; }
+.hero-portrait__copy { transform-style: preserve-3d; }
+.hero-portrait__kicker { transform: translateZ(28px); }
+.hero-portrait__title { text-shadow: 0 10px 55px rgba(0,0,0,.24); transform: translateZ(40px); }
+.hero-portrait__roles { transform: translateZ(26px); }
+.hero-portrait__statement { transform: translateZ(36px); }
+.hero-portrait__visual { transform-style: preserve-3d; }
+.hero-portrait__frame {
+  transform: translateZ(64px) rotateY(-2deg);
+  box-shadow: 1.3rem 1.2rem 0 rgba(90,194,237,.17), 0 30px 100px rgba(0,0,0,.38);
+}
+.hero-portrait__frame img { transform: scale(1.015); transition: transform 1.4s cubic-bezier(.2,.8,.2,1), filter 900ms ease; }
+.hero-portrait__visual:hover .hero-portrait__frame img { transform: scale(1.065); filter: saturate(1) contrast(1.08); }
+.hero-portrait__focus-line { filter: drop-shadow(0 0 8px rgba(95,202,255,.7)); }
+.hero-portrait__depth-scene { filter: drop-shadow(0 0 20px rgba(47,165,220,.17)); }
+
+/* A consistent spatial atmosphere travels through the whole portfolio. */
+.message-from-zee,
+.on-set,
+.off-set,
+.film-archive,
+.frame-archive,
+.filmmaking-practice,
+.future-projects,
+.contact {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  transform-style: preserve-3d;
+}
+.message-from-zee > .page-width,
+.on-set > .page-width,
+.off-set > .page-width,
+.film-archive > .page-width,
+.frame-archive > .page-width,
+.filmmaking-practice > .page-width,
+.future-projects > .page-width,
+.contact > .page-width {
+  position: relative;
+  z-index: 2;
+}
+.message-from-zee::before,
+.on-set::before,
+.off-set::before,
+.film-archive::before,
+.frame-archive::before,
+.filmmaking-practice::before,
+.future-projects::before,
+.contact::before {
+  position: absolute;
+  z-index: 0;
+  top: -13rem;
+  right: -12rem;
+  width: clamp(20rem, 46vw, 52rem);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--cobalt) 21%, transparent);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  box-shadow:
+    0 0 0 2.4rem color-mix(in srgb, var(--cobalt) 3%, transparent),
+    0 0 0 5.3rem color-mix(in srgb, var(--cobalt) 2.2%, transparent),
+    inset 0 0 5rem color-mix(in srgb, var(--cobalt) 4%, transparent);
+  transform: rotateX(68deg) rotateZ(-25deg);
+  animation: section-orbit 72s linear infinite;
+}
+.message-from-zee::after,
+.on-set::after,
+.off-set::after,
+.film-archive::after,
+.frame-archive::after,
+.filmmaking-practice::after,
+.future-projects::after,
+.contact::after {
+  position: absolute;
+  z-index: 0;
+  right: -5rem;
+  bottom: -12rem;
+  width: clamp(13rem, 30vw, 32rem);
+  aspect-ratio: 1;
+  border: 1px dashed color-mix(in srgb, var(--cobalt) 18%, transparent);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  transform: rotateY(65deg) rotateX(12deg);
+  animation: section-orbit 96s linear infinite reverse;
+}
+@keyframes section-orbit {
+  from { rotate: 0deg; }
+  to { rotate: 360deg; }
+}
+.message-from-zee::before,
+.future-projects::before,
+.off-set::before {
+  left: -15rem;
+  right: auto;
+  top: auto;
+  bottom: -18rem;
+  border-color: color-mix(in srgb, var(--cobalt) 15%, transparent);
+}
+
+/* The collage behaves like floating film plates rather than flat thumbnails. */
+.message-from-zee__collage {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+.message-from-zee__image {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(.2,.8,.2,1), box-shadow 900ms ease, border-color 600ms ease;
+}
+.message-from-zee__image--1 { transform: translateZ(28px) rotateY(5deg) rotateZ(-4deg); }
+.message-from-zee__image--2 { transform: translateZ(76px) rotateY(-8deg) rotateZ(3deg); }
+.message-from-zee__image--3 { transform: translateZ(48px) rotateY(6deg) rotateZ(2.5deg); }
+.message-from-zee__image--4 { transform: translateZ(105px) rotateY(-9deg) rotateZ(-4deg); }
+.message-from-zee__image--5 { transform: translateZ(142px) rotateY(2deg) rotateZ(1deg); }
+.message-from-zee__image:hover {
+  z-index: 8;
+  border-color: color-mix(in srgb, var(--cobalt) 55%, var(--paper));
+  box-shadow: 0 35px 90px rgba(0,0,0,.3);
+  transform: translateZ(170px) rotateY(0) rotateZ(0) scale(1.025);
+}
+.message-from-zee__collage-mark { transform: translate(-50%,-50%) translateZ(180px); }
+
+/* Floating architectural panels on set and in the workflow. */
+.practice-item,
+.filmmaking-practice__step,
+.filmmaking-practice__project,
+.academy-stat,
+.academy-game-card {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1), border-color 500ms ease, background 500ms ease, box-shadow 700ms ease;
+}
+.practice-item:hover,
+.filmmaking-practice__step:hover,
+.filmmaking-practice__project:hover,
+.academy-game-card:hover {
+  z-index: 3;
+  border-color: color-mix(in srgb, var(--cobalt) 48%, transparent);
+  box-shadow: 0 28px 80px rgba(0,0,0,.2), 0 0 0 1px color-mix(in srgb, var(--cobalt) 14%, transparent);
+  transform: perspective(900px) translate3d(0,-9px,26px) rotateX(1.3deg);
+}
+
+/* Portrait pedestal: the frame, glass and technical plane sit at different depths. */
+.off-set__visual {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+.off-set__portrait-wrap {
+  transform: translateZ(70px) rotateY(7deg) rotateZ(-3deg);
+  box-shadow: 1.2rem 1.2rem 0 rgba(87,190,235,.18), 2.2rem 2.2rem 4rem rgba(0,0,0,.22);
+  transition: transform 1s cubic-bezier(.2,.8,.2,1), box-shadow 1s ease;
+}
+.off-set__visual:hover .off-set__portrait-wrap {
+  transform: translateZ(115px) rotateY(0deg) rotateZ(0deg);
+  box-shadow: 1.5rem 1.5rem 0 rgba(87,190,235,.23), 2.7rem 2.7rem 5rem rgba(0,0,0,.26);
+}
+.off-set__visual::after {
+  transform: translateZ(-35px) rotateY(-12deg) rotateZ(6deg);
+  box-shadow: 0 0 55px color-mix(in srgb, var(--cobalt) 9%, transparent);
+}
+
+/* Film cards float forward in perspective; source footage remains unchanged. */
+.film-archive__grid {
+  perspective: 1600px;
+  perspective-origin: 50% 30%;
+}
+.film-card { transform-style: preserve-3d; }
+.film-card__button { transform-style: preserve-3d; }
+.film-card__image-wrap {
+  transform: translateZ(0) rotateX(0deg);
+  transform-style: preserve-3d;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  transition: transform 750ms cubic-bezier(.2,.8,.2,1), box-shadow 750ms ease, border-color 450ms ease;
+}
+.film-card__image-wrap img { transform: translateZ(1px) scale(1.01); }
+.film-card:hover .film-card__image-wrap {
+  transform: translateZ(32px) rotateX(2deg);
+  box-shadow: 0 30px 65px rgba(0,0,0,.22);
+}
+.film-card__play { transform: translate(-50%,-50%) translateZ(45px); }
+
+/* Frame archive: deep parallax plates with cinematic lighting. */
+.frame-archive__gallery {
+  perspective: 1500px;
+  perspective-origin: center;
+}
+.frame-archive__tile {
+  transform-style: preserve-3d;
+  transition: transform 850ms cubic-bezier(.2,.8,.2,1), border-color 400ms ease, box-shadow 850ms ease;
+}
+.frame-archive__tile--1 { transform: translateZ(22px) rotateY(2deg); }
+.frame-archive__tile--2 { transform: translateZ(52px) rotateY(-2deg); }
+.frame-archive__tile--3 { transform: translateZ(72px) rotateX(2deg); }
+.frame-archive__tile--4 { transform: translateZ(14px) rotateY(-3deg); }
+.frame-archive__tile:hover {
+  z-index: 4;
+  transform: translateZ(95px) rotateY(0deg) rotateX(0deg) scale(1.015);
+  box-shadow: 0 35px 90px rgba(0,0,0,.42);
+}
+.frame-archive__tile img { transform: translateZ(2px) scale(1.01); }
+
+/* Editorial list has a subtle 3D rail and dimensional focus state. */
+.future-projects__list { perspective: 1000px; }
+.future-projects__list li {
+  transform-style: preserve-3d;
+  transition: transform 500ms ease, padding 500ms ease, background 500ms ease;
+}
+.future-projects__list li:hover {
+  transform: translateZ(22px) rotateX(1deg);
+}
+.future-projects__list li h3,
+.future-projects__list li p { transform: translateZ(12px); }
+
+/* Interactive controls and modal surfaces gain a premium glass edge. */
+.main-navigation {
+  border-color: rgba(152,213,243,.24);
+  background: linear-gradient(115deg,rgba(7,16,25,.9),rgba(9,25,37,.76));
+  box-shadow: 0 16px 55px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.main-navigation__monogram { box-shadow: 0 0 25px rgba(96,199,244,.13); }
+.main-navigation__theme,
+.main-navigation__toggle { transition: transform 250ms ease, background 300ms ease, border-color 300ms ease; }
+.submit-button,
+.enter-frame-button,
+.academy-primary-button { box-shadow: 0 10px 34px rgba(55,164,217,.17); }
+.film-modal__dialog,
+.zee-assistant__panel {
+  border-color: rgba(135,205,239,.27);
+  box-shadow: 0 35px 120px rgba(0,0,0,.52), 0 0 45px rgba(51,152,206,.07);
+}
+
+/* Scroll scene responds to content position, without forcing heavy scroll handlers. */
+@supports (animation-timeline: view()) {
+  .section-heading,
+  .frame-archive__heading,
+  .on-set__intro,
+  .contact__intro {
+    animation: section-heading-arrive linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+}
+@keyframes section-heading-arrive {
+  from { opacity: .45; transform: translate3d(0,36px,-20px); filter: blur(2px); }
+  to { opacity: 1; transform: translate3d(0,0,0); filter: blur(0); }
+}
+
+.cinematic-scroll-progress { height: 3px; }
+.cinematic-scroll-progress span {
+  box-shadow: 0 0 18px rgba(101,199,255,.82), 0 0 35px rgba(101,199,255,.32);
+}
+
+/* The scene stays light on phones and completely still for reduced-motion users. */
+@media (max-width: 760px) {
+  .cinematic-universe__canvas { opacity: .5; }
+  .cinematic-universe__ring { width: 110vw; opacity: .32; }
+  .cinematic-universe__ring--two { width: 78vw; }
+  .message-from-zee__image--1 { transform: rotateZ(-4deg); }
+  .message-from-zee__image--2 { transform: rotateZ(3deg); }
+  .message-from-zee__image--3 { transform: rotateZ(2.5deg); }
+  .message-from-zee__image--4 { transform: rotateZ(-4deg); }
+  .message-from-zee__image--5 { transform: rotateZ(1deg); }
+  .film-card:hover .film-card__image-wrap,
+  .frame-archive__tile:hover { transform: none; }
+  .off-set__portrait-wrap { transform: rotateZ(-3deg); }
+}
+@media (max-width: 480px) {
+  .cinematic-universe__canvas { opacity: .34; }
+  .cinematic-universe__ring { opacity: .2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-universe__ring,
+  .cinematic-universe__ring--two,
+  .message-from-zee::before,
+  .message-from-zee::after,
+  .on-set::before,
+  .on-set::after,
+  .off-set::before,
+  .off-set::after,
+  .film-archive::before,
+  .film-archive::after,
+  .frame-archive::before,
+  .frame-archive::after,
+  .filmmaking-practice::before,
+  .filmmaking-practice::after,
+  .future-projects::before,
+  .future-projects::after,
+  .contact::before,
+  .contact::after { animation: none !important; }
+  .cinematic-universe__canvas { opacity: .18; }
+  .film-card__image-wrap,
+  .frame-archive__tile,
+  .message-from-zee__image,
+  .off-set__portrait-wrap { transform: none !important; }
+}
