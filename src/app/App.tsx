@@ -25,8 +25,10 @@ export function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => {
-    try { return window.localStorage.getItem("zee-theme") === "light" ? "light" : "dark"; }
-    catch { return "dark"; }
+    try {
+      const saved = window.localStorage.getItem("zee-theme");
+      return saved === "dark" ? "dark" : "light";
+    } catch { return "light"; }
   });
 
   useEffect(() => {
@@ -76,10 +78,10 @@ export function App() {
         <HeroPortrait />
         <PersonalIntroduction />
         <OnSetSection />
-        <FilmmakingPractice />
         <OffSetSection />
         <FilmArchive />
         <FrameArchive />
+        <FilmmakingPractice />
         <FutureProjects />
         <AcademySection />
         <ContactSection />
