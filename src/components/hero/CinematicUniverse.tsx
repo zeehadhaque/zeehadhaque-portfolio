@@ -416,6 +416,11 @@ export function CinematicUniverse() {
       gl.viewport(0, 0, width, height);
     };
 
+    const handleLeave = () => {
+      pointer.targetX = 0;
+      pointer.targetY = 0;
+    };
+
     const handlePointer = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       const bounds = canvas.getBoundingClientRect();
@@ -423,11 +428,6 @@ export function CinematicUniverse() {
       if (!inside) { handleLeave(); return; }
       pointer.targetX = ((event.clientX - bounds.left) / Math.max(1, bounds.width) - 0.5) * 2;
       pointer.targetY = (0.5 - (event.clientY - bounds.top) / Math.max(1, bounds.height)) * 2;
-    };
-
-    const handleLeave = () => {
-      pointer.targetX = 0;
-      pointer.targetY = 0;
     };
 
     const draw = (timestamp: number) => {
