@@ -1,0 +1,21 @@
+:root {
+  color-scheme: light;
+  --paper: #f2f0eb;
+  --white: #ffffff;
+  --ink: #101114;
+  --charcoal: #24252a;
+  --cobalt: #315cff;
+  --ice: #7dbbff;
+  --muted: #85858b;
+  --line: rgba(16, 17, 20, 0.16);
+  --line-light: rgba(242, 240, 235, 0.2);
+  --display: "Cormorant Garamond", "Iowan Old Style", Baskerville, Georgia, serif;
+  --sans: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --page-gutter: clamp(1.25rem, 5vw, 5.5rem);
+  --page-max: 1600px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --fast: 180ms;
+  --base: 420ms;
+  --slow: 800ms;
+}
