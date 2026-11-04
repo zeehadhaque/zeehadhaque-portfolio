@@ -48,7 +48,9 @@ void main() {
 
   float depth = max(1.15, -p.z);
   float perspective = 2.05 / depth;
-  gl_Position = vec4(p.x * perspective / max(uAspect, 0.55), p.y * perspective, 0.0, 1.0);
+  float portraitCompensation = min(1.0, max(0.42, uAspect / 1.55));
+  float projectionAspect = max(uAspect, 1.0);
+  gl_Position = vec4(p.x * portraitCompensation * perspective / projectionAspect, p.y * perspective, 0.0, 1.0);
   gl_PointSize = clamp(aSize * (2.55 / depth), 1.0, 10.0);
 
   vColor = aColor;
