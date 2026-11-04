@@ -453,3 +453,171 @@ body::before {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Filmmaking practice — editorial production dossier */
+.filmmaking-practice {
+  padding: clamp(5rem, 10vw, 9rem) 0;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 12% 16%, rgba(64, 119, 184, .12), transparent 34%),
+    linear-gradient(180deg, var(--surface-dark), #050810 75%);
+  color: var(--surface-dark-foreground);
+}
+
+.filmmaking-practice .section-heading > p:last-child {
+  max-width: 52rem;
+  color: var(--text-soft);
+  line-height: 1.85;
+}
+
+.filmmaking-practice__workflow,
+.filmmaking-practice__tools,
+.filmmaking-practice__projects {
+  margin-top: clamp(3rem, 7vw, 6rem);
+}
+
+.filmmaking-practice__steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 1.4rem;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.filmmaking-practice__step {
+  min-height: 13rem;
+  padding: clamp(1.1rem, 2.5vw, 2rem);
+  background: var(--surface-dark);
+}
+
+.filmmaking-practice__step > span,
+.filmmaking-practice__project-number {
+  color: var(--cobalt);
+  font-size: .65rem;
+  letter-spacing: .18em;
+}
+
+.filmmaking-practice__step h3 {
+  margin: 2.2rem 0 .65rem;
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
+.filmmaking-practice__step p,
+.filmmaking-practice__project p {
+  color: var(--text-soft);
+  font-size: .9rem;
+  line-height: 1.8;
+}
+
+.filmmaking-practice__tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 7vw, 7rem);
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(125, 187, 255, .09), rgba(10, 18, 32, .4));
+}
+
+.filmmaking-practice__tools h3 {
+  margin: 1rem 0;
+  color: var(--ink);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+}
+
+.filmmaking-practice__tools h3 em,
+.filmmaking-practice__projects h3 em {
+  color: var(--cobalt);
+  font-family: Georgia, serif;
+  font-weight: 400;
+}
+
+.filmmaking-practice__note {
+  max-width: 28rem;
+  color: var(--text-soft);
+  line-height: 1.8;
+}
+
+.filmmaking-practice__tools ul {
+  align-self: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.filmmaking-practice__tools li {
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: .92rem;
+}
+
+.filmmaking-practice__projects .section-heading h3 {
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+}
+
+.filmmaking-practice__project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 1.5rem;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.filmmaking-practice__project {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+  background: var(--surface-dark);
+}
+
+.filmmaking-practice__project h4 {
+  margin: .55rem 0;
+  color: var(--ink);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  letter-spacing: .025em;
+}
+
+.filmmaking-practice__status {
+  display: inline-block;
+  margin-top: .5rem;
+  padding: .35rem .6rem;
+  border: 1px solid var(--line);
+  color: var(--cobalt);
+  font-size: .65rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.filmmaking-practice__project a {
+  display: inline-block;
+  margin: .8rem 0 0 .7rem;
+  color: var(--ink);
+  font-size: .75rem;
+  text-decoration: underline;
+  text-underline-offset: .25rem;
+}
+
+@media (max-width: 760px) {
+  .filmmaking-practice__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .filmmaking-practice__tools {
+    grid-template-columns: 1fr;
+  }
+  .filmmaking-practice__project-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 440px) {
+  .filmmaking-practice__steps {
+    grid-template-columns: 1fr;
+  }
+}
