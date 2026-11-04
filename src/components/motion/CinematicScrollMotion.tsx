@@ -240,3 +240,8 @@ export function CinematicScrollMotion({ reducedMotion }: CinematicScrollMotionPr
         target.classList.add("motion-tilt");
         registered.add(target);
       }
+      if (!target) {
+        pendingPointer = { target: null, x: 0, y: 0 };
+        if (!pointerFrame) pointerFrame = window.requestAnimationFrame(applyPendingPointer);
+        return;
+      }
