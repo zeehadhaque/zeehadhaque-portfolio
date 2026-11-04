@@ -10,6 +10,7 @@ import {
   type AcademyQuestion,
 } from "../../data/academy";
 import "../../styles/academy.css";
+import { AdvancedLab } from "./AdvancedLab";
 
 type Session = {
   access_token: string;
@@ -195,7 +196,7 @@ export function AcademySection() {
   const [booting, setBooting] = useState(true);
   const [authNotice, setAuthNotice] = useState("");
   const [apiError, setApiError] = useState("");
-  const [view, setView] = useState<"roadmap" | "exam" | "arcade" | "admin">("roadmap");
+  const [view, setView] = useState<"roadmap" | "exam" | "arcade" | "advanced" | "admin">("roadmap");
   const [moduleFilter, setModuleFilter] = useState("all");
   const [selectedDay, setSelectedDay] = useState(1);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -223,6 +224,7 @@ export function AcademySection() {
   const nextRank = academyRanks.find((entry) => entry.min > xp);
   const hasProgram = entitlements.some((entry) => entry.entitlement_key === "program.30day");
   const hasAdvancedArcade = entitlements.some((entry) => entry.entitlement_key === "arcade.pro");
+  const hasAdvancedLab = entitlements.some((entry) => entry.entitlement_key === "track.advanced");
   const selectedLesson = academyDays.find((day) => day.day === selectedDay) ?? academyDays[0];
   const paidLocked = selectedLesson.day > 7 && !hasProgram;
   const prerequisiteLocked = Boolean(session && selectedLesson.day > 1 && !completedDays.has(selectedLesson.day - 1));
@@ -402,7 +404,8 @@ export function AcademySection() {
           <button className={view === "roadmap" ? "is-active" : ""} type="button" onClick={() => setView("roadmap")}><span>01</span>{copy("Roadmap & lessons", "Roadmap ও lesson")}</button>
           <button className={view === "exam" ? "is-active" : ""} type="button" onClick={() => { setView("exam"); setExamSubmitted(false); }}><span>02</span>{copy("Examinations", "পরীক্ষা")}</button>
           <button className={view === "arcade" ? "is-active" : ""} type="button" onClick={() => setView("arcade")}><span>03</span>Cine-Arcade</button>
-          {snapshot.isAdmin && <button className={view === "admin" ? "is-active" : ""} type="button" onClick={() => setView("admin")}><span>04</span>{copy("Admin studio", "Admin studio")} <i>ADMIN</i></button>}
+          <button className={view === "advanced" ? "is-active" : ""} type="button" onClick={() => { if (hasAdvancedLab) setView("advanced"); else setAuthNotice(copy("Advanced Cinematography Lab access is assigned by Academy admin.", "Advanced Cinematography Lab access Academy admin assign করেন।")); }}><span>04</span>{copy("Advanced lab", "Advanced lab")}{!hasAdvancedLab && <i>ACCESS</i>}</button>
+          {snapshot.isAdmin && <button className={view === "admin" ? "is-active" : ""} type="button" onClick={() => setView("admin")}><span>05</span>{copy("Admin studio", "Admin studio")} <i>ADMIN</i></button>}
         </nav>
 
         {!snapshot.configured && <div className="academy-notice academy-notice--warning" role="status"><strong>{copy("Account services need configuration", "Account service configure করা বাকি")}</strong><p>{copy("Add SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY to your Cloudflare Worker secrets, then apply the Academy SQL migration. Guest lessons still work after the new Worker build is deployed.", "Cloudflare Worker secrets-এ SUPABASE_URL ও SUPABASE_PUBLISHABLE_KEY যোগ করো এবং Academy SQL migration apply করো। নতুন Worker deploy হওয়ার পর guest lesson ব্যবহার করা যাবে।")}</p></div>}
@@ -531,6 +534,8 @@ export function AcademySection() {
             ) : <p>{copy("Challenge complete. Choose another challenge to continue.", "Challenge শেষ। চালিয়ে যেতে অন্য challenge বেছে নাও।")} <button type="button" onClick={() => setArcadeGame(null)}>{copy("Back to games", "Games-এ ফেরত")}</button></p>}
           </section>
         )}
+
+        {view === "advanced" && hasAdvancedLab && <AdvancedLab language={language} />}
 
         {view === "admin" && snapshot.isAdmin && (
           <section className="academy-admin">
