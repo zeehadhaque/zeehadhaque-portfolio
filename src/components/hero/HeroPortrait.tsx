@@ -11,7 +11,7 @@ export function HeroPortrait() {
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
     const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-    setPointerStyle({ "--pointer-x": `${x * 0.8}deg`, "--pointer-y": `${y * -0.8}deg` } as CSSProperties);
+    setPointerStyle({ "--pointer-x": `${x * 1.2}deg`, "--pointer-y": `${y * -1.2}deg` } as CSSProperties);
   };
 
   const handlePointerLeave = () => setPointerStyle({});
@@ -51,6 +51,13 @@ export function HeroPortrait() {
 
         <div className="hero-portrait__visual" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave} style={pointerStyle}>
           <div className="hero-portrait__visual-meta" aria-hidden="true"><span>Portrait study / 01</span><span>Original image</span></div>
+          <div className="hero-portrait__depth-scene" aria-hidden="true">
+            <span className="hero-portrait__depth-orbit hero-portrait__depth-orbit--wide" />
+            <span className="hero-portrait__depth-orbit hero-portrait__depth-orbit--tilt" />
+            <span className="hero-portrait__depth-orbit hero-portrait__depth-orbit--vertical" />
+            <span className="hero-portrait__depth-crosshair" />
+            <span className="hero-portrait__depth-core" />
+          </div>
           <figure className={`hero-portrait__frame ${portraitFailed ? "is-unavailable" : ""}`}>
             {!portraitFailed ? (
               <img src={identityPortraitAsset} alt="Portrait of Zeehad Haque" width="1565" height="2400" fetchPriority="high" decoding="async" onError={() => setPortraitFailed(true)} />

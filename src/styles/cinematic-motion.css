@@ -1,0 +1,230 @@
+/* Lightweight cinematic motion layer — CSS transforms + IntersectionObserver only. */
+:root {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.25rem;
+}
+
+main section[id] {
+  scroll-margin-top: 5.25rem;
+}
+
+.cinematic-scroll-progress {
+  position: fixed;
+  z-index: 10000;
+  inset: 0 0 auto;
+  height: 2px;
+  pointer-events: none;
+  background: transparent;
+}
+
+.cinematic-scroll-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--cobalt, #65c7ff), #d9f4ff);
+  box-shadow: 0 0 12px rgba(101, 199, 255, .48);
+  will-change: transform;
+}
+
+/* Scroll reveals are opt-in only after the observer is ready; content stays visible without JS. */
+.has-cinematic-motion .motion-reveal {
+  opacity: 0;
+  translate: 0 28px;
+  transition:
+    opacity 760ms cubic-bezier(.2, .7, .2, 1),
+    translate 900ms cubic-bezier(.2, .7, .2, 1);
+  transition-delay: var(--motion-delay, 0ms);
+}
+
+.has-cinematic-motion .motion-reveal.is-motion-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* 3D lens architecture around the hero portrait. */
+.hero-portrait__visual {
+  isolation: isolate;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.hero-portrait__visual-meta {
+  position: relative;
+  z-index: 4;
+  transform: translateZ(34px);
+}
+
+.hero-portrait__depth-scene {
+  position: absolute;
+  z-index: 1;
+  inset: -9% -14% -7% -14%;
+  overflow: visible;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  opacity: .9;
+}
+
+.hero-portrait__depth-orbit {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  display: block;
+  border: 1px solid rgba(101, 199, 255, .28);
+  border-radius: 50%;
+  box-shadow: 0 0 30px rgba(101, 199, 255, .07), inset 0 0 24px rgba(101, 199, 255, .035);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.hero-portrait__depth-orbit--wide {
+  width: 108%;
+  aspect-ratio: 1;
+  border-right-color: transparent;
+  border-bottom-color: rgba(101, 199, 255, .08);
+  animation: zee-orbit-wide 32s linear infinite;
+}
+
+.hero-portrait__depth-orbit--tilt {
+  width: 82%;
+  aspect-ratio: 1;
+  border-top-color: transparent;
+  border-left-color: rgba(159, 224, 255, .58);
+  border-bottom-style: dashed;
+  animation: zee-orbit-tilt 24s linear infinite reverse;
+}
+
+.hero-portrait__depth-orbit--vertical {
+  width: 69%;
+  height: 112%;
+  border-color: rgba(101, 199, 255, .2);
+  border-right-color: rgba(101, 199, 255, .65);
+  animation: zee-orbit-vertical 28s ease-in-out infinite alternate;
+}
+
+.hero-portrait__depth-crosshair {
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  width: 130%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(101, 199, 255, .5), transparent);
+  transform: translate3d(-50%, -50%, -100px) rotate(-31deg);
+}
+
+.hero-portrait__depth-core {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  width: .55rem;
+  aspect-ratio: 1;
+  border: 1px solid rgba(218, 245, 255, .95);
+  border-radius: 50%;
+  background: var(--cobalt, #65c7ff);
+  box-shadow: 0 0 12px 4px rgba(101, 199, 255, .23), 0 0 48px 10px rgba(101, 199, 255, .12);
+  transform: translate3d(-50%, -50%, 26px);
+  animation: zee-core-pulse 3.6s ease-in-out infinite;
+}
+
+.hero-portrait__frame {
+  z-index: 2;
+  transform: translateZ(36px);
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(.2, .7, .2, 1), clip-path 900ms cubic-bezier(.2, .7, .2, 1);
+}
+
+.hero-portrait__focus-line {
+  z-index: 5;
+  transform: translateZ(66px) rotate(-34deg);
+}
+
+.hero-portrait__identity-tag {
+  z-index: 6;
+  transform: translate3d(1rem, 0, 76px);
+}
+
+.hero-portrait.is-entered .hero-portrait__identity-tag {
+  transform: translate3d(0, 0, 76px);
+}
+
+@keyframes zee-orbit-wide {
+  from { transform: translate3d(-50%, -50%, -90px) rotateX(69deg) rotateZ(-22deg); }
+  to { transform: translate3d(-50%, -50%, -90px) rotateX(69deg) rotateZ(338deg); }
+}
+
+@keyframes zee-orbit-tilt {
+  from { transform: translate3d(-50%, -50%, -45px) rotateX(62deg) rotateY(26deg) rotateZ(18deg); }
+  to { transform: translate3d(-50%, -50%, -45px) rotateX(62deg) rotateY(26deg) rotateZ(378deg); }
+}
+
+@keyframes zee-orbit-vertical {
+  from { transform: translate3d(-50%, -50%, -120px) rotateY(68deg) rotateZ(-28deg) scale(.92); }
+  to { transform: translate3d(-50%, -50%, -120px) rotateY(68deg) rotateZ(28deg) scale(1.04); }
+}
+
+@keyframes zee-core-pulse {
+  0%, 100% { opacity: .58; box-shadow: 0 0 12px 4px rgba(101, 199, 255, .2), 0 0 36px 8px rgba(101, 199, 255, .1); }
+  50% { opacity: 1; box-shadow: 0 0 18px 7px rgba(101, 199, 255, .32), 0 0 58px 16px rgba(101, 199, 255, .16); }
+}
+
+/* Keep the composition restrained on touch screens and compact viewports. */
+@media (max-width: 760px) {
+  .hero-portrait__depth-scene {
+    inset: -3% -9% -3% -9%;
+    opacity: .48;
+    transform: scale(.86);
+  }
+
+  .hero-portrait__depth-orbit--wide { animation-duration: 42s; }
+  .hero-portrait__depth-orbit--tilt { animation-duration: 36s; }
+  .hero-portrait__depth-orbit--vertical { opacity: .55; }
+  .hero-portrait__visual { transform: none !important; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .film-card,
+  .frame-archive__tile,
+  .practice-item,
+  .filmmaking-practice__project {
+    transform-style: preserve-3d;
+    transition: transform 650ms cubic-bezier(.2, .7, .2, 1), box-shadow 650ms cubic-bezier(.2, .7, .2, 1);
+  }
+
+  .film-card:hover,
+  .frame-archive__tile:hover,
+  .practice-item:hover,
+  .filmmaking-practice__project:hover {
+    transform: translate3d(0, -7px, 18px);
+  }
+
+  .film-card__image-wrap img,
+  .frame-archive__tile img {
+    transition: transform 900ms cubic-bezier(.2, .7, .2, 1);
+  }
+
+  .film-card:hover .film-card__image-wrap img,
+  .frame-archive__tile:hover img {
+    transform: scale(1.055);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+
+  .has-cinematic-motion .motion-reveal,
+  .has-cinematic-motion .motion-reveal.is-motion-visible {
+    opacity: 1;
+    translate: none;
+  }
+}
