@@ -9,6 +9,7 @@ import "./styles/cinematic-motion.css";
 import "./styles/ui-refresh.css";
 import "./styles/three-d-world.css";
 import "./styles/every-element-motion.css";
+import "./styles/complete-motion-system.css";
 import { App } from "./app/App";
 
 const root = document.getElementById("root");

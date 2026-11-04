@@ -1,0 +1,566 @@
+/* Complete cinematic motion system: scroll-linked scenes, text, media, depth and micro-interactions. */
+:root {
+  --motion-ease: cubic-bezier(.2,.8,.2,1);
+  --motion-spring: cubic-bezier(.16,1,.3,1);
+  --motion-duration: 780ms;
+  --motion-distance: 34px;
+  --motion-light: rgba(103,205,249,.32);
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+html { scroll-behavior: smooth; }
+body { overflow-x: clip; }
+main section[id] { scroll-margin-top: 6rem; }
+
+/* Universal fallback reveal. Content stays visible when scripting is unavailable. */
+.has-cinematic-motion .motion-reveal {
+  opacity: 0;
+  translate: 0 var(--motion-distance);
+  scale: .986;
+  filter: blur(6px);
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    translate 940ms var(--motion-spring),
+    scale 940ms var(--motion-spring),
+    filter 760ms var(--motion-ease);
+  transition-delay: var(--motion-delay, 0ms);
+  backface-visibility: hidden;
+}
+.has-cinematic-motion .motion-reveal.is-motion-visible {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  filter: blur(0);
+}
+
+/* Text objects have their own motion layer, separate from their parent cards. */
+.motion-text-target {
+  transform-origin: left center;
+  transition:
+    color 420ms ease,
+    text-shadow 520ms ease,
+    letter-spacing 520ms ease;
+}
+.motion-text-target:hover {
+  text-shadow: 0 0 22px color-mix(in srgb, var(--cobalt,#67cdf9) 18%, transparent);
+}
+.hero-portrait__title span,
+.section-heading h2,
+.message-from-zee__copy h2,
+.off-set__content h2,
+.contact__intro h2 {
+  text-wrap: balance;
+}
+.hero-portrait__title span {
+  display: block;
+  animation: title-line-arrive 1.1s var(--motion-spring) both;
+}
+.hero-portrait__title span:nth-child(2) { animation-delay: 150ms; }
+@keyframes title-line-arrive {
+  from { opacity: 0; transform: translate3d(0, .42em, -60px) scale(.96); filter: blur(12px); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0); }
+}
+
+/* Browser-native scroll timelines progressively reveal text and move media.
+   IntersectionObserver classes remain the fallback for older engines. */
+@supports (animation-timeline: view()) and (animation-range: entry 0% entry 100%) {
+  .has-native-scroll-motion .motion-scroll-text {
+    animation: scroll-text-arrive both linear;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 85%;
+  }
+  .has-native-scroll-motion .motion-scroll-media {
+    animation: scroll-media-arrive both linear;
+    animation-timeline: view(block);
+    animation-range: entry 0% cover 42%;
+  }
+}
+@keyframes scroll-text-arrive {
+  0% { opacity: 0; translate: 0 40px; filter: blur(8px); }
+  72% { opacity: 1; translate: 0 0; filter: blur(0); }
+  100% { opacity: 1; translate: 0 0; filter: blur(0); }
+}
+@keyframes scroll-media-arrive {
+  0% { opacity: .42; filter: saturate(.55) contrast(.94) blur(2px); }
+  100% { opacity: 1; filter: saturate(1) contrast(1.04) blur(0); }
+}
+
+/* Every image gets a gentle scroll-scrubbed camera move, with hover zoom layered above it. */
+@supports (animation-timeline: view()) {
+  .has-native-scroll-motion main section img:not(.no-motion),
+  .has-native-scroll-motion .film-card__image-wrap,
+  .has-native-scroll-motion .frame-archive__tile {
+    animation: image-camera-drift both linear;
+    animation-timeline: view(block);
+    animation-range: cover 0% cover 100%;
+  }
+}
+@keyframes image-camera-drift {
+  0% { --image-scale: 1.12; --image-y: 5%; }
+  50% { --image-scale: 1.065; --image-y: 0%; }
+  100% { --image-scale: 1.12; --image-y: -5%; }
+}
+@supports (animation-timeline: view()) {
+  .has-native-scroll-motion main section img:not(.no-motion) {
+    translate: 0 var(--image-y,0);
+    scale: var(--image-scale,1);
+    transform-origin: center;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .film-card:hover .film-card__image-wrap img,
+  .frame-archive__tile:hover img,
+  .message-from-zee__image:hover img,
+  .off-set__visual:hover .off-set__portrait-wrap img,
+  .hero-portrait__visual:hover .hero-portrait__frame img {
+    transform: scale(1.07);
+    filter: saturate(1.08) contrast(1.05);
+  }
+}
+
+/* Pointer-reactive 3D tilt composes through the individual rotate property,
+   so each card keeps its existing transform / translateZ design. */
+.motion-tilt {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition:
+    rotate 380ms var(--motion-spring),
+    translate 380ms var(--motion-spring),
+    box-shadow 500ms ease;
+}
+.motion-tilt.is-pointer-active {
+  rotate: var(--motion-axis-x,0) var(--motion-axis-y,0) 1 var(--motion-angle,0deg);
+  translate: 0 -3px 0;
+  box-shadow: 0 28px 80px rgba(0,0,0,.2), 0 0 28px var(--motion-light);
+}
+.motion-tilt.is-pointer-active::after {
+  opacity: .8;
+}
+.film-card,
+.frame-archive__tile,
+.practice-item,
+.filmmaking-practice__step,
+.filmmaking-practice__project,
+.academy-stat,
+.academy-game-card,
+.academy-question,
+.academy-exercise {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition:
+    transform 720ms var(--motion-spring),
+    border-color 460ms ease,
+    box-shadow 720ms ease,
+    background-color 460ms ease;
+}
+.film-card:hover,
+.frame-archive__tile:hover,
+.practice-item:hover,
+.filmmaking-practice__step:hover,
+.filmmaking-practice__project:hover,
+.academy-stat:hover,
+.academy-game-card:hover {
+  z-index: 5;
+  box-shadow: 0 32px 90px rgba(0,0,0,.26), 0 0 36px color-mix(in srgb,var(--cobalt,#67cdf9) 12%,transparent);
+}
+
+/* Scroll stages: sections breathe and their decorative geometry travels at a slower speed. */
+.message-from-zee,
+.on-set,
+.off-set,
+.film-archive,
+.frame-archive,
+.filmmaking-practice,
+.future-projects,
+.academy-experience,
+.contact {
+  transform-style: preserve-3d;
+}
+@supports (animation-timeline: view()) {
+  .message-from-zee::before,
+  .message-from-zee::after,
+  .on-set::before,
+  .on-set::after,
+  .off-set::before,
+  .off-set::after,
+  .film-archive::before,
+  .film-archive::after,
+  .frame-archive::before,
+  .frame-archive::after,
+  .filmmaking-practice::before,
+  .filmmaking-practice::after,
+  .future-projects::before,
+  .future-projects::after,
+  .contact::before,
+  .contact::after {
+    animation-timeline: view(block);
+    animation-range: cover 0% cover 100%;
+  }
+}
+.message-from-zee__collage { perspective: 1300px; transform-style: preserve-3d; }
+.message-from-zee__image {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition:
+    transform 900ms var(--motion-spring),
+    box-shadow 800ms ease,
+    filter 650ms ease;
+}
+.message-from-zee__image--1 { translate: 0 0 25px; }
+.message-from-zee__image--2 { translate: 0 0 65px; }
+.message-from-zee__image--3 { translate: 0 0 42px; }
+.message-from-zee__image--4 { translate: 0 0 85px; }
+.message-from-zee__image--5 { translate: 0 0 125px; }
+.message-from-zee__image:hover {
+  z-index: 10;
+  translate: 0 -6px 145px;
+  rotate: 0deg;
+  box-shadow: 0 35px 90px rgba(0,0,0,.3);
+}
+
+/* The image gallery and portrait use a moving light plane. */
+.hero-portrait__visual,
+.off-set__visual,
+.film-archive__grid,
+.frame-archive__gallery {
+  perspective: 1500px;
+  transform-style: preserve-3d;
+}
+.hero-portrait__frame,
+.off-set__portrait-wrap,
+.film-card__image-wrap,
+.frame-archive__tile {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+.hero-portrait__frame {
+  transition:
+    transform 1s var(--motion-spring),
+    box-shadow 1s ease,
+    clip-path 1s var(--motion-spring);
+}
+.hero-portrait__visual:hover .hero-portrait__frame {
+  transform: translateZ(75px) rotateY(-2deg) rotateX(1deg);
+  box-shadow: 1.5rem 1.5rem 0 rgba(90,194,237,.22), 0 42px 110px rgba(0,0,0,.45);
+}
+.off-set__portrait-wrap {
+  transition: transform 1s var(--motion-spring), box-shadow 1s ease;
+}
+.off-set__visual:hover .off-set__portrait-wrap {
+  transform: translateZ(90px) rotateY(0) rotateX(1deg) rotateZ(0);
+  box-shadow: 1.4rem 1.4rem 0 rgba(87,190,235,.22), 0 40px 90px rgba(0,0,0,.28);
+}
+.film-card__image-wrap,
+.frame-archive__tile {
+  transition: transform 800ms var(--motion-spring), box-shadow 800ms ease, border-color 450ms ease;
+}
+.film-card:hover .film-card__image-wrap {
+  transform: translateZ(28px) rotateX(2deg);
+  box-shadow: 0 30px 70px rgba(0,0,0,.24);
+}
+.frame-archive__tile:hover {
+  transform: translateZ(55px) rotateY(1deg) rotateX(1deg) scale(1.015);
+  box-shadow: 0 30px 85px rgba(0,0,0,.42);
+}
+
+/* Animated underline and magnetic-ish link response without moving layout. */
+a:not(.film-card__button):not(.frame-archive__tile) {
+  text-decoration-thickness: from-font;
+  text-underline-offset: .22em;
+}
+.main-navigation__desktop a,
+.mobile-navigation li a,
+.message-from-zee__link,
+.line-link,
+.on-set__archive-link,
+.future-projects__list li,
+.filmmaking-practice__project a {
+  position: relative;
+}
+.main-navigation__desktop a::after,
+.mobile-navigation li a::after,
+.message-from-zee__link::after,
+.line-link::after,
+.on-set__archive-link::after,
+.filmmaking-practice__project a::after {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 420ms var(--motion-spring);
+}
+.main-navigation__desktop a:hover::after,
+.mobile-navigation li a:hover::after,
+.message-from-zee__link:hover::after,
+.line-link:hover::after,
+.on-set__archive-link:hover::after,
+.filmmaking-practice__project a:hover::after {
+  transform: scaleX(1);
+}
+
+/* Buttons have a tactile press state, animated sheen and focus halo. */
+:where(button, a, [role="button"], summary) {
+  -webkit-tap-highlight-color: transparent;
+}
+:where(button, [role="button"]):not(:disabled):active {
+  scale: .975;
+}
+:where(button, a, [role="button"], summary):focus-visible {
+  outline: 2px solid var(--cobalt,#67cdf9);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 5px color-mix(in srgb,var(--cobalt,#67cdf9) 15%,transparent);
+}
+.enter-frame-button,
+.submit-button,
+.academy-primary-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.enter-frame-button::after,
+.submit-button::after,
+.academy-primary-button::after {
+  position: absolute;
+  z-index: -1;
+  inset: -60% auto -60% -40%;
+  width: 24%;
+  content: "";
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent);
+  transform: translateX(-180%) skewX(-24deg);
+  transition: transform 850ms var(--motion-spring);
+}
+.enter-frame-button:hover::after,
+.submit-button:hover::after,
+.academy-primary-button:hover::after {
+  transform: translateX(650%) skewX(-24deg);
+}
+
+/* Navigation and overlay transitions. */
+.main-navigation {
+  transition: background 450ms ease, border-color 450ms ease, box-shadow 450ms ease, translate 450ms var(--motion-spring);
+}
+.main-navigation__monogram,
+.main-navigation__theme,
+.main-navigation__toggle {
+  transition: transform 300ms var(--motion-spring), color 300ms ease, background 300ms ease, border-color 300ms ease;
+}
+.main-navigation__brand:hover .main-navigation__monogram { rotate: -7deg; scale: 1.07; }
+.mobile-navigation__drawer {
+  transform-origin: top right;
+}
+.mobile-navigation.is-open .mobile-navigation__drawer {
+  animation: drawer-enter 620ms var(--motion-spring) both;
+}
+@keyframes drawer-enter {
+  from { opacity: 0; transform: translate3d(2rem,-1rem,0) scale(.965); filter: blur(10px); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0); }
+}
+.film-modal__dialog,
+.academy-auth__card,
+.zee-assistant__panel {
+  transform-origin: center bottom;
+}
+.film-modal[aria-modal="true"] .film-modal__dialog,
+.academy-auth[aria-modal="true"] .academy-auth__card {
+  animation: overlay-enter 560ms var(--motion-spring) both;
+}
+@keyframes overlay-enter {
+  from { opacity: 0; transform: translateY(25px) scale(.97); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+.zee-assistant__toggle {
+  animation: assistant-float 6.4s ease-in-out infinite;
+}
+@keyframes assistant-float {
+  0%,100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+
+/* Inputs, quiz answers, notices, and saved states. */
+:where(input, textarea, select) {
+  transition: border-color 300ms ease, box-shadow 350ms ease, background-color 350ms ease, translate 350ms var(--motion-spring);
+}
+:where(input, textarea, select):focus { translate: 0 -1px; }
+.contact-form label:focus-within > span,
+.academy-experience label:focus-within > span {
+  color: var(--cobalt,#67cdf9);
+  transition: color 250ms ease;
+}
+.academy-answer {
+  transition: transform 300ms var(--motion-spring), background 260ms ease, border-color 260ms ease, box-shadow 360ms ease;
+}
+.academy-answer:hover:not(:disabled) { transform: translateX(4px) translateZ(10px); }
+.academy-answer.is-correct { animation: answer-correct 520ms var(--motion-spring) both; }
+.academy-answer.is-wrong { animation: answer-wrong 360ms ease both; }
+@keyframes answer-correct {
+  0% { scale: .99; }
+  58% { scale: 1.012; }
+  100% { scale: 1; }
+}
+@keyframes answer-wrong {
+  0%,100% { translate: 0 0; }
+  25% { translate: -3px 0; }
+  75% { translate: 3px 0; }
+}
+.academy-notice,
+.academy-feedback,
+.form-status {
+  animation: feedback-arrive 460ms var(--motion-spring) both;
+}
+@keyframes feedback-arrive {
+  from { opacity: 0; translate: 0 10px; }
+  to { opacity: 1; translate: 0 0; }
+}
+.academy-ring { transition: background 800ms ease; }
+
+/* Ambient atmosphere and progress rails. */
+.cinematic-scroll-progress { height: 3px; }
+.cinematic-scroll-progress span {
+  box-shadow: 0 0 18px rgba(101,199,255,.85), 0 0 36px rgba(101,199,255,.32);
+}
+.hero-portrait__depth-core,
+.academy-ring { transform-origin: center; }
+.hero-portrait__depth-core { animation: depth-core-breathe 3.4s ease-in-out infinite; }
+@keyframes depth-core-breathe {
+  0%,100% { scale: .9; opacity: .65; }
+  50% { scale: 1.13; opacity: 1; }
+}
+.site-loader__mark { animation: loader-breathe 2.5s ease-in-out infinite; }
+@keyframes loader-breathe {
+  0%,100% { opacity: .7; filter: drop-shadow(0 0 0 rgba(103,205,249,0)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 22px rgba(103,205,249,.3)); }
+}
+
+/* Touch: maintain feedback but remove pointer-only 3D tracking. */
+@media (hover: none), (pointer: coarse) {
+  .motion-tilt.is-pointer-active { rotate: none; translate: none; }
+  .film-card:hover .film-card__image-wrap,
+  .frame-archive__tile:hover,
+  .practice-item:hover,
+  .filmmaking-practice__step:hover,
+  .filmmaking-practice__project:hover,
+  .academy-game-card:hover { transform: none; }
+  .zee-assistant__toggle { animation: none; }
+}
+
+/* No forced movement, parallax or blur for reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  :root, html, body { scroll-behavior: auto !important; }
+  *,*::before,*::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .has-cinematic-motion .motion-reveal,
+  .has-cinematic-motion .motion-reveal.is-motion-visible,
+  .has-native-scroll-motion .motion-scroll-text,
+  .has-native-scroll-motion .motion-scroll-media {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: 1 !important;
+    filter: none !important;
+    animation: none !important;
+  }
+  .motion-tilt,
+  .motion-tilt.is-pointer-active { rotate: none !important; }
+  .hero-portrait__copy > *,
+  .hero-portrait__visual,
+  .zee-assistant__toggle,
+  .site-loader__mark,
+  .academy-answer,
+  .academy-notice,
+  .academy-feedback,
+  .form-status { animation: none !important; }
+  .enter-frame-button::after,
+  .submit-button::after,
+  .academy-primary-button::after { display: none !important; }
+}
+
+/* Continuous scroll camera: hero text recedes as the visitor enters the next chapter. */
+@supports (animation-timeline: scroll()) {
+  .has-native-scroll-motion .hero-portrait__copy {
+    animation: hero-camera-recede linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0px 92vh;
+  }
+  .has-native-scroll-motion .hero-portrait__visual {
+    animation: hero-portrait-depth linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0px 100vh;
+  }
+}
+@keyframes hero-camera-recede {
+  0% { opacity: 1; translate: 0 0 0; scale: 1; }
+  100% { opacity: .2; translate: 0 -7rem -60px; scale: .91; }
+}
+@keyframes hero-portrait-depth {
+  0% { translate: 0 0 0; scale: 1; }
+  100% { translate: 0 3rem -90px; scale: .9; }
+}
+
+/* The visual archive has cinematic image drift and a moving highlight rail. */
+@supports (animation-timeline: view()) {
+  .has-native-scroll-motion .film-card__meta,
+  .has-native-scroll-motion .frame-archive__tile-meta {
+    animation: caption-arrive both linear;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 85%;
+  }
+}
+@keyframes caption-arrive {
+  from { opacity: .25; translate: 0 12px; letter-spacing: .02em; }
+  to { opacity: 1; translate: 0 0; letter-spacing: inherit; }
+}
+
+/* Section entry lines grow as their heading enters the viewport. */
+.section-kicker::before {
+  transform-origin: left center;
+  transition: transform 700ms var(--motion-spring), opacity 500ms ease;
+}
+.motion-text-target.is-motion-visible.section-kicker::before,
+.motion-reveal.is-motion-visible .section-kicker::before {
+  transform: scaleX(1);
+}
+.section-heading h2,
+.frame-archive__heading h2,
+.on-set__intro h2,
+.filmmaking-practice h2,
+.contact__intro h2 {
+  text-shadow: 0 16px 48px rgba(0,0,0,.13);
+}
+
+/* Academy learning states use the same reveal rhythm as the editorial archive. */
+.academy-experience .academy-day-chip,
+.academy-experience .academy-module-list > button,
+.academy-experience .academy-answer,
+.academy-experience .academy-primary-button,
+.academy-experience .academy-outline-button {
+  transition:
+    transform 420ms var(--motion-spring),
+    color 260ms ease,
+    background 360ms ease,
+    border-color 360ms ease,
+    box-shadow 420ms ease;
+}
+.academy-experience .academy-day-chip:hover,
+.academy-experience .academy-module-list > button:hover,
+.academy-experience .academy-answer:hover:not(:disabled) {
+  transform: translate3d(0,-3px,14px);
+}
+.academy-experience .academy-stat__track > i {
+  transform-origin: left center;
+  transition: width 1.1s var(--motion-spring);
+}
+.academy-experience .academy-ring {
+  transition: background 1s var(--motion-spring), transform 600ms var(--motion-spring);
+}
+.academy-experience .academy-ring:hover { transform: rotate(8deg) scale(1.035); }
+
+/* System preference is the final authority for users who request less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .has-native-scroll-motion .hero-portrait__copy,
+  .has-native-scroll-motion .hero-portrait__visual,
+  .has-native-scroll-motion .film-card__meta,
+  .has-native-scroll-motion .frame-archive__tile-meta {
+    animation: none !important;
+  }
+}
