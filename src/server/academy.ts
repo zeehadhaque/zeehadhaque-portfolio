@@ -212,7 +212,7 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
     const userId = typeof body.userId === "string" ? body.userId : "";
     const key = typeof body.entitlementKey === "string" ? body.entitlementKey : "";
     if (!/^[0-9a-f-]{36}$/i.test(userId)) return json({ message: "Choose a valid learner account." }, 400);
-    const allowed = ["program.30day", "track.advanced", "arcade.pro", "certificate.issue"];
+    const allowed = ["program.30day", "track.advanced", "arcade.pro"];
     if (!allowed.includes(key)) return json({ message: "Choose a valid entitlement." }, 400);
 
     const path = action === "grant" ? "/rest/v1/rpc/academy_grant_entitlement" : "/rest/v1/rpc/academy_revoke_entitlement";
