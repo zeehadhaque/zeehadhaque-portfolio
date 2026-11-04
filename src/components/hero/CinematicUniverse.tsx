@@ -17,7 +17,7 @@ type Uniforms = {
   kind: WebGLUniformLocation;
 };
 
-const vertexSource = \`#version 300 es
+const vertexSource = `#version 300 es
 precision highp float;
 in vec3 aPosition;
 in vec3 aColor;
@@ -53,9 +53,9 @@ void main() {
 
   vColor = aColor;
   vAlpha = clamp((7.1 - depth) / 3.7, 0.12, 0.92);
-}\`;
+}`;
 
-const fragmentSource = \`#version 300 es
+const fragmentSource = `#version 300 es
 precision highp float;
 in vec3 vColor;
 in float vAlpha;
@@ -69,7 +69,7 @@ void main() {
     alpha *= 1.0 - smoothstep(0.12, 0.5, d);
   }
   outColor = vec4(vColor, alpha);
-}\`;
+}`;
 
 function compileShader(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
   const shader = gl.createShader(type);
