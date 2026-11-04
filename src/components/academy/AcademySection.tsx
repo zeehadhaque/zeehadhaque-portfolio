@@ -224,7 +224,9 @@ export function AcademySection() {
   const hasProgram = entitlements.some((entry) => entry.entitlement_key === "program.30day");
   const hasAdvancedArcade = entitlements.some((entry) => entry.entitlement_key === "arcade.pro");
   const selectedLesson = academyDays.find((day) => day.day === selectedDay) ?? academyDays[0];
-  const selectedLocked = selectedLesson.day > 7 && !hasProgram;
+  const paidLocked = selectedLesson.day > 7 && !hasProgram;
+  const prerequisiteLocked = Boolean(session && selectedLesson.day > 1 && !completedDays.has(selectedLesson.day - 1));
+  const selectedLocked = paidLocked || prerequisiteLocked;
   const selectedCompleted = completedDays.has(selectedLesson.day);
   const completedInModule = (key: string) => progress.filter((row) => academyDays.find((day) => day.day === row.day)?.module === key).length;
   const filteredDays = academyDays.filter((day) => moduleFilter === "all" || day.module === moduleFilter);
@@ -453,7 +455,7 @@ export function AcademySection() {
               <div className="academy-roadmap__foot"><span>01 / 30</span><span>{copy("A lesson a day. A film at the end.", "প্রতিদিন একটি lesson। শেষে একটি film।")}</span></div>
             </aside>
 
-            <main className="academy-lesson">
+            <div className="academy-lesson">
               {selectedLocked ? (
                 <div className="academy-lock-screen">
                   <div className="academy-lock-screen__symbol">⌑</div>
@@ -487,7 +489,7 @@ export function AcademySection() {
                   {saving && <p className="academy-inline-status" role="status">{copy("Saving your progress…", "Progress save হচ্ছে…")}</p>}
                 </>
               )}
-            </main>
+            </div>
           </div>
         )}
 
