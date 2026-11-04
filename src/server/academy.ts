@@ -47,7 +47,6 @@ async function supabaseFetch(config: SupabaseConfig, path: string, init: Request
   headers.set("apikey", config.key);
   headers.set("Accept", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  else headers.set("Authorization", `Bearer ${config.key}`);
   return fetch(`${config.url}${path}`, { ...init, headers });
 }
 
