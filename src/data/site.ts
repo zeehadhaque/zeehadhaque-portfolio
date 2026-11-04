@@ -9,7 +9,8 @@ export const siteIdentity: SiteIdentity = {
   statement: "I DON'T JUST CAPTURE FRAMES. I CREATE WORLDS.",
 };
 
-export const portraitAsset = "/assets/images/profile/haque-portrait.webp";
+export const identityPortraitAsset = "/assets/images/profile/haque-identity.jpg";
+export const portraitAsset = "/assets/images/profile/zeehad-clean-portrait.png";
 
 export const navigationItems: readonly NavigationItem[] = [
   { label: "Home", href: "#home" },
