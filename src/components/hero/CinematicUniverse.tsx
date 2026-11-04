@@ -419,6 +419,8 @@ export function CinematicUniverse() {
     const handlePointer = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       const bounds = canvas.getBoundingClientRect();
+      const inside = event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
+      if (!inside) { handleLeave(); return; }
       pointer.targetX = ((event.clientX - bounds.left) / Math.max(1, bounds.width) - 0.5) * 2;
       pointer.targetY = (0.5 - (event.clientY - bounds.top) / Math.max(1, bounds.height)) * 2;
     };
@@ -490,8 +492,8 @@ export function CinematicUniverse() {
         start();
       }
     };
-    canvas.addEventListener("pointermove", handlePointer, { passive: true });
-    canvas.addEventListener("pointerleave", handleLeave);
+    window.addEventListener("pointermove", handlePointer, { passive: true });
+    window.addEventListener("blur", handleLeave);
     motionPreference.addEventListener("change", onMotionChange);
 
     draw(0);
@@ -501,8 +503,8 @@ export function CinematicUniverse() {
       stop();
       observer.disconnect();
       resizeObserver.disconnect();
-      canvas.removeEventListener("pointermove", handlePointer);
-      canvas.removeEventListener("pointerleave", handleLeave);
+      window.removeEventListener("pointermove", handlePointer);
+      window.removeEventListener("blur", handleLeave);
       motionPreference.removeEventListener("change", onMotionChange);
       scene.geometry.forEach((item) => gl.deleteBuffer(item.buffer));
       gl.deleteProgram(scene.program);
