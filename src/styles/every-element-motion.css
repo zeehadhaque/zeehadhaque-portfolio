@@ -1,0 +1,341 @@
+/* Full-interface cinematic motion language */
+:root {
+  --motion-ease: cubic-bezier(.2,.8,.2,1);
+  --motion-snap: cubic-bezier(.16,1,.3,1);
+}
+
+/* Staggered reveal — applied only after the observer has registered a target. */
+.has-cinematic-motion .motion-reveal {
+  opacity: 0;
+  translate: 0 30px 0;
+  scale: .985;
+  filter: blur(7px);
+  transition:
+    opacity 820ms var(--motion-ease),
+    translate 920ms var(--motion-snap),
+    scale 920ms var(--motion-snap),
+    filter 820ms var(--motion-ease);
+  transition-delay: var(--motion-delay, 0ms);
+  backface-visibility: hidden;
+}
+.has-cinematic-motion .motion-reveal.is-motion-visible {
+  opacity: 1;
+  translate: 0 0 0;
+  scale: 1;
+  filter: blur(0);
+}
+
+/* Content enters with a restrained sense of depth. */
+.hero-portrait__copy > *,
+.hero-portrait__visual {
+  animation: hero-content-arrive 1.15s var(--motion-snap) both;
+}
+.hero-portrait__copy > :nth-child(1) { animation-delay: 100ms; }
+.hero-portrait__copy > :nth-child(2) { animation-delay: 190ms; }
+.hero-portrait__copy > :nth-child(3) { animation-delay: 280ms; }
+.hero-portrait__copy > :nth-child(4) { animation-delay: 370ms; }
+.hero-portrait__copy > :nth-child(5) { animation-delay: 460ms; }
+.hero-portrait__visual { animation-delay: 260ms; }
+
+@keyframes hero-content-arrive {
+  from { opacity: 0; translate: 0 32px 0; scale: .975; filter: blur(9px); }
+  to { opacity: 1; translate: 0 0 0; scale: 1; filter: blur(0); }
+}
+
+/* Interactive elements respond consistently across the site and Academy. */
+:where(button, a, [role="button"], summary) {
+  -webkit-tap-highlight-color: transparent;
+}
+:where(button, a, [role="button"], summary):not(:disabled) {
+  transition:
+    color 260ms ease,
+    background-color 320ms ease,
+    border-color 320ms ease,
+    box-shadow 420ms ease,
+    filter 320ms ease,
+    scale 320ms var(--motion-snap),
+    translate 320ms var(--motion-snap);
+}
+:where(button, [role="button"]):not(:disabled):active {
+  scale: .975;
+}
+:where(a):active {
+  filter: brightness(1.12);
+}
+:where(button, a, [role="button"], summary):focus-visible {
+  outline: 2px solid var(--cobalt, #67cdf9);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--cobalt, #67cdf9) 14%, transparent);
+}
+:where(button, a, [role="button"]):not(:disabled):hover {
+  filter: brightness(1.09);
+}
+
+/* All project, process, and learning cards gain lift and light. */
+.film-card,
+.frame-archive__tile,
+.practice-item,
+.filmmaking-practice__step,
+.filmmaking-practice__project,
+.future-projects__list li,
+.academy-stat,
+.academy-module-list > button,
+.academy-day-chip,
+.academy-game-card,
+.academy-exercise,
+.academy-question,
+.academy-admin__student {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+.film-card,
+.frame-archive__tile,
+.practice-item,
+.filmmaking-practice__step,
+.filmmaking-practice__project,
+.academy-stat,
+.academy-game-card {
+  transition:
+    transform 760ms var(--motion-snap),
+    border-color 520ms ease,
+    box-shadow 760ms ease,
+    background-color 520ms ease;
+}
+.film-card:hover,
+.frame-archive__tile:hover,
+.practice-item:hover,
+.filmmaking-practice__step:hover,
+.filmmaking-practice__project:hover,
+.academy-stat:hover,
+.academy-game-card:hover {
+  z-index: 4;
+  box-shadow: 0 30px 90px rgba(0,0,0,.24), 0 0 32px color-mix(in srgb, var(--cobalt, #67cdf9) 10%, transparent);
+}
+.academy-module-list > button:hover,
+.academy-day-chip:hover {
+  translate: 0 -3px;
+}
+.academy-admin__student {
+  transition: background-color 350ms ease, padding 350ms ease, border-color 350ms ease;
+}
+.academy-admin__student:hover {
+  padding-inline: .65rem;
+  border-color: color-mix(in srgb, var(--academy-blue, #67cdf9) 40%, transparent);
+  background: rgba(125,187,255,.055);
+}
+
+/* Image movement is contained by its visual frame. */
+:where(.film-card__image-wrap, .frame-archive__tile, .message-from-zee__image, .off-set__portrait-wrap, .hero-portrait__frame) {
+  overflow: hidden;
+}
+:where(.film-card__image-wrap, .frame-archive__tile, .message-from-zee__image, .off-set__portrait-wrap, .hero-portrait__frame) img {
+  transition:
+    transform 1.1s var(--motion-snap),
+    filter 850ms ease;
+  will-change: transform;
+}
+.film-card:hover .film-card__image-wrap img,
+.frame-archive__tile:hover img,
+.message-from-zee__image:hover img,
+.off-set__visual:hover .off-set__portrait-wrap img {
+  transform: scale(1.065);
+  filter: saturate(1.06) contrast(1.04);
+}
+
+/* Form controls feel tactile without moving the surrounding layout. */
+:where(input, textarea, select) {
+  transition:
+    border-color 300ms ease,
+    box-shadow 350ms ease,
+    background-color 350ms ease,
+    transform 350ms var(--motion-snap);
+}
+:where(input, textarea, select):focus {
+  transform: translateY(-1px);
+}
+.contact-form label:focus-within > span {
+  color: var(--cobalt);
+  transition: color 250ms ease;
+}
+.academy-experience :where(input, textarea, select):focus {
+  box-shadow: 0 0 0 3px rgba(125,187,255,.1), 0 0 26px rgba(125,187,255,.08);
+}
+
+/* Navigation, menus, modal and assistant transitions. */
+.main-navigation {
+  transition:
+    background 450ms ease,
+    border-color 450ms ease,
+    box-shadow 450ms ease,
+    transform 450ms var(--motion-snap);
+}
+.main-navigation__desktop a,
+.mobile-navigation li a {
+  transition: color 280ms ease, padding 350ms var(--motion-snap), background 350ms ease;
+}
+.mobile-navigation__drawer {
+  transform-origin: top right;
+}
+.mobile-navigation[aria-hidden="false"] .mobile-navigation__drawer {
+  animation: menu-arrive 620ms var(--motion-snap) both;
+}
+@keyframes menu-arrive {
+  from { opacity: 0; transform: translate3d(2rem,-1rem,0) scale(.97); filter: blur(8px); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0); }
+}
+.film-modal__dialog,
+.academy-auth__card,
+.zee-assistant__panel {
+  transform-origin: center bottom;
+}
+.film-modal[aria-modal="true"] .film-modal__dialog,
+.academy-auth[aria-modal="true"] .academy-auth__card {
+  animation: modal-arrive 580ms var(--motion-snap) both;
+}
+@keyframes modal-arrive {
+  from { opacity: 0; transform: translateY(24px) scale(.97); filter: blur(7px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+.zee-assistant__toggle {
+  animation: assistant-float 6s ease-in-out infinite;
+}
+@keyframes assistant-float {
+  0%,100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+
+/* Ambient life: small glints and breathing highlights, not busy flashing. */
+.enter-frame-button,
+.submit-button,
+.academy-primary-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.enter-frame-button::after,
+.submit-button::after,
+.academy-primary-button::after {
+  position: absolute;
+  z-index: -1;
+  inset: -60% auto -60% -35%;
+  width: 22%;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.34), transparent);
+  transform: translateX(-180%) skewX(-24deg);
+  transition: transform 850ms var(--motion-snap);
+}
+.enter-frame-button:hover::after,
+.submit-button:hover::after,
+.academy-primary-button:hover::after {
+  transform: translateX(680%) skewX(-24deg);
+}
+.hero-portrait__identity-tag,
+.hero-portrait__depth-core,
+.academy-ring {
+  animation-timing-function: ease-in-out;
+}
+.section-kicker::before {
+  transform-origin: left center;
+}
+.has-cinematic-motion .motion-reveal.is-motion-visible .section-kicker::before {
+  animation: kicker-line-grow 750ms var(--motion-snap) both;
+}
+@keyframes kicker-line-grow {
+  from { transform: scaleX(.08); opacity: .3; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+/* Academy quiz answers and status feedback enter smoothly. */
+.academy-answer {
+  transition:
+    transform 300ms var(--motion-snap),
+    background 260ms ease,
+    border-color 260ms ease,
+    box-shadow 360ms ease;
+}
+.academy-answer:hover:not(:disabled) {
+  transform: translateX(4px) translateZ(10px);
+}
+.academy-answer.is-correct {
+  animation: answer-correct 520ms var(--motion-snap) both;
+}
+.academy-answer.is-wrong {
+  animation: answer-wrong 360ms ease both;
+}
+@keyframes answer-correct {
+  0% { transform: scale(.99); }
+  58% { transform: scale(1.012); }
+  100% { transform: scale(1); }
+}
+@keyframes answer-wrong {
+  0%,100% { translate: 0 0; }
+  25% { translate: -3px 0; }
+  75% { translate: 3px 0; }
+}
+.academy-notice,
+.academy-feedback,
+.form-status {
+  animation: feedback-arrive 460ms var(--motion-snap) both;
+}
+@keyframes feedback-arrive {
+  from { opacity: 0; translate: 0 10px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+/* Loading curtain and progress rail. */
+.site-loader__mark {
+  animation: loader-mark-breathe 2.4s ease-in-out infinite;
+}
+.site-loader__line > span {
+  transform-origin: left center;
+  animation: loader-line-glow 2.1s ease-in-out infinite;
+}
+@keyframes loader-mark-breathe {
+  0%,100% { opacity: .72; filter: drop-shadow(0 0 0 rgba(103,205,249,0)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 18px rgba(103,205,249,.24)); }
+}
+@keyframes loader-line-glow {
+  0%,100% { filter: brightness(.8); }
+  50% { filter: brightness(1.45); }
+}
+
+/* Touch screens keep responsive transitions; reduced-motion users get no forced movement. */
+@media (hover: none) {
+  .film-card:hover,
+  .frame-archive__tile:hover,
+  .practice-item:hover,
+  .filmmaking-practice__step:hover,
+  .filmmaking-practice__project:hover,
+  .academy-stat:hover,
+  .academy-game-card:hover {
+    transform: none;
+  }
+  .film-card:hover .film-card__image-wrap img,
+  .frame-archive__tile:hover img,
+  .message-from-zee__image:hover img,
+  .off-set__visual:hover .off-set__portrait-wrap img { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .has-cinematic-motion .motion-reveal,
+  .has-cinematic-motion .motion-reveal.is-motion-visible {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: 1 !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  .hero-portrait__copy > *,
+  .hero-portrait__visual,
+  .zee-assistant__toggle,
+  .site-loader__mark,
+  .site-loader__line > span,
+  .academy-answer,
+  .academy-notice,
+  .academy-feedback,
+  .form-status {
+    animation: none !important;
+  }
+  .enter-frame-button::after,
+  .submit-button::after,
+  .academy-primary-button::after { display: none; }
+}
