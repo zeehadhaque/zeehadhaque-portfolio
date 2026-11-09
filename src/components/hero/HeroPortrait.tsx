@@ -1,21 +1,24 @@
-import { useState, type CSSProperties, type PointerEvent } from "react";
+import { useState, type PointerEvent } from "react";
 import { identityPortraitAsset, siteIdentity } from "../../data/site";
 import { CinematicUniverse } from "./CinematicUniverse";
 
 export function HeroPortrait() {
   const [entered, setEntered] = useState(false);
   const [portraitFailed, setPortraitFailed] = useState(false);
-  const [pointerStyle, setPointerStyle] = useState<CSSProperties>({});
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "touch") return;
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
     const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-    setPointerStyle({ "--pointer-x": `${x * 1.2}deg`, "--pointer-y": `${y * -1.2}deg` } as CSSProperties);
+    event.currentTarget.style.setProperty("--pointer-x", `${x * 1.2}deg`);
+    event.currentTarget.style.setProperty("--pointer-y", `${y * -1.2}deg`);
   };
 
-  const handlePointerLeave = () => setPointerStyle({});
+  const handlePointerLeave = (event: PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.style.removeProperty("--pointer-x");
+    event.currentTarget.style.removeProperty("--pointer-y");
+  };
 
   const enterFrame = () => {
     setEntered(true);
@@ -55,7 +58,7 @@ export function HeroPortrait() {
           </a>
         </div>
 
-        <div className="hero-portrait__visual" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave} style={pointerStyle}>
+        <div className="hero-portrait__visual" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
           <div className="hero-portrait__visual-meta" aria-hidden="true"><span>Portrait study / 01</span><span>Original image</span></div>
           <div className="hero-portrait__depth-scene" aria-hidden="true">
             <span className="hero-portrait__depth-orbit hero-portrait__depth-orbit--wide" />
