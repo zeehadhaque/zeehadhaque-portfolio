@@ -332,13 +332,13 @@ function createScene(gl: WebGL2RenderingContext): { program: WebGLProgram; unifo
   };
 
   const stars: number[] = [];
-  for (let i = 0; i < 980; i += 1) {
+  for (let i = 0; i < 560; i += 1) {
     stars.push((random() - 0.5) * 8.4, (random() - 0.5) * 5.2, random() * 3.8);
   }
   geometry.push(packedGeometry(gl, stars, [0.36, 0.72, 0.96], 1.8, gl.POINTS, 0.2, 0));
 
   const closeParticles: number[] = [];
-  for (let i = 0; i < 180; i += 1) {
+  for (let i = 0; i < 110; i += 1) {
     const angle = random() * Math.PI * 2;
     const radius = 1.1 + random() * 2.7;
     closeParticles.push(Math.cos(angle) * radius, (random() - 0.5) * 3.7, random() * 2.1);
@@ -377,7 +377,7 @@ export function CinematicUniverse() {
     if (!canvas) return;
     const gl = canvas.getContext("webgl2", {
       alpha: true,
-      antialias: true,
+      antialias: false,
       depth: false,
       stencil: false,
       powerPreference: "low-power",
@@ -408,7 +408,7 @@ export function CinematicUniverse() {
     const size = gl.getAttribLocation(scene.program, "aSize");
     const resize = () => {
       const bounds = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.65);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       width = Math.max(1, Math.round(bounds.width * dpr));
       height = Math.max(1, Math.round(bounds.height * dpr));
       if (canvas.width !== width || canvas.height !== height) {
@@ -486,6 +486,11 @@ export function CinematicUniverse() {
     resizeObserver.observe(canvas);
     resize();
 
+    const onVisibilityChange = () => {
+      if (document.hidden) stop();
+      else if (canvas.getBoundingClientRect().height > 0 && !motionPreference.matches) start();
+    };
+
     const onMotionChange = () => {
       if (motionPreference.matches) {
         stop();
@@ -494,6 +499,7 @@ export function CinematicUniverse() {
         start();
       }
     };
+    document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pointermove", handlePointer, { passive: true });
     window.addEventListener("blur", handleLeave);
     motionPreference.addEventListener("change", onMotionChange);
@@ -505,6 +511,7 @@ export function CinematicUniverse() {
       stop();
       observer.disconnect();
       resizeObserver.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pointermove", handlePointer);
       window.removeEventListener("blur", handleLeave);
       motionPreference.removeEventListener("change", onMotionChange);
