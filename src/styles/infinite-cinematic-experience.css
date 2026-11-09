@@ -232,3 +232,44 @@ main section[id] { scroll-margin-top:110px; }
 .app-shell[data-theme="light"] .practice-item h3,.app-shell[data-theme="light"] .future-projects__list h3 { color:#192a3d; }
 :root[data-theme="light"] .practice-item p,:root[data-theme="light"] .future-projects__list p,
 .app-shell[data-theme="light"] .practice-item p,.app-shell[data-theme="light"] .future-projects__list p { color:#5c6d80; }
+
+
+/* Chapter reveals cascade through the cards only after the chapter itself arrives. */
+.film-archive__grid.is-motion-visible > *,
+.frame-archive__gallery.is-motion-visible > *,
+.on-set__grid.is-motion-visible > *,
+.filmmaking-practice__steps.is-motion-visible > *,
+.filmmaking-practice__project-grid.is-motion-visible > *,
+.future-projects__list.is-motion-visible > * {
+  animation: world-card-arrive 850ms var(--world-ease) both;
+}
+.film-archive__grid.is-motion-visible > *:nth-child(2),
+.frame-archive__gallery.is-motion-visible > *:nth-child(2),
+.on-set__grid.is-motion-visible > *:nth-child(2),
+.filmmaking-practice__steps.is-motion-visible > *:nth-child(2),
+.filmmaking-practice__project-grid.is-motion-visible > *:nth-child(2),
+.future-projects__list.is-motion-visible > *:nth-child(2) { animation-delay:70ms; }
+.film-archive__grid.is-motion-visible > *:nth-child(3),
+.frame-archive__gallery.is-motion-visible > *:nth-child(3),
+.on-set__grid.is-motion-visible > *:nth-child(3),
+.filmmaking-practice__steps.is-motion-visible > *:nth-child(3),
+.filmmaking-practice__project-grid.is-motion-visible > *:nth-child(3),
+.future-projects__list.is-motion-visible > *:nth-child(3) { animation-delay:140ms; }
+.film-archive__grid.is-motion-visible > *:nth-child(4),
+.frame-archive__gallery.is-motion-visible > *:nth-child(4),
+.on-set__grid.is-motion-visible > *:nth-child(4),
+.filmmaking-practice__steps.is-motion-visible > *:nth-child(4),
+.filmmaking-practice__project-grid.is-motion-visible > *:nth-child(4),
+.future-projects__list.is-motion-visible > *:nth-child(4) { animation-delay:210ms; }
+@keyframes world-card-arrive {
+  from { opacity:0; transform:translate3d(0,26px,0) scale(.985); filter:blur(5px); }
+  to { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .film-archive__grid.is-motion-visible > *,
+  .frame-archive__gallery.is-motion-visible > *,
+  .on-set__grid.is-motion-visible > *,
+  .filmmaking-practice__steps.is-motion-visible > *,
+  .filmmaking-practice__project-grid.is-motion-visible > *,
+  .future-projects__list.is-motion-visible > * { animation:none!important; }
+}
