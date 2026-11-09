@@ -507,7 +507,7 @@ export function CinematicUniverse() {
 
     // Draw once on entry; redraw only after pointer, scroll, or resize input.
     isInView = canvas.getBoundingClientRect().bottom > 0 && canvas.getBoundingClientRect().top < window.innerHeight;
-    if (isInView) draw(0);
+    if (isInView) draw();
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
