@@ -1,0 +1,92 @@
+/*
+ * Performance safety layer.
+ * Keep the visual system and short entrance transitions, remove continuous GPU work.
+ */
+
+/* Grain and stacked atmosphere overlays repaint/composite over the whole viewport. */
+body::before,
+.app-shell::before,
+.app-shell::after {
+  display: none !important;
+}
+
+/* Backdrop blur over a moving page is expensive, especially on integrated GPUs. */
+*,
+*::before,
+*::after {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  will-change: auto !important;
+}
+
+/* Replace glass blur with clean translucent surfaces. */
+.main-navigation {
+  background: rgba(5, 10, 18, .96) !important;
+}
+.hero-portrait__identity-tag,
+.message-from-zee__image span,
+.film-card__index,
+.off-set__visual-label,
+.off-set__visual-index,
+.zee-assistant__toggle,
+.zee-assistant__panel {
+  background-color: rgba(5, 12, 22, .96) !important;
+}
+
+/* Keep static image colour treatment simple; avoid filter layers while scrolling. */
+.cinematic-universe,
+.cinematic-universe__canvas,
+.hero-portrait__depth-scene,
+.hero-portrait__focus-line,
+.hero-portrait__frame img,
+.message-from-zee__collage,
+.message-from-zee__image img,
+.film-card__image-wrap img,
+.frame-archive__tile img,
+.off-set__portrait-wrap img {
+  filter: none !important;
+}
+
+/* Decorative geometry no longer animates continuously in the background. */
+.cinematic-universe__ring,
+.hero-portrait__depth-orbit,
+.hero-portrait__depth-core,
+.academy-lens--outer,
+.academy-lens--inner,
+.academy-lens--core,
+.message-from-zee::before,
+.message-from-zee::after,
+.on-set::before,
+.on-set::after,
+.off-set::before,
+.off-set::after,
+.film-archive::before,
+.film-archive::after,
+.frame-archive::before,
+.frame-archive::after,
+.filmmaking-practice::before,
+.filmmaking-practice::after,
+.future-projects::before,
+.future-projects::after,
+.contact::before,
+.contact::after,
+.cinematic-universe::before,
+.cinematic-universe::after,
+.hero-portrait::after,
+.hero-portrait__frame::after {
+  animation: none !important;
+  filter: none !important;
+}
+
+/* Scroll stays native; no smooth-scroll animation fighting wheel input. */
+html,
+:root {
+  scroll-behavior: auto !important;
+}
+
+/* Preserve intentional short UI transitions without perpetual compositing hints. */
+.motion-reveal,
+.motion-reveal.is-motion-visible {
+  will-change: auto !important;
+  filter: none !important;
+}
