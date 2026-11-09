@@ -25,6 +25,7 @@ export function App() {
   const activeSection = useActiveSection(sectionIds);
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const [isPortraitReady, setIsPortraitReady] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => {
     try {
       const saved = window.localStorage.getItem("zee-theme-v2");
@@ -38,25 +39,26 @@ export function App() {
   }, [theme]);
 
   useEffect(() => {
-    let finished = false;
-    const finishLoading = () => {
-      if (finished) return;
-      finished = true;
-      setIsLoading(false);
+    let settled = false;
+    const markPortraitReady = () => {
+      if (settled) return;
+      settled = true;
+      setIsPortraitReady(true);
     };
 
     const portrait = new Image();
-    portrait.onload = finishLoading;
-    portrait.onerror = finishLoading;
+    portrait.onload = markPortraitReady;
+    portrait.onerror = markPortraitReady;
     portrait.src = identityPortraitAsset;
 
-    const maximumWait = window.setTimeout(finishLoading, reducedMotion ? 180 : 900);
+    // A slow or unavailable portrait must never keep the entrance curtain stuck.
+    const fallback = window.setTimeout(markPortraitReady, 1600);
     return () => {
-      window.clearTimeout(maximumWait);
+      window.clearTimeout(fallback);
       portrait.onload = null;
       portrait.onerror = null;
     };
-  }, [reducedMotion]);
+  }, []);
 
   useEffect(() => {
     document.body.classList.toggle("navigation-is-open", isNavigationOpen);
@@ -66,7 +68,7 @@ export function App() {
   return (
     <div className="app-shell" data-reduced-motion={reducedMotion} data-theme={theme}>
       <SkipLink />
-      <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} />
+      <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} ready={isPortraitReady} onComplete={() => setIsLoading(false)} />
       <CinematicScrollMotion reducedMotion={reducedMotion} />
       <SiteNavigation
         activeSection={activeSection}
