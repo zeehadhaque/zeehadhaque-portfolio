@@ -13,6 +13,7 @@ import "./styles/complete-motion-system.css";
 import "./styles/premium-cinematic-finish.css";
 import "./styles/auteur-cinematic-overhaul.css";
 import "./styles/cinematic-luxury-finish.css";
+import "./styles/infinite-cinematic-experience.css";
 import { App } from "./app/App";
 
 const root = document.getElementById("root");

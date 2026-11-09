@@ -5,34 +5,37 @@ interface CinematicScrollMotionProps {
 }
 
 const targets = [
-  "main section h1", "main section h2", "main section h3", "main section h4",
-  "main section p", "main section span", "main section strong", "main section small",
-  "main section em", "main section b", "main section blockquote",
-  "main section figcaption", "main section label", "main section li",
-  "main section button", "main section a", "main section input",
-  "main section textarea", "main section select", "main section img",
-  "main section video", "main section iframe", "main section figure",
-  "main section article", "main section form",
-  ".main-navigation__brand", ".main-navigation__desktop a",
-  ".main-navigation__theme", ".main-navigation__motion",
-  ".main-navigation__toggle", ".mobile-navigation__drawer",
-  ".main-footer__signature", ".main-footer__bottom > *",
+  ".hero-portrait__copy", ".hero-portrait__visual",
+  ".message-from-zee__grid",
+  ".film-archive .section-heading", ".film-archive__grid",
+  ".frame-archive__heading", ".frame-archive__gallery",
+  ".on-set__intro", ".on-set__grid", ".off-set__grid",
+  ".filmmaking-practice > .page-width > .section-heading",
+  ".filmmaking-practice__workflow", ".filmmaking-practice__steps",
+  ".filmmaking-practice__tools", ".filmmaking-practice__projects",
+  ".future-projects .section-heading", ".future-projects__list",
+  ".contact__intro", ".contact__grid",
+  ".main-footer__top", ".main-footer__bottom",
   ".zee-assistant__toggle", ".zee-assistant__panel",
+  ".mobile-navigation__drawer",
+  ".section-kicker", ".section-heading h2", ".hero-portrait__title",
+  ".on-set__intro h2", ".off-set__content h2", ".frame-archive__heading h2",
+  ".message-from-zee__copy h2", ".contact__intro h2", ".future-projects h2",
   ".academy-experience .academy-masthead",
   ".academy-experience .academy-hero__copy",
   ".academy-experience .academy-hero__art",
-  ".academy-experience .academy-nav", ".academy-experience .academy-stat",
-  ".academy-experience .academy-roadmap", ".academy-experience .academy-lesson",
-  ".academy-experience .academy-exam-question",
-  ".academy-experience .academy-game-card",
-  ".academy-experience .academy-admin__student",
+  ".academy-experience .academy-nav",
+  ".academy-experience .academy-dashboard",
+  ".academy-experience .academy-roadmap",
+  ".academy-experience .academy-lesson",
+  ".academy-experience .academy-exam",
+  ".academy-experience .academy-arcade",
+  ".academy-experience .academy-admin",
   ".academy-experience .academy-auth__card",
-  ".academy-experience .academy-question",
-  ".academy-experience .academy-answer",
 ].join(",");
 
-const textTargets = "h1,h2,h3,h4,p,span,strong,small,em,b,blockquote,figcaption,label,li,.section-kicker,.section-tail";
-const mediaTargets = "img,video,iframe,.hero-portrait__visual,.message-from-zee__collage,.off-set__visual,.frame-archive__tile,.film-card__image-wrap";
+const textTargets = ".section-kicker,.section-heading h2,.hero-portrait__title,.on-set__intro h2,.off-set__content h2,.frame-archive__heading h2,.message-from-zee__copy h2,.contact__intro h2,.future-projects h2";
+const mediaTargets = ".hero-portrait__visual,.message-from-zee__collage,.off-set__visual,.film-archive__grid,.frame-archive__gallery,.filmmaking-practice__steps,.filmmaking-practice__tools,.filmmaking-practice__project-grid,.future-projects__list,.academy-experience .academy-hero__art";
 const tiltTargets = [
   ".hero-portrait__visual", ".film-card", ".frame-archive__tile",
   ".practice-item", ".filmmaking-practice__step",

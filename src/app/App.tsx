@@ -79,10 +79,10 @@ export function App() {
       <main id="main-content">
         <HeroPortrait />
         <PersonalIntroduction />
-        <OnSetSection />
-        <OffSetSection />
         <FilmArchive />
         <FrameArchive />
+        <OnSetSection />
+        <OffSetSection />
         <FilmmakingPractice />
         <FutureProjects />
         <AcademySection />

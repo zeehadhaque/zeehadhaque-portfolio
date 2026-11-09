@@ -47,9 +47,9 @@ export function ContactSection() {
     <section className="contact section-dark" id="contact" aria-labelledby="contact-title">
       <div className="page-width">
         <div className="contact__intro">
-          <p className="section-kicker">07 / Final contact</p>
+          <p className="section-kicker">10 / The closing frame</p>
           <h2 id="contact-title">Let's create something <em>meaningful.</em></h2>
-          <p>For a film, a visual collaboration or a conversation about the work.</p>
+          <p>For independent productions, visual collaborations or a thoughtful conversation about film.</p>
         </div>
         <div className="contact__grid">
           <div className="contact__details">

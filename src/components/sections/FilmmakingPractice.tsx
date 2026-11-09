@@ -5,13 +5,13 @@ export function FilmmakingPractice() {
     <section className="filmmaking-practice section-dark" id="filmmaking-practice" aria-labelledby="filmmaking-practice-title">
       <div className="page-width">
         <div className="section-heading section-heading--light">
-          <p className="section-kicker">02 / The craft behind the frame</p>
-          <h2 id="filmmaking-practice-title">Made with intent.<br /><em>Not limitation.</em></h2>
+          <p className="section-kicker">07 / The craft behind the frame</p>
+          <h2 id="filmmaking-practice-title">The story sets<br /><em>the scale.</em></h2>
           <p>{siteIdentity.filmmakingApproach}</p>
         </div>
 
         <div className="filmmaking-practice__workflow">
-          <p className="section-kicker">A film takes shape</p>
+          <p className="section-kicker">From intention to image</p>
           <div className="filmmaking-practice__steps">
             {siteIdentity.productionWorkflow.map((step) => (
               <article className="filmmaking-practice__step" key={step.number}>
@@ -27,7 +27,7 @@ export function FilmmakingPractice() {
           <div>
             <p className="section-kicker">Independent filmmaker / Toolkit</p>
             <h3>Small setup.<br /><em>Big intention.</em></h3>
-            <p className="filmmaking-practice__note">A practical, mobile-first production workflow built around available equipment and story-led decisions.</p>
+            <p className="filmmaking-practice__note">An independent, mobile-first workflow. The tools may be modest; the choices behind each frame are deliberate.</p>
           </div>
           <ul>
             {siteIdentity.toolsAndCraft.map((tool) => <li key={tool}>{tool}</li>)}
