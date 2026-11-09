@@ -12,11 +12,11 @@ export function OffSetSection() {
           <span className="off-set__visual-index">02—08</span>
         </div>
         <div className="off-set__content">
-          <p className="section-kicker">02 / The person beyond the production</p>
+          <p className="section-kicker">06 / The person beyond the production</p>
           <h2 id="off-set-title"><span>OFF</span><em>SET.</em></h2>
-          <p className="off-set__lead">The quieter side of a visual storyteller.</p>
+          <p className="off-set__lead">The quiet work of paying attention.</p>
           <p className="off-set__body">{siteIdentity.workingMethod}</p>
-          <p className="content-status">Personal photographs, visual studies and behind-the-scenes moments belong here as the archive grows.</p>
+          <p className="content-status">The camera can rest; observation doesn’t. Places, gestures and the changing quality of light keep becoming notes for the next frame.</p>
           <a className="line-link" href="#frame-archive">Explore the visual archive <span aria-hidden="true">↗</span></a>
         </div>
       </div>
