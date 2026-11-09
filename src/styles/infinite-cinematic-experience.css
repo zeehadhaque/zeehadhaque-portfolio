@@ -273,3 +273,49 @@ main section[id] { scroll-margin-top:110px; }
   .filmmaking-practice__project-grid.is-motion-visible > *,
   .future-projects__list.is-motion-visible > * { animation:none!important; }
 }
+
+
+/* PERFORMANCE PASS: keep the cinematic language, remove expensive per-frame paint work. */
+.has-cinematic-motion .motion-reveal {
+  filter: none !important;
+  scale: 1 !important;
+  transition: opacity 420ms cubic-bezier(.2,.7,.2,1),
+              translate 480ms cubic-bezier(.2,.7,.2,1) !important;
+  backface-visibility: visible;
+}
+.has-cinematic-motion .motion-reveal.is-motion-visible {
+  filter: none !important;
+  scale: 1 !important;
+}
+.has-native-scroll-motion .motion-scroll-text,
+.has-native-scroll-motion .motion-scroll-media,
+.has-native-scroll-motion main section img:not(.no-motion),
+.has-native-scroll-motion .film-card__image-wrap,
+.has-native-scroll-motion .frame-archive__tile {
+  animation: none !important;
+}
+.motion-tilt { transition: box-shadow 260ms ease !important; }
+.motion-tilt.is-pointer-active {
+  rotate: none !important;
+  translate: none !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.18) !important;
+}
+.film-card,.frame-archive__tile,.practice-item,
+.filmmaking-practice__step,.filmmaking-practice__project,
+.academy-stat,.academy-game-card {
+  backface-visibility: visible !important;
+  transition: transform 320ms cubic-bezier(.2,.7,.2,1),
+              border-color 260ms ease, box-shadow 320ms ease !important;
+}
+.hero-portrait__depth-orbit { will-change: auto !important; }
+.hero-portrait__depth-core { will-change: auto !important; }
+body::before { opacity: .018 !important; }
+@media (max-width: 760px) {
+  .hero-portrait__depth-scene { opacity: .32 !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .has-cinematic-motion .motion-reveal,
+  .has-cinematic-motion .motion-reveal.is-motion-visible {
+    opacity: 1 !important; translate: none !important;
+  }
+}

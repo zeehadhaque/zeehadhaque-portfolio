@@ -36,13 +36,8 @@ const targets = [
 
 const textTargets = ".section-kicker,.section-heading h2,.hero-portrait__title,.on-set__intro h2,.off-set__content h2,.frame-archive__heading h2,.message-from-zee__copy h2,.contact__intro h2,.future-projects h2";
 const mediaTargets = ".hero-portrait__visual,.message-from-zee__collage,.off-set__visual,.film-archive__grid,.frame-archive__gallery,.filmmaking-practice__steps,.filmmaking-practice__tools,.filmmaking-practice__project-grid,.future-projects__list,.academy-experience .academy-hero__art";
-const tiltTargets = [
-  ".hero-portrait__visual", ".film-card", ".frame-archive__tile",
-  ".practice-item", ".filmmaking-practice__step",
-  ".filmmaking-practice__project", ".future-projects__list > li",
-  ".academy-stat", ".academy-game-card", ".academy-question",
-  ".academy-exercise", ".message-from-zee__image", ".off-set__portrait-wrap",
-].join(",");
+// Keep pointer-driven 3D motion on the hero only; card hover remains CSS-driven.
+const tiltTargets = ".hero-portrait__visual";
 
 function hasNativeScrollTimelines(): boolean {
   return typeof CSS !== "undefined"
