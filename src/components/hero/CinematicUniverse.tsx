@@ -406,7 +406,7 @@ export function CinematicUniverse() {
     const color = gl.getAttribLocation(scene.program, "aColor");
     const size = gl.getAttribLocation(scene.program, "aSize");
 
-    const draw = (timestamp: number) => {
+    const draw = () => {
       frame = 0;
       if (document.hidden || !isInView) return;
       pointer.x = pointer.targetX;
@@ -502,7 +502,6 @@ export function CinematicUniverse() {
 
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pointermove", handlePointer, { passive: true });
-    window.addEventListener("pointerout", handleLeave, { passive: true });
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("blur", handleLeave);
 
@@ -511,12 +510,12 @@ export function CinematicUniverse() {
     if (isInView) draw(0);
 
     return () => {
-      stop();
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = 0;
       observer.disconnect();
       resizeObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pointermove", handlePointer);
-      window.removeEventListener("pointerout", handleLeave);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("blur", handleLeave);
       scene.geometry.forEach((item) => gl.deleteBuffer(item.buffer));
