@@ -44,9 +44,9 @@ export function FilmArchive() {
           <div className="section-heading section-heading--split">
             <div>
               <p className="section-kicker">03 / Selected films</p>
-              <h2 id="films-title">A collection of <em>frames</em><br />and stories.</h2>
+              <h2 id="films-title">Stories built in<br /><em>light and silence.</em></h2>
             </div>
-            <p>Authentic source links supplied by Zeehad. Where a title is not verified, the archive keeps the label neutral.</p>
+            <p>An evolving collection of films, visual experiments and teasers. Each frame opens its original source; titles remain neutral wherever a name has not been confirmed.</p>
           </div>
           <div className="film-archive__grid">
             {filmProjects.map((film, index) => <FilmCard key={film.id} film={film} index={index} onOpen={setSelectedFilm} />)}
