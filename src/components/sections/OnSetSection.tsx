@@ -11,11 +11,11 @@ export function OnSetSection() {
       <div className="page-width">
         <div className="on-set__intro">
           <div>
-            <p className="section-kicker">01 / The work in motion</p>
+            <p className="section-kicker">05 / The work in motion</p>
             <h2 id="on-set-title"><span>ON</span><em>SET.</em></h2>
           </div>
           <div className="on-set__description">
-            <p>Behind every frame is a choice. Behind every scene, a reason.</p>
+            <p>Every frame begins with a decision. Every scene is shaped around what it needs to make you feel.</p>
             <span>Writing / Direction / Camera / Edit</span>
           </div>
         </div>
@@ -29,7 +29,7 @@ export function OnSetSection() {
             </article>
           ))}
         </div>
-        <a className="on-set__archive-link" href="#films">Explore the film archive <span aria-hidden="true">↗</span></a>
+        <a className="on-set__archive-link" href="#films">Return to the Film Vault <span aria-hidden="true">↗</span></a>
       </div>
     </section>
   );
