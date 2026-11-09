@@ -397,57 +397,30 @@ export function CinematicUniverse() {
     }
 
     const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
-    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
     let width = 1;
     let height = 1;
-    let running = false;
+    let isInView = false;
 
     const position = gl.getAttribLocation(scene.program, "aPosition");
     const color = gl.getAttribLocation(scene.program, "aColor");
     const size = gl.getAttribLocation(scene.program, "aSize");
-    const resize = () => {
-      const bounds = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-      width = Math.max(1, Math.round(bounds.width * dpr));
-      height = Math.max(1, Math.round(bounds.height * dpr));
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
-      gl.viewport(0, 0, width, height);
-    };
-
-    const handleLeave = () => {
-      pointer.targetX = 0;
-      pointer.targetY = 0;
-    };
-
-    const handlePointer = (event: PointerEvent) => {
-      if (event.pointerType === "touch") return;
-      const bounds = canvas.getBoundingClientRect();
-      const inside = event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
-      if (!inside) { handleLeave(); return; }
-      pointer.targetX = ((event.clientX - bounds.left) / Math.max(1, bounds.width) - 0.5) * 2;
-      pointer.targetY = (0.5 - (event.clientY - bounds.top) / Math.max(1, bounds.height)) * 2;
-    };
 
     const draw = (timestamp: number) => {
       frame = 0;
-      pointer.x += (pointer.targetX - pointer.x) * 0.045;
-      pointer.y += (pointer.targetY - pointer.y) * 0.045;
+      if (document.hidden || !isInView) return;
+      pointer.x = pointer.targetX;
+      pointer.y = pointer.targetY;
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
       gl.useProgram(scene.program);
 
-      const time = motionPreference.matches ? 0 : timestamp * 0.0001;
-      const scroll = Math.min(1, Math.max(0, window.scrollY / Math.max(1, window.innerHeight)));
-      gl.uniform1f(scene.uniforms.time, time);
+      gl.uniform1f(scene.uniforms.time, 0);
       gl.uniform2f(scene.uniforms.pointer, pointer.x, pointer.y);
       gl.uniform1f(scene.uniforms.aspect, width / Math.max(1, height));
-      gl.uniform1f(scene.uniforms.scroll, scroll);
+      gl.uniform1f(scene.uniforms.scroll, Math.min(1, Math.max(0, window.scrollY / Math.max(1, window.innerHeight))));
 
       for (const item of scene.geometry) {
         gl.bindBuffer(gl.ARRAY_BUFFER, item.buffer);
@@ -462,23 +435,55 @@ export function CinematicUniverse() {
         gl.uniform1f(scene.uniforms.kind, item.kind);
         gl.drawArrays(item.mode, 0, item.count);
       }
-      if (running && !motionPreference.matches) frame = window.requestAnimationFrame(draw);
     };
 
-    const start = () => {
-      if (running) return;
-      running = true;
-      if (!frame) frame = window.requestAnimationFrame(draw);
+    const scheduleDraw = () => {
+      if (frame || document.hidden || !isInView) return;
+      frame = window.requestAnimationFrame(draw);
     };
-    const stop = () => {
-      running = false;
-      if (frame) window.cancelAnimationFrame(frame);
-      frame = 0;
+
+    const resize = () => {
+      const bounds = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.0);
+      width = Math.max(1, Math.round(bounds.width * dpr));
+      height = Math.max(1, Math.round(bounds.height * dpr));
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+      gl.viewport(0, 0, width, height);
+      scheduleDraw();
     };
+
+    const handlePointer = (event: PointerEvent) => {
+      if (event.pointerType === "touch" || !isInView) return;
+      const bounds = canvas.getBoundingClientRect();
+      const inside = event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
+      if (!inside) {
+        pointer.targetX = 0;
+        pointer.targetY = 0;
+      } else {
+        pointer.targetX = ((event.clientX - bounds.left) / Math.max(1, bounds.width) - 0.5) * 2;
+        pointer.targetY = (0.5 - (event.clientY - bounds.top) / Math.max(1, bounds.height)) * 2;
+      }
+      scheduleDraw();
+    };
+
+    const handleLeave = () => {
+      pointer.targetX = 0;
+      pointer.targetY = 0;
+      scheduleDraw();
+    };
+
+    const handleScroll = () => scheduleDraw();
 
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry?.isIntersecting) start();
-      else stop();
+      isInView = Boolean(entry?.isIntersecting);
+      if (isInView) scheduleDraw();
+      else if (frame) {
+        window.cancelAnimationFrame(frame);
+        frame = 0;
+      }
     }, { threshold: 0.01 });
     observer.observe(canvas);
 
@@ -487,25 +492,23 @@ export function CinematicUniverse() {
     resize();
 
     const onVisibilityChange = () => {
-      if (document.hidden) stop();
-      else if (canvas.getBoundingClientRect().height > 0 && !motionPreference.matches) start();
-    };
-
-    const onMotionChange = () => {
-      if (motionPreference.matches) {
-        stop();
-        draw(0);
-      } else if (canvas.getBoundingClientRect().height > 0) {
-        start();
+      if (document.hidden) {
+        if (frame) window.cancelAnimationFrame(frame);
+        frame = 0;
+      } else {
+        scheduleDraw();
       }
     };
+
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pointermove", handlePointer, { passive: true });
+    window.addEventListener("pointerout", handleLeave, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("blur", handleLeave);
-    motionPreference.addEventListener("change", onMotionChange);
 
-    draw(0);
-    if (!motionPreference.matches) start();
+    // Draw once on entry; redraw only after pointer, scroll, or resize input.
+    isInView = canvas.getBoundingClientRect().bottom > 0 && canvas.getBoundingClientRect().top < window.innerHeight;
+    if (isInView) draw(0);
 
     return () => {
       stop();
@@ -513,8 +516,9 @@ export function CinematicUniverse() {
       resizeObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pointermove", handlePointer);
+      window.removeEventListener("pointerout", handleLeave);
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("blur", handleLeave);
-      motionPreference.removeEventListener("change", onMotionChange);
       scene.geometry.forEach((item) => gl.deleteBuffer(item.buffer));
       gl.deleteProgram(scene.program);
     };
