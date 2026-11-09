@@ -460,6 +460,7 @@ export function CinematicUniverse() {
       const bounds = canvas.getBoundingClientRect();
       const inside = event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom;
       if (!inside) {
+        if (pointer.targetX === 0 && pointer.targetY === 0) return;
         pointer.targetX = 0;
         pointer.targetY = 0;
       } else {
