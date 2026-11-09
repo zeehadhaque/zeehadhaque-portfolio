@@ -11,6 +11,7 @@ import "./styles/three-d-world.css";
 import "./styles/every-element-motion.css";
 import "./styles/complete-motion-system.css";
 import "./styles/premium-cinematic-finish.css";
+import "./styles/auteur-cinematic-overhaul.css";
 import { App } from "./app/App";
 
 const root = document.getElementById("root");
