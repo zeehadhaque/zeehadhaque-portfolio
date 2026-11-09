@@ -49,6 +49,10 @@ export function HeroPortrait() {
             <span>Enter the frame</span>
             <span className="enter-frame-button__arrow" aria-hidden="true">↘</span>
           </button>
+          <a className="hero-portrait__work-link" href="#films">
+            <span>Explore selected films</span>
+            <span aria-hidden="true">↗</span>
+          </a>
         </div>
 
         <div className="hero-portrait__visual" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave} style={pointerStyle}>
