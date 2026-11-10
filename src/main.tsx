@@ -18,6 +18,7 @@ import "./styles/zeehaque-complete-portfolio.css";
 import "./styles/immersive-world.css";
 import "./styles/motion-choreography.css";
 import "./styles/portfolio-quality.css";
+import "./styles/active-scroll-experience.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/App";
