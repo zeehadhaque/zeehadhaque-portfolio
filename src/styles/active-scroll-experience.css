@@ -14,6 +14,10 @@
 /* A compact, velocity-aware navigation pill instead of a static full-width bar. */
 .main-navigation.auteur-navigation {
   top: 16px !important;
+  /* Keep the fixed header centered when scroll-state transforms are active. */
+  left: 0 !important;
+  right: 0 !important;
+  margin-inline: auto !important;
   width: min(1220px, calc(100% - 48px)) !important;
   min-height: 60px !important;
   padding: 8px 19px !important;
