@@ -1,42 +1,54 @@
-# Cloudflare Pages deployment
+# Cloudflare Workers deployment
 
-This repository is a React + TypeScript + Vite site. Cloudflare Pages serves the Vite output from `dist` and runs the Pages Functions in `functions/`.
+This repository builds the cinematic portfolio with React, TypeScript and Vite, then serves it through the Cloudflare Worker named `zeehadhaque-filmmaker`.
 
-## Git-connected Pages build settings
+## Automatic GitHub deployment
 
-- Production branch: `main`
-- Root directory: `/`
-- Framework preset: React (Vite)
-- Build command: `npm run build`
-- Build output directory: `dist`
+The workflow at `.github/workflows/deploy-cloudflare.yml` builds and deploys the Worker whenever a commit reaches `main`. It can also be started manually from the repository's Actions tab.
 
-The `public/_routes.json` file limits Pages Function invocation to `/api/*`, so ordinary static website requests are served as static assets.
+Add these repository secrets under **GitHub → Settings → Secrets and variables → Actions → New repository secret**:
 
-## Runtime variables
+| Secret | Value |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with Account:Read and Workers Scripts:Edit permissions |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID that owns the Worker |
 
-Add these under Cloudflare Dashboard â†’ Workers & Pages â†’ your Pages project â†’ Settings â†’ Variables and Secrets. Add values for the Production environment (and Preview too only if preview deployments need working APIs).
+Once both secrets exist, merging a change to `main` triggers the build and deployment automatically. Without them, the workflow still builds the project but skips deployment.
+
+## Cloudflare runtime variables
+
+Configure these under **Cloudflare Dashboard → Workers & Pages → zeehadhaque-filmmaker → Settings → Variables and Secrets**. Use encrypted secrets for API keys.
 
 | Variable | Type | Purpose |
 | --- | --- | --- |
-| `GEMINI_API_KEY` | Secret | Google Gemini API key; never put it in frontend code or Git |
-| `GEMINI_MODEL` | Text | Optional; defaults to `gemini-3.8-flash` |
-| `SUPABASE_URL` | Text | Supabase project URL |
-| `SUPABASE_PUBLISHABLE_KEY` | Text | Supabase publishable key; legacy anon key is accepted as fallback |
+| `GEMINI_API_KEY` | Secret | Powers the ZEE AI assistant; never put it in frontend code or Git |
+| `GEMINI_MODEL` | Text (optional) | Optional model override |
+| `SUPABASE_URL` | Text | Supabase project URL for Academy accounts and contact messages |
+| `SUPABASE_PUBLISHABLE_KEY` | Secret | Supabase publishable key; legacy anon key is accepted as fallback |
 
-Do not add a Supabase service-role key. Public contact submissions use the publishable/anon key and the table's Row Level Security policy. Owner inbox reads require a bearer token for the verified `zeehadhaque@gmail.com` account.
+Do not add a Supabase service-role key. The Academy uses verified user tokens and protected database functions.
 
-## Supabase prerequisite
+## Academy and contact database
 
-If the `contact_messages` table and its RLS policies have not already been created in the Supabase project, run `supabase/migrations/001_contact_messages.sql` once in the Supabase SQL Editor.
+Apply the SQL migrations in `supabase/migrations/` to the matching Supabase project before enabling account-backed Academy progress or contact submissions. The public site and guest Academy lessons can render without Supabase, but sign-in, saved progress, owner inbox and contact form persistence require the matching configuration.
+
+## Manual deployment
+
+From a clean clone of this repository:
+
+```powershell
+npm.cmd ci
+npm.cmd run build
+npx.cmd wrangler deploy --config wrangler.jsonc
+```
+
+Authenticate first with `npx.cmd wrangler login` if Wrangler has not been authorised on that machine.
 
 ## API routes
 
-- `POST /api/chat` â€” Gemini-powered ZEE assistant; request `{ "message": "..." }`, response `{ "reply": "..." }`.
-- `POST /api/contact` â€” saves the public contact form; response `{ "ok": true }`.
-- `GET /api/contact` â€” requires a verified owner Supabase access token and returns `{ "messages": [...] }`.
+- `POST /api/chat` — Gemini-powered ZEE assistant.
+- `POST /api/contact` — saves a public contact message through Supabase.
+- `GET /api/contact` — verified owner inbox.
+- `GET /api/academy` and `POST /api/academy` — Academy authentication, progress and entitlement operations.
 
-The old `api/` and `vercel.json` files are intentionally retained for the existing Vercel deployment. Cloudflare Pages uses the new `functions/api/` files instead.
-
-## Rate limiting note
-
-The included limits are best-effort per Cloudflare isolate, not a globally shared counter. For stronger abuse protection, configure Cloudflare Rate Limiting or Turnstile before relying on these limits for high-traffic public use.
+Runtime secrets are stored by Cloudflare and are not overwritten by a normal Worker code deployment.

@@ -378,7 +378,7 @@ export function AcademySection() {
         <header className="academy-masthead">
           <div className="academy-brand">
             <span className="academy-brand__mark">ZH<span>·</span></span>
-            <div><span className="academy-eyebrow">INDEPENDENT FILMMAKER'S LEARNING LAB</span><strong>ZEE FILMMAKING ACADEMY</strong></div>
+            <div><span className="academy-eyebrow">09 / INDEPENDENT FILMMAKER'S LEARNING LAB</span><strong>ZEE FILMMAKING ACADEMY</strong></div>
           </div>
           <div className="academy-masthead__actions">
             <div className="academy-language" role="group" aria-label="Language">
