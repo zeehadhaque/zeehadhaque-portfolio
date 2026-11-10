@@ -98,15 +98,17 @@ export function ImmersiveWorld() {
       if (trail.length < 2) return;
 
       let averageLife = 0;
+      for (const point of trail) {
+        point.life = Math.max(0, point.life - deltaMs / 880);
+        averageLife += point.life;
+      }
+      averageLife /= trail.length;
+
       context.beginPath();
       context.moveTo(trail[0].x, trail[0].y);
       for (let index = 1; index < trail.length; index += 1) {
-        const point = trail[index];
-        point.life = Math.max(0, point.life - deltaMs / 880);
-        averageLife += point.life;
-        context.lineTo(point.x, point.y);
+        context.lineTo(trail[index].x, trail[index].y);
       }
-      averageLife /= Math.max(1, trail.length - 1);
       context.save();
       context.globalCompositeOperation = "screen";
       context.globalAlpha = averageLife * 0.66;
