@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const BASE_FRAME_MS = 1000 / 60;
 
 export function MotionDirector() {
   useEffect(() => {
@@ -8,14 +9,14 @@ export function MotionDirector() {
     const body = document.body;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-    const lowPower = (navigator.hardwareConcurrency ?? 8) <= 4 || memory <= 4 || !finePointer;
-    const frameInterval = lowPower ? 1000 / 30 : 1000 / 60;
     const sections = Array.from(document.querySelectorAll<HTMLElement>(".auteur-site > section"));
+    const navigation = document.querySelector<HTMLElement>(".main-navigation");
     const magneticTargets = ".auteur-button,.auteur-text-link,.main-navigation__desktop a,.main-navigation__brand,.auteur-film-card button,.auteur-inline-link,.auteur-contact-form__submit button,.main-navigation__theme,.main-navigation__toggle";
 
-    // Respect OS accessibility preferences and avoid an unnecessary animation loop.
-    if (reduced) return;
+    if (reduced) {
+      root.dataset.scrollMotion = "reduced";
+      return;
+    }
 
     let raf = 0;
     let lastFrameTime = 0;
@@ -23,6 +24,7 @@ export function MotionDirector() {
     let lastScrollY = window.scrollY;
     let velocity = 0;
     let targetVelocity = 0;
+    let scrollDirection: "up" | "down" = "down";
     let pointerX = window.innerWidth / 2;
     let pointerY = window.innerHeight / 2;
     let cursorX = pointerX;
@@ -55,13 +57,13 @@ export function MotionDirector() {
         needsSectionUpdate = false;
         return;
       }
+
       const viewportCenter = window.innerHeight / 2;
-      // Read every section position first, then write styles in a separate pass.
-      // This avoids repeated layout recalculation while the visitor scrolls.
+      // Batch every geometry read before writing any style to avoid layout thrashing.
       const measurements = sections.map((section) => {
         const rect = section.getBoundingClientRect();
         const center = rect.top + rect.height / 2;
-        const distance = (center - viewportCenter) / Math.max(window.innerHeight, rect.height * .45);
+        const distance = (center - viewportCenter) / Math.max(window.innerHeight, rect.height * 0.45);
         return { section, distance: clamp(distance, -1.4, 1.4) };
       });
 
@@ -70,64 +72,6 @@ export function MotionDirector() {
         section.style.setProperty("--scene-focus", clamp(1 - Math.abs(distance), 0, 1).toFixed(3));
       }
       needsSectionUpdate = false;
-    };
-
-    const update = (time: number) => {
-      raf = 0;
-      if (document.hidden) return;
-      if (time - lastFrameTime < frameInterval) {
-        schedule();
-        return;
-      }
-      lastFrameTime = time;
-
-      const maxScroll = Math.max(1, root.scrollHeight - window.innerHeight);
-      const progress = clamp(window.scrollY / maxScroll, 0, 1);
-      // Decay the last measured scroll velocity. Without this, targetVelocity
-      // stayed non-zero and kept the animation loop alive indefinitely.
-      targetVelocity *= 0.78;
-      velocity += (targetVelocity - velocity) * .22;
-      if (Math.abs(targetVelocity) < .006 && Math.abs(velocity) < .008) {
-        targetVelocity = 0;
-        velocity = 0;
-      }
-
-      root.style.setProperty("--scroll-progress", progress.toFixed(4));
-      root.style.setProperty("--scroll-velocity", velocity.toFixed(3));
-      root.style.setProperty("--camera-yaw", ((progress - .5) * -9).toFixed(2) + "deg");
-      root.style.setProperty("--camera-pitch", ((progress - .5) * 4).toFixed(2) + "deg");
-      root.style.setProperty("--camera-travel", (progress * 150).toFixed(1) + "px");
-      root.style.setProperty("--scroll-energy", Math.abs(velocity).toFixed(3));
-
-      if (needsSectionUpdate) updateSections();
-
-      if (pendingPointer) {
-        const nextPointer = pendingPointer;
-        pendingPointer = null;
-        applyPointerMove(nextPointer.target, nextPointer.x, nextPointer.y);
-      }
-
-      let cursorMoving = false;
-      if (cursor && cursorRing && cursorDot && finePointer) {
-        cursorX += (pointerX - cursorX) * .22;
-        cursorY += (pointerY - cursorY) * .22;
-        cursor.style.transform = `translate3d(${cursorX}px,${cursorY}px,0)`;
-        cursorDot.style.transform = `translate3d(${pointerX - cursorX}px,${pointerY - cursorY}px,0)`;
-        cursorMoving = Math.abs(pointerX - cursorX) > .2 || Math.abs(pointerY - cursorY) > .2;
-      }
-
-      if (Math.abs(velocity) > .008 || cursorMoving) schedule();
-    };
-
-    const onScroll = () => {
-      const now = performance.now();
-      const currentY = window.scrollY;
-      const elapsed = Math.max(12, now - lastScrollTime);
-      targetVelocity = clamp((currentY - lastScrollY) / elapsed, -2.4, 2.4);
-      lastScrollY = currentY;
-      lastScrollTime = now;
-      needsSectionUpdate = true;
-      schedule();
     };
 
     const applyPointerMove = (eventTarget: Element | null, x: number, y: number) => {
@@ -164,6 +108,79 @@ export function MotionDirector() {
       if (cursor) cursor.style.opacity = "1";
     };
 
+    const update = (time: number) => {
+      raf = 0;
+      if (document.hidden) return;
+
+      // Time-normalized damping keeps the same motion feel at 60, 90, 120 or 144 Hz.
+      const deltaMs = lastFrameTime ? clamp(time - lastFrameTime, 1, 48) : BASE_FRAME_MS;
+      const frameScale = deltaMs / BASE_FRAME_MS;
+      lastFrameTime = time;
+
+      const maxScroll = Math.max(1, root.scrollHeight - window.innerHeight);
+      const progress = clamp(window.scrollY / maxScroll, 0, 1);
+      const velocityDecay = Math.pow(0.78, frameScale);
+      const velocityEase = 1 - Math.pow(1 - 0.22, frameScale);
+      targetVelocity *= velocityDecay;
+      velocity += (targetVelocity - velocity) * velocityEase;
+
+      if (Math.abs(targetVelocity) < 0.006 && Math.abs(velocity) < 0.008) {
+        targetVelocity = 0;
+        velocity = 0;
+      }
+
+      const energy = clamp(Math.abs(velocity) / 1.8, 0, 1);
+      root.style.setProperty("--scroll-progress", progress.toFixed(4));
+      root.style.setProperty("--scroll-velocity", velocity.toFixed(3));
+      root.style.setProperty("--scroll-energy", energy.toFixed(3));
+      root.style.setProperty("--camera-yaw", ((progress - 0.5) * -9).toFixed(2) + "deg");
+      root.style.setProperty("--camera-pitch", ((progress - 0.5) * 4).toFixed(2) + "deg");
+      root.style.setProperty("--camera-travel", (progress * 150).toFixed(1) + "px");
+      root.dataset.scrollDirection = scrollDirection;
+
+      const motionState = energy > 0.42 ? "fast" : energy > 0.05 ? "moving" : "idle";
+      root.dataset.scrollMotion = motionState;
+      if (navigation) {
+        navigation.dataset.scrollMotion = motionState;
+        navigation.dataset.scrollDirection = scrollDirection;
+        navigation.style.setProperty("--scroll-intensity", energy.toFixed(3));
+      }
+
+      if (needsSectionUpdate) updateSections();
+
+      if (pendingPointer) {
+        const nextPointer = pendingPointer;
+        pendingPointer = null;
+        applyPointerMove(nextPointer.target, nextPointer.x, nextPointer.y);
+      }
+
+      let cursorMoving = false;
+      if (cursor && cursorRing && cursorDot && finePointer) {
+        const cursorEase = 1 - Math.pow(1 - 0.22, frameScale);
+        cursorX += (pointerX - cursorX) * cursorEase;
+        cursorY += (pointerY - cursorY) * cursorEase;
+        cursor.style.transform = `translate3d(${cursorX}px,${cursorY}px,0)`;
+        cursorDot.style.transform = `translate3d(${pointerX - cursorX}px,${pointerY - cursorY}px,0)`;
+        cursorMoving = Math.abs(pointerX - cursorX) > 0.18 || Math.abs(pointerY - cursorY) > 0.18;
+      }
+
+      // Stop requesting frames when the scroll impulse and cursor have settled.
+      if (Math.abs(velocity) > 0.008 || cursorMoving) schedule();
+    };
+
+    const onScroll = () => {
+      const now = performance.now();
+      const currentY = window.scrollY;
+      const elapsed = Math.max(8, now - lastScrollTime);
+      const deltaY = currentY - lastScrollY;
+      if (Math.abs(deltaY) > 0.5) scrollDirection = deltaY > 0 ? "down" : "up";
+      targetVelocity = clamp(deltaY / elapsed, -3.5, 3.5);
+      lastScrollY = currentY;
+      lastScrollTime = now;
+      needsSectionUpdate = true;
+      schedule();
+    };
+
     const onPointerMove = (event: PointerEvent) => {
       if (!finePointer) return;
       pointerX = event.clientX;
@@ -173,15 +190,15 @@ export function MotionDirector() {
         y: pointerY,
         target: event.target instanceof Element ? event.target : null,
       };
-      // Coalesce high-frequency pointer events into the next animation frame.
+      // Coalesce high-frequency pointer input to the display's next frame.
       schedule();
     };
 
     const onPointerLeave = () => {
       pendingPointer = null;
       if (activeMagnet) resetTarget(activeMagnet, "--mag");
-      activeMagnet = null;
       if (activeParallax) resetTarget(activeParallax, "--parallax");
+      activeMagnet = null;
       activeParallax = null;
       cursor?.classList.remove("is-hovering");
       if (cursor) cursor.style.opacity = "0";
@@ -205,6 +222,7 @@ export function MotionDirector() {
         raf = 0;
         return;
       }
+      lastFrameTime = 0;
       needsSectionUpdate = true;
       schedule();
     };
@@ -212,26 +230,37 @@ export function MotionDirector() {
     updateSections();
     schedule();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    if (finePointer) window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerleave", onPointerLeave);
     window.addEventListener("click", onClick);
-    window.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("pointerup", onPointerUp);
+    if (finePointer) {
+      window.addEventListener("pointerdown", onPointerDown);
+      window.addEventListener("pointerup", onPointerUp);
+    }
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       window.cancelAnimationFrame(raf);
       window.clearTimeout(transitionTimer);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("pointermove", onPointerMove);
+      if (finePointer) window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerleave", onPointerLeave);
       window.removeEventListener("click", onClick);
-      window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("pointerup", onPointerUp);
+      if (finePointer) {
+        window.removeEventListener("pointerdown", onPointerDown);
+        window.removeEventListener("pointerup", onPointerUp);
+      }
       document.removeEventListener("visibilitychange", onVisibilityChange);
       body.classList.remove("motion-cursor-active", "is-navigating");
       if (activeMagnet) resetTarget(activeMagnet, "--mag");
       if (activeParallax) resetTarget(activeParallax, "--parallax");
+      delete root.dataset.scrollMotion;
+      delete root.dataset.scrollDirection;
+      if (navigation) {
+        delete navigation.dataset.scrollMotion;
+        delete navigation.dataset.scrollDirection;
+        navigation.style.removeProperty("--scroll-intensity");
+      }
     };
   }, []);
 
