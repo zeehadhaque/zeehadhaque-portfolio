@@ -173,6 +173,14 @@ Email: [zeehadhaque@gmail.com](mailto:zeehadhaque@gmail.com)
 
 WhatsApp: [+8801629851155](https://wa.me/8801629851155)
 
+WEBSITE
+
+Zeehad Haque — Official Filmmaker Portfolio
+
+Website: https://zeehadhaque.zeehadhaque.workers.dev/
+
+The official portfolio of Zeehad Haque, featuring filmmaking projects, professional information, cinematic work, and creative experiments.
+
 ---
 
 <div align="center">
