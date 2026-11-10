@@ -4,7 +4,7 @@ export function OffSetSection() {
   return (
     <section className="off-set section-light" id="off-set" aria-labelledby="off-set-title">
       <div className="page-width off-set__grid">
-        <div className="off-set__visual editorial-placeholder" aria-label="Personal portrait archive">
+        <div className="off-set__visual" aria-label="Personal portrait archive">
           <div className="off-set__portrait-wrap">
             <img src={portraitAsset} alt="Portrait of Zeehad Haque" loading="lazy" width="1565" height="2400" />
           </div>
@@ -16,7 +16,7 @@ export function OffSetSection() {
           <h2 id="off-set-title"><span>OFF</span><em>SET.</em></h2>
           <p className="off-set__lead">The quiet work of paying attention.</p>
           <p className="off-set__body">{siteIdentity.workingMethod}</p>
-          <p className="content-status">The camera can rest; observation doesn’t. Places, gestures and the changing quality of light keep becoming notes for the next frame.</p>
+          <p className="off-set__body off-set__body--secondary">The camera can rest; observation doesn’t. Places, gestures and the changing quality of light keep becoming notes for the next frame.</p>
           <a className="line-link" href="#frame-archive">Explore the visual archive <span aria-hidden="true">↗</span></a>
         </div>
       </div>
