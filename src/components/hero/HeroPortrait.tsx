@@ -69,7 +69,7 @@ export function HeroPortrait() {
           </div>
           <figure className={`hero-portrait__frame ${portraitFailed ? "is-unavailable" : ""}`}>
             {!portraitFailed ? (
-              <img src={identityPortraitAsset} alt="Portrait of Zeehad Haque" width="1565" height="2400" fetchPriority="high" decoding="async" onError={() => setPortraitFailed(true)} />
+              <img src={identityPortraitAsset} alt="Zeehad Haque — independent filmmaker, director, writer and cinematographer from Bangladesh" width="1565" height="2400" fetchPriority="high" decoding="async" onError={() => setPortraitFailed(true)} />
             ) : (
               <div className="hero-portrait__fallback" role="img" aria-label="Portrait unavailable">
                 <strong>Portrait asset unavailable</strong>
