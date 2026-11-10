@@ -122,3 +122,32 @@ html,
   will-change: auto !important;
   filter: none !important;
 }
+
+
+/* The deferred Academy keeps its section footprint while its code and CSS load. */
+.auteur-academy > .academy-deferred {
+  min-height: 100svh;
+}
+
+.academy-deferred__placeholder,
+.academy-deferred__loading {
+  min-height: 100svh;
+}
+
+.academy-deferred__loading {
+  display: grid;
+  place-items: center;
+  padding: 3rem 1.5rem;
+  color: #9db9dc;
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .academy-deferred__loading {
+    letter-spacing: .08em;
+    font-size: .7rem;
+  }
+}
