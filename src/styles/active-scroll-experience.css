@@ -1,0 +1,324 @@
+/*
+ * ZEEHAD HAQUE — active scroll experience
+ * Native scroll timelines for cinematic camera movement, section reveals and image depth.
+ * All scroll-linked animations use opacity / translate / scale; no forced JS scroll loop.
+ */
+
+:root {
+  --at-ink: rgba(222, 237, 255, .92);
+  --at-blue: #85baff;
+  --at-line: rgba(151, 193, 246, .2);
+  --at-ease: cubic-bezier(.17, .4, .02, .99);
+}
+
+/* A compact, velocity-aware navigation pill instead of a static full-width bar. */
+.main-navigation.auteur-navigation {
+  top: 16px !important;
+  width: min(1220px, calc(100% - 48px)) !important;
+  min-height: 60px !important;
+  padding: 8px 19px !important;
+  border: 1px solid var(--at-line) !important;
+  border-bottom: 1px solid var(--at-line) !important;
+  border-radius: 999px !important;
+  background: rgba(4, 9, 18, .9) !important;
+  box-shadow: 0 12px 42px rgba(0, 0, 0, .24), inset 0 1px rgba(225, 240, 255, .05);
+  transform: translate3d(0, 0, 0) scale(1);
+  transform-origin: 50% 0;
+  transition:
+    transform 280ms var(--at-ease),
+    border-color 280ms ease,
+    box-shadow 280ms ease,
+    background-color 280ms ease;
+}
+
+.main-navigation.auteur-navigation[data-scroll-motion="moving"] {
+  border-color: rgba(139, 190, 250, .3) !important;
+  transform: translate3d(0, -1px, 0) scale(.992);
+}
+
+.main-navigation.auteur-navigation[data-scroll-motion="fast"] {
+  border-color: rgba(158, 205, 255, .48) !important;
+  box-shadow: 0 17px 54px rgba(0, 0, 0, .34), 0 0 24px rgba(106, 166, 236, .08);
+  transform: translate3d(0, -3px, 0) scale(.982);
+}
+
+.main-navigation__desktop a {
+  transition: color 180ms ease, opacity 180ms ease, transform 180ms ease !important;
+}
+
+.main-navigation__desktop a:not(.is-active) {
+  opacity: .74;
+}
+
+.main-navigation__desktop a.is-active {
+  opacity: 1;
+}
+
+.main-navigation__desktop a.is-active::after {
+  transform: scaleX(1);
+  box-shadow: 0 0 14px rgba(133, 186, 255, .5);
+}
+
+.main-navigation__theme,
+.main-navigation__toggle {
+  transition: transform 180ms var(--at-ease), border-color 180ms ease, background-color 180ms ease !important;
+}
+
+.main-navigation__theme:active,
+.main-navigation__toggle:active {
+  transform: scale(.96);
+}
+
+/* The fixed world stays a single visual stage while the page moves through it. */
+.immersive-world {
+  transform-origin: 50% 48%;
+  backface-visibility: hidden;
+}
+
+.immersive-world canvas {
+  opacity: .92 !important;
+  mix-blend-mode: screen;
+  backface-visibility: hidden;
+}
+
+.immersive-world__vignette {
+  pointer-events: none;
+}
+
+.immersive-rig {
+  opacity: .84;
+  transform: translateZ(0);
+}
+
+.immersive-rig__portal {
+  border-color: rgba(143, 190, 244, .14);
+  box-shadow:
+    0 0 110px rgba(63, 119, 188, .1),
+    inset 0 0 90px rgba(83, 139, 207, .055),
+    0 0 calc(70px + var(--scroll-energy, 0) * 70px) rgba(87, 157, 239, .08);
+  transition: box-shadow 220ms linear;
+}
+
+.immersive-rig__axis {
+  opacity: calc(.36 + var(--scroll-energy, 0) * .46);
+}
+
+/* Scroll progress becomes a camera move through the opening chapter. */
+.auteur-hero__copy,
+.auteur-hero__portrait {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.auteur-hero__portrait figure {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: auto;
+}
+
+@supports (animation-timeline: scroll(root block)) {
+  .auteur-hero__copy {
+    animation: at-hero-copy-flight linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0vh 94vh;
+  }
+
+  .auteur-hero__portrait {
+    animation: at-hero-portrait-flight linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0vh 108vh;
+  }
+}
+
+@keyframes at-hero-copy-flight {
+  0% { opacity: 1; translate: 0 0 0; scale: 1; }
+  100% { opacity: .12; translate: 0 -7vh -54px; scale: .94; }
+}
+
+@keyframes at-hero-portrait-flight {
+  0% { translate: 0 0 0; scale: 1; }
+  100% { translate: 0 5vh -76px; scale: .91; }
+}
+
+/* Native view timelines replace blur-heavy reveals with compositor-friendly motion. */
+@supports (animation-timeline: view(block)) {
+  .auteur-site [data-reveal] {
+    opacity: 0;
+    transform: none !important;
+    translate: 0 42px;
+    scale: .986;
+    filter: none !important;
+    transition: none !important;
+    animation: at-section-reveal linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 78%;
+  }
+
+  .auteur-site [data-reveal].is-visible {
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .auteur-film-card__image img,
+  .auteur-frame img,
+  .auteur-beyond__image img {
+    animation: at-image-depth linear both;
+    animation-timeline: view(block);
+    animation-range: cover 0% cover 100%;
+    transform-origin: 50% 50%;
+    backface-visibility: hidden;
+  }
+
+  .auteur-film-card,
+  .auteur-frame,
+  .auteur-craft-card,
+  .auteur-workflow article,
+  .auteur-project-list li {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+
+  .auteur-film-card__image,
+  .auteur-frame {
+    transform: translateZ(0);
+    transition:
+      transform 560ms var(--at-ease),
+      border-color 320ms ease,
+      box-shadow 560ms ease;
+  }
+
+  .auteur-film-card button:hover .auteur-film-card__image,
+  .auteur-frame:hover {
+    transform: perspective(1000px) translate3d(0, -5px, 24px) rotateX(1deg);
+    box-shadow: 0 26px 68px rgba(0, 0, 0, .3), 0 0 24px rgba(112, 174, 244, .08);
+  }
+}
+
+@keyframes at-section-reveal {
+  0% { opacity: 0; translate: 0 42px; scale: .986; }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+@keyframes at-image-depth {
+  0% { translate: 0 2.6%; scale: 1.055; }
+  48% { translate: 0 0; scale: 1.025; }
+  100% { translate: 0 -2.6%; scale: 1.055; }
+}
+
+/* A subtle focus pulse is tied to chapter position, not a permanent animation loop. */
+.auteur-site > section {
+  --chapter-energy: 0;
+}
+
+@supports (animation-timeline: view(block)) {
+  .auteur-site > section .auteur-section-top,
+  .auteur-site > section .auteur-section-heading,
+  .auteur-site > section .auteur-frames__heading,
+  .auteur-site > section .auteur-contact__intro {
+    animation: at-heading-arrive linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 62%;
+  }
+}
+
+@keyframes at-heading-arrive {
+  0% { opacity: .35; translate: 0 28px; }
+  100% { opacity: 1; translate: 0 0; }
+}
+
+/* Film thumbnails move like camera plates, with reduced hover travel on touch. */
+.auteur-film-card__image,
+.auteur-frame,
+.auteur-beyond__image img {
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+.auteur-film-card__image img,
+.auteur-frame img,
+.auteur-beyond__image img {
+  will-change: auto;
+}
+
+.auteur-film-card button,
+.auteur-frame {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.auteur-film-card button:focus-visible,
+.auteur-frame:focus-visible {
+  outline: 2px solid #a8ceff !important;
+  outline-offset: 5px;
+}
+
+/* Fast scroll gives the ambient scene a brief sense of inertia and direction. */
+:root[data-scroll-motion="fast"] .immersive-rig__portal {
+  filter: brightness(1.13);
+}
+
+:root[data-scroll-direction="down"] .immersive-rig__axis--one {
+  opacity: calc(.22 + var(--scroll-energy, 0) * .55);
+}
+
+:root[data-scroll-direction="up"] .immersive-rig__axis--two {
+  opacity: calc(.2 + var(--scroll-energy, 0) * .55);
+}
+
+/* Keep this motion system smooth without changing native wheel/touch scroll physics. */
+@media (max-width: 760px), (pointer: coarse) {
+  .main-navigation.auteur-navigation {
+    top: 9px !important;
+    width: calc(100% - 18px) !important;
+    min-height: 54px !important;
+    padding: 7px 12px !important;
+  }
+
+  .main-navigation.auteur-navigation[data-scroll-motion="fast"] {
+    transform: translate3d(0, -1px, 0) scale(.99);
+  }
+
+  .immersive-rig {
+    opacity: .48;
+  }
+
+  .immersive-rig__portal {
+    width: 105vw;
+  }
+
+  .immersive-world canvas {
+    opacity: .62 !important;
+  }
+
+  .auteur-film-card button:hover .auteur-film-card__image,
+  .auteur-frame:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* Motion is optional: accessibility preference always wins. */
+@media (prefers-reduced-motion: reduce) {
+  .auteur-site [data-reveal] {
+    animation: none !important;
+    opacity: 1 !important;
+    translate: none !important;
+    scale: 1 !important;
+  }
+
+  .auteur-hero__copy,
+  .auteur-hero__portrait {
+    animation: none !important;
+    opacity: 1 !important;
+    translate: none !important;
+    scale: 1 !important;
+  }
+
+  .immersive-world canvas {
+    opacity: .14 !important;
+  }
+
+  .main-navigation.auteur-navigation {
+    transform: none !important;
+    transition: none !important;
+  }
+}
