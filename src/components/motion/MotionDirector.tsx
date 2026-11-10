@@ -29,6 +29,7 @@ export function MotionDirector() {
     let cursorY = pointerY;
     let activeMagnet: HTMLElement | null = null;
     let activeParallax: HTMLElement | null = null;
+    let pendingPointer: { x: number; y: number; target: Element | null } | null = null;
     let transitionTimer = 0;
     let needsSectionUpdate = true;
 
@@ -51,13 +52,19 @@ export function MotionDirector() {
 
     const updateSections = () => {
       const viewportCenter = window.innerHeight / 2;
-      sections.forEach((section) => {
+      // Read every section position first, then write styles in a separate pass.
+      // This avoids repeated layout recalculation while the visitor scrolls.
+      const measurements = sections.map((section) => {
         const rect = section.getBoundingClientRect();
         const center = rect.top + rect.height / 2;
         const distance = (center - viewportCenter) / Math.max(window.innerHeight, rect.height * .45);
-        section.style.setProperty("--scene-distance", clamp(distance, -1.4, 1.4).toFixed(3));
-        section.style.setProperty("--scene-focus", clamp(1 - Math.abs(distance), 0, 1).toFixed(3));
+        return { section, distance: clamp(distance, -1.4, 1.4) };
       });
+
+      for (const { section, distance } of measurements) {
+        section.style.setProperty("--scene-distance", distance.toFixed(3));
+        section.style.setProperty("--scene-focus", clamp(1 - Math.abs(distance), 0, 1).toFixed(3));
+      }
       needsSectionUpdate = false;
     };
 
@@ -72,8 +79,14 @@ export function MotionDirector() {
 
       const maxScroll = Math.max(1, root.scrollHeight - window.innerHeight);
       const progress = clamp(window.scrollY / maxScroll, 0, 1);
-      velocity += (targetVelocity - velocity) * .2;
-      if (Math.abs(velocity) < .008) velocity = 0;
+      // Decay the last measured scroll velocity. Without this, targetVelocity
+      // stayed non-zero and kept the animation loop alive indefinitely.
+      targetVelocity *= 0.78;
+      velocity += (targetVelocity - velocity) * .22;
+      if (Math.abs(targetVelocity) < .006 && Math.abs(velocity) < .008) {
+        targetVelocity = 0;
+        velocity = 0;
+      }
 
       root.style.setProperty("--scroll-progress", progress.toFixed(4));
       root.style.setProperty("--scroll-velocity", velocity.toFixed(3));
@@ -83,6 +96,12 @@ export function MotionDirector() {
       root.style.setProperty("--scroll-energy", Math.abs(velocity).toFixed(3));
 
       if (needsSectionUpdate) updateSections();
+
+      if (pendingPointer) {
+        const nextPointer = pendingPointer;
+        pendingPointer = null;
+        applyPointerMove(nextPointer.target, nextPointer.x, nextPointer.y);
+      }
 
       let cursorMoving = false;
       if (cursor && cursorRing && cursorDot && finePointer) {
@@ -107,12 +126,7 @@ export function MotionDirector() {
       schedule();
     };
 
-    const onPointerMove = (event: PointerEvent) => {
-      pointerX = event.clientX;
-      pointerY = event.clientY;
-      if (!finePointer) return;
-
-      const eventTarget = event.target as HTMLElement | null;
+    const applyPointerMove = (eventTarget: Element | null, x: number, y: number) => {
       const target = eventTarget?.closest<HTMLElement>(magneticTargets) ?? null;
       if (activeMagnet && activeMagnet !== target) resetTarget(activeMagnet, "--mag");
       activeMagnet = target;
@@ -120,10 +134,10 @@ export function MotionDirector() {
       if (target) {
         const rect = target.getBoundingClientRect();
         const strength = target.matches(".auteur-film-card button") ? 5 : 9;
-        const x = clamp((event.clientX - (rect.left + rect.width / 2)) / Math.max(rect.width, 1) * strength, -strength, strength);
-        const y = clamp((event.clientY - (rect.top + rect.height / 2)) / Math.max(rect.height, 1) * strength, -strength, strength);
-        target.style.setProperty("--mag-x", x.toFixed(1) + "px");
-        target.style.setProperty("--mag-y", y.toFixed(1) + "px");
+        const offsetX = clamp((x - (rect.left + rect.width / 2)) / Math.max(rect.width, 1) * strength, -strength, strength);
+        const offsetY = clamp((y - (rect.top + rect.height / 2)) / Math.max(rect.height, 1) * strength, -strength, strength);
+        target.style.setProperty("--mag-x", offsetX.toFixed(1) + "px");
+        target.style.setProperty("--mag-y", offsetY.toFixed(1) + "px");
         target.classList.add("is-magnetic");
         cursor?.classList.add("is-hovering");
       } else {
@@ -137,17 +151,30 @@ export function MotionDirector() {
       if (depthTarget) {
         const rect = depthTarget.getBoundingClientRect();
         const depth = Number(depthTarget.dataset.parallax || 6);
-        const x = (event.clientX - (rect.left + rect.width / 2)) / Math.max(rect.width, 1);
-        const y = (event.clientY - (rect.top + rect.height / 2)) / Math.max(rect.height, 1);
-        depthTarget.style.setProperty("--parallax-x", (x * depth).toFixed(2) + "px");
-        depthTarget.style.setProperty("--parallax-y", (y * depth).toFixed(2) + "px");
+        const offsetX = (x - (rect.left + rect.width / 2)) / Math.max(rect.width, 1);
+        const offsetY = (y - (rect.top + rect.height / 2)) / Math.max(rect.height, 1);
+        depthTarget.style.setProperty("--parallax-x", (offsetX * depth).toFixed(2) + "px");
+        depthTarget.style.setProperty("--parallax-y", (offsetY * depth).toFixed(2) + "px");
       }
 
       if (cursor) cursor.style.opacity = "1";
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!finePointer) return;
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      pendingPointer = {
+        x: pointerX,
+        y: pointerY,
+        target: event.target instanceof Element ? event.target : null,
+      };
+      // Coalesce high-frequency pointer events into the next animation frame.
       schedule();
     };
 
     const onPointerLeave = () => {
+      pendingPointer = null;
       if (activeMagnet) resetTarget(activeMagnet, "--mag");
       activeMagnet = null;
       if (activeParallax) resetTarget(activeParallax, "--parallax");
