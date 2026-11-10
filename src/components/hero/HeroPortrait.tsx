@@ -38,7 +38,7 @@ export function HeroPortrait() {
 
       <div className="hero-portrait__inner page-width">
         <div className="hero-portrait__copy">
-          <p className="section-kicker hero-portrait__kicker"><span /> Zeehad Haque Identity</p>
+          <p className="section-kicker hero-portrait__kicker"><span /> Independent filmmaker / Bangladesh</p>
           <h1 id="hero-title" className="hero-portrait__title">
             <span>Zeehad</span>
             <span>Haque</span>
@@ -46,14 +46,14 @@ export function HeroPortrait() {
           <p className="hero-portrait__roles">{siteIdentity.roles}</p>
           <div className="hero-portrait__statement">
             <span className="hero-portrait__quote-mark" aria-hidden="true">“</span>
-            <p>I DON'T JUST CAPTURE FRAMES.<br className="hero-portrait__desktop-break" /> <em>I CREATE WORLDS.</em></p>
+            <p>Stories shaped by <em>silence, tension &amp; light.</em></p>
           </div>
           <button className="enter-frame-button" type="button" onClick={enterFrame}>
-            <span>Enter the frame</span>
+            <span>Discover my work</span>
             <span className="enter-frame-button__arrow" aria-hidden="true">↘</span>
           </button>
           <a className="hero-portrait__work-link" href="#films">
-            <span>Explore selected films</span>
+            <span>View the filmography</span>
             <span aria-hidden="true">↗</span>
           </a>
         </div>
@@ -84,7 +84,7 @@ export function HeroPortrait() {
       </div>
 
       <div className="hero-portrait__footer page-width">
-        <span>A filmmaker's world, experienced as a cinematic journey.</span>
+        <span>Independent cinema. Personal vision. Uncompromising frames.</span>
         <a href="#introduction"><i aria-hidden="true" /> Scroll to explore</a>
         <span className="hero-portrait__counter">01 <b /> 08</span>
       </div>
