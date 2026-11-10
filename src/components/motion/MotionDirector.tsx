@@ -9,7 +9,7 @@ export function MotionDirector() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-    const lowPower = navigator.hardwareConcurrency <= 4 || memory <= 4;
+    const lowPower = (navigator.hardwareConcurrency ?? 8) <= 4 || memory <= 4 || !finePointer;
     const frameInterval = lowPower ? 1000 / 30 : 1000 / 60;
     const sections = Array.from(document.querySelectorAll<HTMLElement>(".auteur-site > section"));
     const magneticTargets = ".auteur-button,.auteur-text-link,.main-navigation__desktop a,.main-navigation__brand,.auteur-film-card button,.auteur-inline-link,.auteur-contact-form__submit button,.main-navigation__theme,.main-navigation__toggle";
@@ -51,6 +51,10 @@ export function MotionDirector() {
     };
 
     const updateSections = () => {
+      if (!finePointer) {
+        needsSectionUpdate = false;
+        return;
+      }
       const viewportCenter = window.innerHeight / 2;
       // Read every section position first, then write styles in a separate pass.
       // This avoids repeated layout recalculation while the visitor scrolls.
