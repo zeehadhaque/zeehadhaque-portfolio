@@ -20,6 +20,7 @@ export function MotionDirector() {
     let cursorX = pointerX;
     let cursorY = pointerY;
     let activeMagnet: HTMLElement | null = null;
+    let activeParallax: HTMLElement | null = null;
     let transitionTimer = 0;
     const cursor = document.querySelector<HTMLElement>(".motion-cursor");
     const cursorRing = cursor?.querySelector<HTMLElement>(".motion-cursor__ring");
@@ -74,7 +75,7 @@ export function MotionDirector() {
         activeMagnet.style.setProperty("--mag-y", "0px");
         activeMagnet.classList.remove("is-magnetic");
       }
-      activeMagnet = target;
+      activeMagnet = target ?? null;
       if (target) {
         const rect = target.getBoundingClientRect();
         const strength = target.matches(".auteur-film-card button") ? 5 : 9;
@@ -88,7 +89,12 @@ export function MotionDirector() {
         cursor?.classList.remove("is-hovering");
       }
 
-      const depthTarget = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-parallax]");
+      const depthTarget = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-parallax]") ?? null;
+      if (activeParallax && activeParallax !== depthTarget) {
+        activeParallax.style.setProperty("--parallax-x", "0px");
+        activeParallax.style.setProperty("--parallax-y", "0px");
+      }
+      activeParallax = depthTarget;
       if (depthTarget) {
         const rect = depthTarget.getBoundingClientRect();
         const depth = Number(depthTarget.dataset.parallax || 6);
@@ -107,6 +113,11 @@ export function MotionDirector() {
         activeMagnet.classList.remove("is-magnetic");
       }
       activeMagnet = null;
+      if (activeParallax) {
+        activeParallax.style.setProperty("--parallax-x", "0px");
+        activeParallax.style.setProperty("--parallax-y", "0px");
+      }
+      activeParallax = null;
       cursor?.classList.remove("is-hovering");
       if (cursor) cursor.style.opacity = "0";
     };
@@ -139,6 +150,14 @@ export function MotionDirector() {
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
       body.classList.remove("motion-cursor-active", "is-navigating");
+      if (activeMagnet) {
+        activeMagnet.style.setProperty("--mag-x", "0px");
+        activeMagnet.style.setProperty("--mag-y", "0px");
+      }
+      if (activeParallax) {
+        activeParallax.style.setProperty("--parallax-x", "0px");
+        activeParallax.style.setProperty("--parallax-y", "0px");
+      }
     };
   }, []);
 
