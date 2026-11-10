@@ -16,6 +16,7 @@ import "./styles/cinematic-luxury-finish.css";
 import "./styles/infinite-cinematic-experience.css";
 import "./styles/performance-safety.css";
 import "./styles/warm-luminous-auteur.css";
+import "./styles/zeehaque-auteur-identity.css";
 import { App } from "./app/App";
 
 const root = document.getElementById("root");

@@ -31,7 +31,7 @@ export function PersonalIntroduction() {
 
         <div className="message-from-zee__copy">
           <p className="section-kicker">02 / The filmmaker behind the frame</p>
-          <h2 id="introduction-title">The frame is only<br />the <em>beginning.</em></h2>
+          <h2 id="introduction-title">I make films<br />that <em>stay with you.</em></h2>
           <p className="message-from-zee__statement">{siteIdentity.statement}</p>
           <p className="message-from-zee__bio">{siteIdentity.biography}</p>
           <div className="message-from-zee__credits">

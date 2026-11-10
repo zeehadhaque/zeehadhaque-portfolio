@@ -1,0 +1,61 @@
+/* ZEEHAD HAQUE — AUTEUR IDENTITY SYSTEM
+   Nocturnal editorial cinema: charcoal, warm ivory, restrained brass. */
+:root,:root[data-theme="dark"] {
+ --paper:#09090b;--ink:#f2eee7;--white:#fffaf2;--charcoal:#c7beb1;--cobalt:#c8a879;--ice:#ead9bc;--muted:#938b80;
+ --line:rgba(221,203,174,.17);--line-light:rgba(255,250,242,.13);--surface-dark:#08090c;--surface-dark-foreground:#f2eee7;
+ --surface-cobalt:#171411;--surface-cobalt-foreground:#f5eee2;--surface-raised:#151518;--text-soft:rgba(242,238,231,.68);
+ --shadow-glow:0 26px 90px rgba(0,0,0,.48);--zee-ease:cubic-bezier(.19,1,.22,1);
+}
+:root[data-theme="light"] {
+ --paper:#eee9df;--ink:#201d19;--white:#fffaf2;--charcoal:#50483e;--cobalt:#967044;--ice:#c9a979;--muted:#786f63;
+ --line:rgba(68,52,34,.18);--line-light:rgba(255,255,255,.5);--surface-dark:#201d19;--surface-dark-foreground:#f4eee4;
+ --surface-cobalt:#e4d9c8;--surface-cobalt-foreground:#29231b;--surface-raised:#f8f3e9;--text-soft:rgba(244,238,228,.72);
+}
+html{scroll-behavior:smooth;scrollbar-color:var(--cobalt) var(--paper)} body{font-family:Manrope,Arial,sans-serif;letter-spacing:.005em}
+::selection{background:var(--cobalt);color:#17130e}.app-shell{background:var(--paper)}
+.main-navigation{top:14px;width:min(1460px,calc(100% - 36px));min-height:68px;padding:10px 22px;border:1px solid var(--line);border-radius:18px;background:rgba(10,10,12,.78);backdrop-filter:blur(28px) saturate(135%);box-shadow:0 18px 65px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.07)}
+:root[data-theme="light"] .main-navigation{background:rgba(248,243,233,.86)}
+.main-navigation__monogram{border-radius:50%;background:linear-gradient(145deg,#ead8b9,#9d7a4d);color:#1a1510;border:1px solid rgba(255,255,255,.3)}
+.main-navigation__desktop a{font-size:10px;letter-spacing:.13em;transition:color .35s ease,transform .35s var(--zee-ease)}
+.main-navigation__desktop a:hover{color:var(--cobalt);transform:translateY(-2px)}
+.main-navigation__theme,.main-navigation__toggle{border:1px solid var(--line);border-radius:999px}
+.hero-portrait{min-height:min(1000px,max(820px,100svh));padding-top:clamp(145px,16vh,190px);background:radial-gradient(ellipse at 78% 34%,rgba(185,145,91,.16),transparent 36%),radial-gradient(ellipse at 12% 75%,rgba(115,124,139,.09),transparent 38%),linear-gradient(122deg,#08090c 0%,#111116 56%,#08090b 100%)}
+:root[data-theme="light"] .hero-portrait{background:radial-gradient(ellipse at 78% 34%,rgba(173,135,82,.14),transparent 36%),linear-gradient(125deg,#eee9df,#e6dfd3 62%,#f4eee4)}
+.hero-portrait::before{opacity:.2;background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 65%),linear-gradient(180deg,transparent 65%,var(--paper))}
+.hero-portrait__inner{grid-template-columns:minmax(0,1.08fr) minmax(310px,.76fr);gap:clamp(48px,7vw,118px)}
+.hero-portrait__title{font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(100px,13vw,190px)!important;line-height:.72!important;letter-spacing:-.075em!important;font-weight:500!important}
+.hero-portrait__title span:first-child{color:#f1eee8}
+.hero-portrait__title span:last-child{margin-left:clamp(28px,5vw,82px);color:#c8a879!important;background:linear-gradient(110deg,#f0dfc1,#c8a879 58%,#8f714b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme="light"] .hero-portrait__title span:first-child{color:#24201b}
+.hero-portrait__kicker,.section-kicker{letter-spacing:.22em}.hero-portrait__roles{margin-top:38px;letter-spacing:.19em}
+.hero-portrait__statement{border-left-color:var(--cobalt)}.hero-portrait__statement p{font-family:Manrope,sans-serif;font-size:clamp(16px,1.3vw,20px);line-height:1.65;letter-spacing:.11em}.hero-portrait__statement em{color:var(--cobalt);font-style:normal}
+.enter-frame-button{border-radius:999px;border:1px solid rgba(232,210,175,.62);background:linear-gradient(130deg,#e7d1ad,#b28a59);color:#19140e;box-shadow:0 10px 35px rgba(185,145,91,.18);transition:transform .55s var(--zee-ease),box-shadow .55s ease}
+.enter-frame-button:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(185,145,91,.3)}
+.hero-portrait__frame{border:1px solid rgba(225,207,176,.38);border-radius:4px;box-shadow:18px 18px 0 rgba(183,145,94,.13),0 45px 110px rgba(0,0,0,.52)}
+.hero-portrait__frame img{filter:saturate(.78) contrast(1.06);transition:filter .8s ease,transform 1.4s var(--zee-ease)}.hero-portrait__frame:hover img{filter:saturate(1) contrast(1.04);transform:scale(1.025)}
+.hero-portrait__depth-orbit{border-color:rgba(211,179,132,.2)!important}.hero-portrait__depth-core{background:#d0ad79!important;box-shadow:0 0 26px #c8a879,0 0 90px rgba(200,168,121,.42)!important}
+.hero-portrait__visual::before{background:radial-gradient(ellipse,rgba(198,160,107,.17),transparent 65%)}.hero-portrait__footer{border-color:var(--line)}
+.section-light,.section-dark{padding-block:clamp(92px,10vw,158px)}.section-light{background:var(--paper);color:var(--ink)}
+.section-dark,.filmmaking-practice{background:radial-gradient(ellipse at 85% 0%,rgba(188,147,92,.08),transparent 35rem),linear-gradient(180deg,#0b0b0e,#08090b);color:#f2eee7}
+:root[data-theme="light"] .section-light{background:#eee9df;color:#201d19}:root[data-theme="light"] .section-dark{background:#201d19;color:#f4eee4}
+.section-heading h2,.on-set__intro h2,.off-set__content h2,.frame-archive__heading h2,.academy__intro h2,.contact h2,.message-from-zee__copy h2{font-family:'Cormorant Garamond',Georgia,serif!important;font-weight:500!important;letter-spacing:-.055em!important;line-height:.98!important}
+.section-heading h2 em,.on-set__intro h2 em,.off-set__content h2 em,.frame-archive__heading h2 em,.message-from-zee__copy h2 em{color:var(--cobalt)!important}
+.message-from-zee__bio,.section-heading>p{max-width:60ch;line-height:1.95}
+.message-from-zee__image,.film-card__image-wrap,.off-set__portrait-wrap{border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.film-card__image-wrap img{filter:saturate(.78) contrast(1.07);transition:transform 1s var(--zee-ease),filter .7s ease}
+.film-card:hover .film-card__image-wrap img{transform:scale(1.045);filter:saturate(1) contrast(1.04)}
+.film-card__meta strong{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.55rem;font-weight:500}
+.filmmaking-practice__step,.filmmaking-practice__tools,.filmmaking-practice__project,.academy__features,.contact-form{border-color:var(--line)}
+.future-projects__list li{border-color:var(--line);transition:background .4s ease,padding .4s var(--zee-ease)}
+.future-projects__list li:hover{background:rgba(200,168,121,.055);padding-inline:12px}
+.contact-form input,.contact-form textarea{border-color:var(--line);background:rgba(255,255,255,.035);color:inherit}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--cobalt);box-shadow:0 0 0 3px rgba(200,168,121,.1)}
+.submit-button{border-radius:999px;background:linear-gradient(130deg,#e7d1ad,#b28a59);color:#19140e}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--cobalt);outline-offset:4px}
+@keyframes zeeRise{from{opacity:0;transform:translate3d(0,26px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.hero-portrait__kicker{animation:zeeRise .8s var(--zee-ease) both}.hero-portrait__title{animation:zeeRise 1.05s .08s var(--zee-ease) both}
+.hero-portrait__roles{animation:zeeRise .9s .2s var(--zee-ease) both}.hero-portrait__statement{animation:zeeRise .9s .32s var(--zee-ease) both}
+.enter-frame-button,.hero-portrait__work-link{animation:zeeRise .9s .44s var(--zee-ease) both}.hero-portrait__visual{animation:zeeRise 1.2s .16s var(--zee-ease) both}
+@media(max-width:900px){.hero-portrait{min-height:auto;padding-top:130px}.hero-portrait__inner{grid-template-columns:1fr;gap:46px}.hero-portrait__copy{padding-bottom:0}.hero-portrait__title{font-size:clamp(82px,18vw,140px)!important}.hero-portrait__visual{width:min(78%,460px);margin-inline:auto}}
+@media(max-width:600px){.main-navigation{top:8px;width:calc(100% - 16px);min-height:58px;padding:8px 12px}.hero-portrait{padding-top:112px}.hero-portrait__title{font-size:clamp(70px,19vw,112px)!important}.hero-portrait__roles{font-size:10px;line-height:1.8}.hero-portrait__visual{width:min(92%,420px)}.hero-portrait__footer{display:flex;flex-wrap:wrap;gap:12px 20px}.section-light,.section-dark{padding-block:76px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
