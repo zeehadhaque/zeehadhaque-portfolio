@@ -78,10 +78,42 @@ body::before,
   filter: none !important;
 }
 
-/* Scroll stays native; no smooth-scroll animation fighting wheel input. */
+/* Native wheel/touch scrolling stays untouched; anchor navigation uses smooth scrolling. */
 html,
 :root {
-  scroll-behavior: auto !important;
+  scroll-behavior: smooth !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  :root,
+  body {
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  /* The background still has depth, but avoids costly desktop pointer tracking. */
+  .immersive-world__scanline {
+    display: none !important;
+  }
+
+  .immersive-rig {
+    opacity: .38;
+  }
+
+  .motion-cursor {
+    display: none !important;
+  }
+
+  .auteur-site > section .auteur-shell {
+    transform: none !important;
+    translate: none !important;
+  }
+
+  [data-parallax] {
+    translate: none !important;
+  }
 }
 
 /* Preserve intentional short UI transitions without perpetual compositing hints. */
@@ -89,4 +121,33 @@ html,
 .motion-reveal.is-motion-visible {
   will-change: auto !important;
   filter: none !important;
+}
+
+
+/* The deferred Academy keeps its section footprint while its code and CSS load. */
+.auteur-academy > .academy-deferred {
+  min-height: 100svh;
+}
+
+.academy-deferred__placeholder,
+.academy-deferred__loading {
+  min-height: 100svh;
+}
+
+.academy-deferred__loading {
+  display: grid;
+  place-items: center;
+  padding: 3rem 1.5rem;
+  color: #9db9dc;
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .academy-deferred__loading {
+    letter-spacing: .08em;
+    font-size: .7rem;
+  }
 }
