@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://zeehadhaque-filmmaker.khayrulislamzeehad.workers.dev/sitemap.xml
