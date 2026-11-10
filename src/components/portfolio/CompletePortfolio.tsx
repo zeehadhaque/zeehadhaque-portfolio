@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
-import { AcademySection } from "../academy/AcademySection";
+import { DeferredAcademy } from "../academy/DeferredAcademy";
 import {
   filmProjects,
   futureProjects,
@@ -183,7 +183,7 @@ export function CompletePortfolio() {
               <article className="auteur-film-card" data-reveal data-parallax="9" key={film.id}>
                 <button type="button" onClick={(event) => openFilm(film, event)} aria-label={`Watch ${knownFilmTitles[film.videoId] ?? `selected film ${index + 1}`}`}>
                   <span className="auteur-film-card__image">
-                    <img src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`} alt={knownFilmTitles[film.videoId] ? `${knownFilmTitles[film.videoId]} film still` : `Film still ${index + 1} from Zeehad Haque's filmography`} loading="lazy" width="480" height="360" />
+                    <img src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`} alt={knownFilmTitles[film.videoId] ? `${knownFilmTitles[film.videoId]} film still` : `Film still ${index + 1} from Zeehad Haque's filmography`} loading="lazy" decoding="async" fetchPriority="low" width="480" height="360" />
                     <span className="auteur-film-card__number">0{index + 1}</span><span className="auteur-film-card__play">↗</span>
                   </span>
                   <span className="auteur-film-card__meta"><strong>{knownFilmTitles[film.videoId] ?? `SELECTED FILM / 0${index + 1}`}</strong><small>{film.isShort ? "SHORT FORM" : film.title ? "TEASER" : "SHORT FILM / VISUAL STUDY"}</small></span>
@@ -202,7 +202,7 @@ export function CompletePortfolio() {
           <div className="auteur-frame-wall">
             {filmProjects.map((film, index) => (
               <a className={`auteur-frame auteur-frame--${(index % 4) + 1}`} data-reveal data-parallax="6" href={film.sourceUrl} target="_blank" rel="noreferrer" key={film.id}>
-                <img src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`} alt={`Cinematic frame ${index + 1} from Zeehad Haque's selected film work`} loading="lazy" width="480" height="360" />
+                <img src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`} alt={`Cinematic frame ${index + 1} from Zeehad Haque's selected film work`} loading="lazy" decoding="async" fetchPriority="low" width="480" height="360" />
                 <span><b>FRAME / 0{index + 1}</b><i>OPEN SOURCE ↗</i></span>
               </a>
             ))}
@@ -222,7 +222,7 @@ export function CompletePortfolio() {
 
       <section className="auteur-beyond auteur-paper" id="off-set" aria-labelledby="beyond-title">
         <div className="auteur-shell auteur-beyond__grid">
-          <div className="auteur-beyond__image" data-reveal data-parallax="10"><img src={portraitAsset} alt="Zeehad Haque outside the film set" loading="lazy" width="1565" height="2400" /><span>BEYOND THE SET / PERSONAL ARCHIVE</span></div>
+          <div className="auteur-beyond__image" data-reveal data-parallax="10"><img src={portraitAsset} alt="Zeehad Haque outside the film set" loading="lazy" decoding="async" fetchPriority="low" width="1565" height="2400" /><span>BEYOND THE SET / PERSONAL ARCHIVE</span></div>
           <div className="auteur-beyond__copy" data-reveal><div className="auteur-section-top"><span>05 / BEYOND THE CAMERA</span><span>OBSERVATION & MEMORY</span></div><p className="auteur-eyebrow auteur-eyebrow--dark">THE PERSON, NOT JUST THE ROLE</p><h2 id="beyond-title">Always looking.<br /><em>Always learning.</em></h2><p className="auteur-beyond__lead">The camera can rest. Observation doesn't.</p><p>{siteIdentity.workingMethod}</p><p>Places, gestures, sounds and the changing quality of light become notes for the next scene. The work begins long before a camera starts recording.</p><a className="auteur-inline-link" href="#projects">Explore the stories in development <span>↗</span></a></div>
         </div>
       </section>
@@ -248,7 +248,7 @@ export function CompletePortfolio() {
         </div>
       </section>
 
-      <section className="auteur-academy" id="academy" aria-label="Zee Filmmaking Academy"><AcademySection /></section>
+      <section className="auteur-academy" id="academy" aria-label="Zee Filmmaking Academy"><DeferredAcademy /></section>
 
       <section className="auteur-contact auteur-night" id="contact" aria-labelledby="contact-title">
         <div className="auteur-shell">
