@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { LoadingCurtain } from "../components/motion/LoadingCurtain";
+import { ImmersiveWorld } from "../components/motion/ImmersiveWorld";
+import { MotionDirector } from "../components/motion/MotionDirector";
 import { MainFooter } from "../components/layout/MainFooter";
 import { SkipLink } from "../components/layout/SkipLink";
 import { SiteNavigation } from "../components/navigation/SiteNavigation";
@@ -52,7 +54,9 @@ export function App() {
   }, [isNavigationOpen]);
 
   return (
-    <div className="app-shell" data-reduced-motion={reducedMotion} data-theme={theme}>
+    <div className="app-shell immersive-app" data-reduced-motion={reducedMotion} data-theme={theme}>
+      <ImmersiveWorld />
+      <MotionDirector />
       <SkipLink />
       <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} ready={isPortraitReady} onComplete={() => setIsLoading(false)} />
       <SiteNavigation

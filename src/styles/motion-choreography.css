@@ -1,0 +1,123 @@
+/* SCROLL CHOREOGRAPHY + INTERACTION PHYSICS */
+:root{
+  --scroll-progress:0;
+  --scroll-velocity:0;
+  --camera-yaw:0deg;
+  --camera-pitch:0deg;
+  --camera-travel:0px;
+  --scroll-energy:0;
+  --project-origin-x:0px;
+  --project-origin-y:0px;
+}
+.immersive-world{
+  transform:perspective(1400px) rotateX(var(--camera-pitch)) rotateY(var(--camera-yaw)) translate3d(0,calc(var(--camera-travel)*-.08),0) scale(calc(1 + var(--scroll-energy)*.008));
+  transform-origin:50% 48%;
+  will-change:transform;
+}
+.immersive-rig{
+  position:fixed;z-index:-1;inset:0;overflow:hidden;pointer-events:none;
+  perspective:1400px;transform-style:preserve-3d;opacity:.72;
+}
+.immersive-rig__portal{
+  position:absolute;left:50%;top:48%;width:min(62vw,760px);aspect-ratio:1;
+  border:1px solid rgba(125,174,232,.09);border-radius:50%;
+  transform-style:preserve-3d;
+  transform:translate3d(-50%,-50%,0) rotateX(calc(68deg + var(--camera-pitch))) rotateY(var(--camera-yaw)) translateZ(calc(var(--camera-travel)*-.28));
+  box-shadow:0 0 110px rgba(63,119,188,.08),inset 0 0 90px rgba(83,139,207,.045);
+  transition:filter .4s;
+}
+.immersive-rig__portal:before,.immersive-rig__portal:after,.immersive-rig__portal span,.immersive-rig__portal i,.immersive-rig__portal b{
+  content:"";position:absolute;inset:9%;border:1px solid rgba(143,190,244,.12);border-radius:50%;transform:rotateZ(30deg);
+}
+.immersive-rig__portal:after{inset:20%;transform:rotateZ(-24deg) rotateY(36deg);border-color:rgba(143,190,244,.16)}
+.immersive-rig__portal span{inset:30%;transform:rotateY(62deg) rotateX(24deg);border-color:rgba(143,190,244,.19)}
+.immersive-rig__portal i{inset:2%;transform:rotateY(82deg) rotateX(38deg);border-color:rgba(143,190,244,.07)}
+.immersive-rig__portal b{inset:40%;background:radial-gradient(circle,rgba(119,170,233,.1),transparent 70%);border:0}
+.immersive-rig__axis{position:absolute;left:50%;top:50%;width:130vw;height:1px;background:linear-gradient(90deg,transparent,rgba(132,179,236,.11),transparent);transform:translate(-50%,-50%) rotate(calc(-18deg + var(--camera-yaw))) translateZ(-180px)}
+.immersive-rig__axis--two{transform:translate(-50%,-50%) rotate(72deg) translateZ(-300px);opacity:.5}
+.auteur-site>section{position:relative;isolation:isolate;transform-style:preserve-3d}
+.auteur-site>section:before{
+  content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:calc(var(--scene-focus,0)*.35);
+  background:radial-gradient(ellipse at 50% 48%,rgba(88,142,207,.07),transparent 62%);
+  transition:opacity .2s linear;
+}
+.auteur-site>section .auteur-shell{
+  transform:perspective(1800px) translate3d(0,calc(var(--scene-distance,0)*-9px),0) rotateX(calc(var(--scene-distance,0)*-.22deg));
+  transform-origin:50% 50%;transform-style:preserve-3d;
+  will-change:transform;
+}
+[data-parallax]{
+  translate:var(--parallax-x,0px) var(--parallax-y,0px);
+  transition:translate .7s cubic-bezier(.16,1,.3,1),filter .7s;
+  transform-style:preserve-3d;
+}
+.auteur-hero__portrait{transform:translate3d(0,0,42px);will-change:translate,transform}
+.auteur-hero__copy{transform:translateZ(22px)}
+.auteur-film-card,.auteur-frame,.auteur-craft-card{transform-style:preserve-3d;transition:transform .8s cubic-bezier(.16,1,.3,1),filter .6s}
+.auteur-film-card:hover,.auteur-frame:hover,.auteur-craft-card:hover{transform:perspective(900px) translate3d(0,-7px,26px) rotateX(1deg)}
+.auteur-film-card__image{transform:translateZ(12px);backface-visibility:hidden}
+.auteur-film-card__meta{transform:translateZ(20px)}
+.auteur-frame img{transform:translateZ(12px)}
+.auteur-button,.auteur-text-link,.main-navigation__desktop a,.main-navigation__brand,.auteur-film-card button,.auteur-inline-link,.auteur-contact-form__submit button,.main-navigation__theme,.main-navigation__toggle{
+  translate:var(--mag-x,0px) var(--mag-y,0px);
+  transition:translate .38s cubic-bezier(.2,1.4,.4,1),color .35s,background .35s,border-color .35s,box-shadow .35s;
+  will-change:translate;
+}
+.motion-cursor{
+  position:fixed;z-index:9999;left:0;top:0;width:1px;height:1px;opacity:0;
+  pointer-events:none;mix-blend-mode:screen;transition:opacity .2s;
+}
+.motion-cursor__ring{
+  position:absolute;left:0;top:0;width:35px;height:35px;border:1px solid rgba(180,214,255,.8);
+  border-radius:50%;transform:translate(-50%,-50%);transition:width .35s cubic-bezier(.16,1,.3,1),height .35s cubic-bezier(.16,1,.3,1),background .3s,border-color .3s;
+  box-shadow:0 0 22px rgba(119,174,239,.13);
+}
+.motion-cursor__dot{position:absolute;left:0;top:0;width:4px;height:4px;border-radius:50%;background:#e6f2ff;transform:translate(-50%,-50%)}
+.motion-cursor.is-hovering .motion-cursor__ring{width:64px;height:64px;background:rgba(111,165,229,.1);border-color:#e4f1ff}
+.motion-cursor.is-pressed .motion-cursor__ring{width:25px;height:25px;background:rgba(190,219,255,.25)}
+body.motion-cursor-active,body.motion-cursor-active a,body.motion-cursor-active button{cursor:none!important}
+body.motion-cursor-active input,body.motion-cursor-active textarea{cursor:text!important}
+.page-transition{
+  position:fixed;z-index:8000;inset:0;display:grid;place-items:center;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(24,48,78,.96),rgba(3,7,14,.99) 70%);
+  clip-path:inset(100% 0 0 0);opacity:0;transform:translateZ(0);
+}
+.page-transition span{color:#c8ddfa;font-size:9px;letter-spacing:.35em;text-transform:uppercase;opacity:0;transform:translateY(14px)}
+body.is-navigating .page-transition{animation:sceneCurtain .76s cubic-bezier(.76,0,.24,1) both}
+body.is-navigating .page-transition span{animation:sceneLabel .54s .12s ease both}
+@keyframes sceneCurtain{0%{clip-path:inset(100% 0 0 0);opacity:0}20%{opacity:1}52%{clip-path:inset(0 0 0 0);opacity:1}100%{clip-path:inset(0 0 100% 0);opacity:0}}
+@keyframes sceneLabel{0%{opacity:0;transform:translateY(14px)}35%,70%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-12px)}}
+.motion-stagger-item{
+  opacity:0;transform:translate3d(0,24px,0) rotateX(3deg);filter:blur(5px);
+  transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .95s cubic-bezier(.16,1,.3,1),filter .85s;
+  transition-delay:calc(var(--stagger-index,0)*85ms);
+}
+[data-reveal].is-visible .motion-stagger-item{opacity:1;transform:translate3d(0,0,0) rotateX(0);filter:blur(0)}
+.auteur-film-modal{perspective:1400px;backdrop-filter:blur(18px)}
+.auteur-film-modal__window{
+  transform-origin:center center;transform-style:preserve-3d;
+  animation:projectPortalIn .9s cubic-bezier(.16,1,.3,1) both;
+  box-shadow:0 40px 150px rgba(0,0,0,.75),0 0 100px rgba(96,151,220,.1);
+  overflow:hidden;
+}
+@keyframes projectPortalIn{
+  0%{opacity:0;transform:translate3d(var(--project-origin-x),var(--project-origin-y),-620px) scale(.14) rotateX(16deg) rotateY(-5deg);filter:blur(14px)}
+  62%{opacity:1;transform:translate3d(0,0,30px) scale(1.025) rotateX(-1deg);filter:blur(0)}
+  100%{opacity:1;transform:translate3d(0,0,0) scale(1) rotateX(0);filter:blur(0)}
+}
+.auteur-film-modal__visual{position:relative;max-height:120px;overflow:hidden;margin:-18px -18px 16px}
+.auteur-film-modal__visual img{display:block;width:100%;height:120px;object-fit:cover;filter:blur(2px) brightness(.42) saturate(.65);transform:scale(1.08)}
+.auteur-film-modal__visual span{position:absolute;left:18px;bottom:14px;color:#dceaff;font-size:8px;letter-spacing:.22em}
+.auteur-film-modal__window iframe{box-shadow:0 15px 50px rgba(0,0,0,.5)}
+@media(max-width:720px){
+  .immersive-rig__portal{width:110vw;opacity:.65}
+  .motion-cursor{display:none}
+  .auteur-site>section .auteur-shell{transform:none;will-change:auto}
+  [data-parallax]{translate:none!important}
+  .motion-stagger-item{transition-delay:calc(var(--stagger-index,0)*45ms)}
+}
+@media(prefers-reduced-motion:reduce){
+  .immersive-rig,.motion-cursor,.page-transition{display:none!important}
+  .auteur-site>section .auteur-shell,[data-parallax],.motion-stagger-item{transform:none!important;translate:none!important;transition:none!important;opacity:1!important;filter:none!important}
+  body.motion-cursor-active,body.motion-cursor-active a,body.motion-cursor-active button{cursor:auto!important}
+}

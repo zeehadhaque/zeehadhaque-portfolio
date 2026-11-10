@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import { AcademySection } from "../academy/AcademySection";
 import {
   filmProjects,
@@ -35,8 +35,21 @@ export function CompletePortfolio() {
   const [formState, setFormState] = useState<FormState>("idle");
   const [formMessage, setFormMessage] = useState("");
 
+  const openFilm = (film: FilmProject, event: MouseEvent<HTMLButtonElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    document.documentElement.style.setProperty("--project-origin-x", `${rect.left + rect.width / 2 - window.innerWidth / 2}px`);
+    document.documentElement.style.setProperty("--project-origin-y", `${rect.top + rect.height / 2 - window.innerHeight / 2}px`);
+    setSelectedFilm(film);
+  };
+
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    elements.forEach((element) => {
+      Array.from(element.children).forEach((child, index) => {
+        (child as HTMLElement).classList.add("motion-stagger-item");
+        (child as HTMLElement).style.setProperty("--stagger-index", String(index));
+      });
+    });
     if (!("IntersectionObserver" in window)) {
       elements.forEach((element) => element.classList.add("is-visible"));
       return;
@@ -105,7 +118,7 @@ export function CompletePortfolio() {
         <div className="auteur-hero__grain" aria-hidden="true" />
         <div className="auteur-hero__index" aria-hidden="true">INDEPENDENT CINEMA / 001</div>
         <div className="auteur-shell auteur-hero__layout">
-          <div className="auteur-hero__copy">
+          <div className="auteur-hero__copy" data-parallax="7">
             <p className="auteur-eyebrow"><span /> INDEPENDENT FILMMAKER · BANGLADESH</p>
             <h1 id="auteur-title" className="auteur-hero__title">
               <span>Zeehad</span>
@@ -121,7 +134,7 @@ export function CompletePortfolio() {
               <span>GAZIPUR</span><span className="auteur-hero__signature-line" /><span>DHAKA, BANGLADESH</span>
             </div>
           </div>
-          <div className="auteur-hero__portrait" data-reveal>
+          <div className="auteur-hero__portrait" data-reveal data-parallax="13">
             <div className="auteur-hero__portrait-top"><span>PORTRAIT / 01</span><span>THE PERSON BEHIND THE FRAME</span></div>
             <figure>
               <img src={identityPortraitAsset} alt="Zeehad Haque — independent filmmaker, director, writer and cinematographer from Bangladesh" width="1565" height="2400" fetchPriority="high" />
@@ -167,8 +180,8 @@ export function CompletePortfolio() {
           </div>
           <div className="auteur-film-grid">
             {filmProjects.map((film, index) => (
-              <article className="auteur-film-card" data-reveal key={film.id}>
-                <button type="button" onClick={() => setSelectedFilm(film)} aria-label={`Watch ${knownFilmTitles[film.videoId] ?? `selected film ${index + 1}`}`}>
+              <article className="auteur-film-card" data-reveal data-parallax="9" key={film.id}>
+                <button type="button" onClick={(event) => openFilm(film, event)} aria-label={`Watch ${knownFilmTitles[film.videoId] ?? `selected film ${index + 1}`}`}>
                   <span className="auteur-film-card__image">
                     <img src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`} alt={knownFilmTitles[film.videoId] ? `${knownFilmTitles[film.videoId]} film still` : `Film still ${index + 1} from Zeehad Haque's filmography`} loading="lazy" width="480" height="360" />
                     <span className="auteur-film-card__number">0{index + 1}</span><span className="auteur-film-card__play">↗</span>
@@ -188,7 +201,7 @@ export function CompletePortfolio() {
           <div className="auteur-frames__heading" data-reveal><h2 id="frames-title">The world<br /><em>in frames.</em></h2><p>Light, texture, distance and stillness. A collection of visual fragments from the films and the worlds around them.</p></div>
           <div className="auteur-frame-wall">
             {filmProjects.map((film, index) => (
-              <a className={`auteur-frame auteur-frame--${(index % 4) + 1}`} data-reveal href={film.sourceUrl} target="_blank" rel="noreferrer" key={film.id}>
+              <a className={`auteur-frame auteur-frame--${(index % 4) + 1}`} data-reveal data-parallax="6" href={film.sourceUrl} target="_blank" rel="noreferrer" key={film.id}>
                 <img src={`https://i.ytimg.com/vi/${film.videoId}/hqdefault.jpg`} alt={`Cinematic frame ${index + 1} from Zeehad Haque's selected film work`} loading="lazy" width="480" height="360" />
                 <span><b>FRAME / 0{index + 1}</b><i>OPEN SOURCE ↗</i></span>
               </a>
@@ -209,7 +222,7 @@ export function CompletePortfolio() {
 
       <section className="auteur-beyond auteur-paper" id="off-set" aria-labelledby="beyond-title">
         <div className="auteur-shell auteur-beyond__grid">
-          <div className="auteur-beyond__image" data-reveal><img src={portraitAsset} alt="Zeehad Haque outside the film set" loading="lazy" width="1565" height="2400" /><span>BEYOND THE SET / PERSONAL ARCHIVE</span></div>
+          <div className="auteur-beyond__image" data-reveal data-parallax="10"><img src={portraitAsset} alt="Zeehad Haque outside the film set" loading="lazy" width="1565" height="2400" /><span>BEYOND THE SET / PERSONAL ARCHIVE</span></div>
           <div className="auteur-beyond__copy" data-reveal><div className="auteur-section-top"><span>05 / BEYOND THE CAMERA</span><span>OBSERVATION & MEMORY</span></div><p className="auteur-eyebrow auteur-eyebrow--dark">THE PERSON, NOT JUST THE ROLE</p><h2 id="beyond-title">Always looking.<br /><em>Always learning.</em></h2><p className="auteur-beyond__lead">The camera can rest. Observation doesn't.</p><p>{siteIdentity.workingMethod}</p><p>Places, gestures, sounds and the changing quality of light become notes for the next scene. The work begins long before a camera starts recording.</p><a className="auteur-inline-link" href="#projects">Explore the stories in development <span>↗</span></a></div>
         </div>
       </section>
@@ -255,7 +268,7 @@ export function CompletePortfolio() {
         </div>
       </section>
 
-      {selectedFilm && <div className="auteur-film-modal" role="dialog" aria-modal="true" aria-label={knownFilmTitles[selectedFilm.videoId] ?? "Selected film"}><button className="auteur-film-modal__backdrop" type="button" onClick={() => setSelectedFilm(null)} aria-label="Close film viewer" /><div className="auteur-film-modal__window"><div><span>{knownFilmTitles[selectedFilm.videoId] ?? "SELECTED FILM"}</span><button type="button" onClick={() => setSelectedFilm(null)} aria-label="Close">×</button></div><iframe title={knownFilmTitles[selectedFilm.videoId] ?? "Selected film"} src={`https://www.youtube-nocookie.com/embed/${selectedFilm.videoId}?rel=0&modestbranding=1`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /><a href={selectedFilm.sourceUrl} target="_blank" rel="noreferrer">OPEN ORIGINAL SOURCE ↗</a></div></div>}
+      {selectedFilm && <div className="auteur-film-modal is-project-transition" role="dialog" aria-modal="true" aria-label={knownFilmTitles[selectedFilm.videoId] ?? "Selected film"}><button className="auteur-film-modal__backdrop" type="button" onClick={() => setSelectedFilm(null)} aria-label="Close film viewer" /><div className="auteur-film-modal__window"><div className="auteur-film-modal__visual"><img src={`https://i.ytimg.com/vi/${selectedFilm.videoId}/hqdefault.jpg`} alt="" /><span>PROJECT / SELECTED FRAME</span></div><div><span>{knownFilmTitles[selectedFilm.videoId] ?? "SELECTED FILM"}</span><button type="button" onClick={() => setSelectedFilm(null)} aria-label="Close">×</button></div><iframe title={knownFilmTitles[selectedFilm.videoId] ?? "Selected film"} src={`https://www.youtube-nocookie.com/embed/${selectedFilm.videoId}?rel=0&modestbranding=1`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /><a href={selectedFilm.sourceUrl} target="_blank" rel="noreferrer">OPEN ORIGINAL SOURCE ↗</a></div></div>}
     </main>
   );
 }

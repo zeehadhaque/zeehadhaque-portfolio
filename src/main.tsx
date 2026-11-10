@@ -16,6 +16,8 @@ import "./styles/performance-safety.css";
 import "./styles/warm-luminous-auteur.css";
 import "./styles/zeehaque-auteur-identity.css";
 import "./styles/zeehaque-complete-portfolio.css";
+import "./styles/immersive-world.css";
+import "./styles/motion-choreography.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/App";
