@@ -9,6 +9,7 @@ export function ImmersiveWorld() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let width = 0, height = 0, frame = 0, raf = 0;
     let pointer = { x: -1000, y: -1000 };
+    let scrollProgress = 0;
     const trail: {x:number;y:number;life:number}[] = [];
     const nodes = Array.from({length: reduced ? 24 : 58}, (_,i) => ({
       x: Math.random(), y: Math.random(), z: Math.random(), phase: i * 0.73
@@ -31,9 +32,10 @@ export function ImmersiveWorld() {
       const g = ctx.createRadialGradient(width*.52,height*.48,0,width*.52,height*.48,Math.max(width,height)*.78);
       g.addColorStop(0,"rgba(28,43,70,.32)"); g.addColorStop(.55,"rgba(8,13,24,.18)"); g.addColorStop(1,"rgba(2,4,9,.86)");
       ctx.fillStyle=g; ctx.fillRect(0,0,width,height);
+      const cameraTravel = reduced ? 0 : scrollProgress * height * .18;
       const projected = nodes.map(n => {
         const drift = reduced ? 0 : Math.sin(frame*.003+n.phase)*.018;
-        const x=(n.x+drift)*width, y=(n.y+Math.cos(frame*.002+n.phase)*.014)*height;
+        const x=(n.x+drift)*width, y=(n.y+Math.cos(frame*.002+n.phase)*.014)*height-cameraTravel*(.22+n.z*.78);
         return {x,y,r: .6+n.z*1.5};
       });
       ctx.lineWidth=.6;
@@ -62,10 +64,15 @@ export function ImmersiveWorld() {
       }
       raf=requestAnimationFrame(draw);
     };
-    resize(); draw();
+    const onScroll = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollProgress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+    };
+    resize(); onScroll(); draw();
+    window.addEventListener("scroll", onScroll, {passive:true});
     window.addEventListener("resize",resize,{passive:true});
     window.addEventListener("pointermove",move,{passive:true});
-    return ()=>{cancelAnimationFrame(raf);window.removeEventListener("resize",resize);window.removeEventListener("pointermove",move);};
+    return ()=>{cancelAnimationFrame(raf);window.removeEventListener("resize",resize);window.removeEventListener("pointermove",move);window.removeEventListener("scroll",onScroll);};
   },[]);
   return <div className="immersive-world" aria-hidden="true"><canvas ref={canvasRef}/><div className="immersive-world__vignette"/><div className="immersive-world__scanline"/></div>;
 }
