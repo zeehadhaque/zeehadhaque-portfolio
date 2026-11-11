@@ -13,6 +13,9 @@ const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
   <url>
     <loc>https://zeehadhaque.zeehadhaque.workers.dev/</loc>
   </url>
+  <url>
+    <loc>https://zeehadhaque.zeehadhaque.workers.dev/about/</loc>
+  </url>
 </urlset>
 `;
 
