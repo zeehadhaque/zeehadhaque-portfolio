@@ -24,6 +24,13 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Optimize hero portrait
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes webp
+          cwebp -quiet -q 82 -m 6 -resize 1200 0 public/assets/images/profile/zeehad-haque-filmmaker.jpg -o public/assets/images/profile/zeehad-haque-filmmaker.webp
+          test -s public/assets/images/profile/zeehad-haque-filmmaker.webp
+          ls -lh public/assets/images/profile/zeehad-haque-filmmaker.jpg public/assets/images/profile/zeehad-haque-filmmaker.webp
       - name: Type-check and build
         run: npm run build
       - name: Deploy Worker

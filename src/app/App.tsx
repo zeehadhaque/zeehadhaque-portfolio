@@ -7,7 +7,7 @@ import { SkipLink } from "../components/layout/SkipLink";
 import { SiteNavigation } from "../components/navigation/SiteNavigation";
 import { CompletePortfolio } from "../components/portfolio/CompletePortfolio";
 import { ZeeAIAssistant } from "../components/zee-ai/ZeeAIAssistant";
-import { identityPortraitAsset, navigationItems } from "../data/site";
+import { navigationItems } from "../data/site";
 import { useActiveSection } from "../hooks/useActiveSection";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
@@ -17,7 +17,6 @@ export function App() {
   const activeSection = useActiveSection(sectionIds);
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-  const [isPortraitReady, setIsPortraitReady] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => {
     try {
       return window.localStorage.getItem("zee-theme-v2") === "light" ? "light" : "dark";
@@ -30,25 +29,6 @@ export function App() {
   }, [theme]);
 
   useEffect(() => {
-    let settled = false;
-    const ready = () => {
-      if (settled) return;
-      settled = true;
-      setIsPortraitReady(true);
-    };
-    const portrait = new Image();
-    portrait.onload = ready;
-    portrait.onerror = ready;
-    portrait.src = identityPortraitAsset;
-    const fallback = window.setTimeout(ready, 1600);
-    return () => {
-      window.clearTimeout(fallback);
-      portrait.onload = null;
-      portrait.onerror = null;
-    };
-  }, []);
-
-  useEffect(() => {
     document.body.classList.toggle("navigation-is-open", isNavigationOpen);
     return () => document.body.classList.remove("navigation-is-open");
   }, [isNavigationOpen]);
@@ -58,7 +38,7 @@ export function App() {
       <ImmersiveWorld />
       <MotionDirector />
       <SkipLink />
-      <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} ready={isPortraitReady} onComplete={() => setIsLoading(false)} />
+      <LoadingCurtain visible={isLoading} reducedMotion={reducedMotion} ready={true} onComplete={() => setIsLoading(false)} />
       <SiteNavigation
         activeSection={activeSection}
         theme={theme}
