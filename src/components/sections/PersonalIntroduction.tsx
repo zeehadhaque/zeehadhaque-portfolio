@@ -38,7 +38,7 @@ export function PersonalIntroduction() {
             <span>{siteIdentity.roles}</span>
             <span>{siteIdentity.location}</span>
           </div>
-          <a className="message-from-zee__link" href="#on-set">Explore the process <span aria-hidden="true">↗</span></a>
+          <div className="message-from-zee__actions"><a className="message-from-zee__link" href="#on-set">Explore the process <span aria-hidden="true">↗</span></a><a className="message-from-zee__link" href="/about/">Read the official filmmaker profile <span aria-hidden="true">↗</span></a></div>
         </div>
       </div>
     </section>
