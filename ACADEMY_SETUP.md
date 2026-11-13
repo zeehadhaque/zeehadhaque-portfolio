@@ -1,14 +1,10 @@
 # Zee Filmmaking Academy — activation guide
 
-The Academy UI and API are implemented in the repository. Learner accounts, persisted progress, XP awards and access entitlements remain disabled until the Supabase migration and Cloudflare Worker variables below are configured.
+The Academy UI, API, Supabase project, database tables, row-level security policies and account endpoints are configured. Learner sign-up uses email confirmation; the production Auth redirect allowlist still needs the active Worker origin added before the verification link can return to the site.
 
-## 1. Apply the database migration
+## 1. Database status
 
-Open **Supabase Dashboard → SQL Editor**.
-
-1. If the project has not used the portfolio contact form before, run `supabase/migrations/001_contact_messages.sql` first.
-2. Run the complete file `supabase/migrations/002_zee_filmmaking_academy.sql` once.
-3. Confirm that the Academy tables and RPC functions were created.
+The production project `khagjlnczaihgkohmpmg` (`zee-filmmaking-academy`, Singapore) already has both SQL migrations applied: contact messages and Zee Filmmaking Academy. The Academy tables, 30-day answer key, RLS policies, bootstrap trigger and RPC functions were verified in the live database.
 
 The migration creates:
 - `academy_profiles` — verified learner profile metadata.
@@ -21,25 +17,17 @@ Row Level Security is enabled. Learners can read only their own profile/progress
 
 ## 2. Configure Cloudflare Worker variables
 
-Open **Cloudflare Dashboard → Workers & Pages → zeehadhaque-filmmaker → Settings → Variables and Secrets**.
+Supabase connection variables are already included in `wrangler.jsonc` as public Worker variables (`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`). The publishable key is specifically intended for client-facing use. The live `/api/academy` endpoint has been checked and returns `configured: true`.
 
-Add these production variables:
-
-| Name | Type | Value |
-|---|---|---|
-| `SUPABASE_URL` | Text | Supabase project URL, e.g. `https://<project-ref>.supabase.co` |
-| `SUPABASE_PUBLISHABLE_KEY` | Text | Supabase publishable key (legacy anon key is accepted as fallback) |
-| `GEMINI_API_KEY` | Secret | Gemini API key for the existing ZEE chat assistant |
-| `GEMINI_MODEL` | Text | Optional Gemini model name; the existing chat function has a default |
-
-Do not add a Supabase `service_role` key. The Worker verifies the user's access token with Supabase Auth and uses that user's token for database reads/RPC calls. It never needs the service-role credential. Keep `GEMINI_API_KEY` as a Cloudflare Secret; never place it in frontend code or Git.
+Keep `GEMINI_API_KEY` as a Cloudflare Secret for the separate ZEE chat assistant; do not place it in frontend code or Git. Do not add a Supabase `service_role` key. The Worker verifies each user's access token with Supabase Auth and uses that user's token for database reads/RPC calls.
 
 ## 3. Configure Supabase Auth URLs
 
 In **Supabase → Authentication → URL Configuration**:
 
-- Set the Site URL to the active Worker URL: `https://zeehadhaque-filmmaker.khayrulislamzeehad.workers.dev`.
-- Add the same Worker origin to the allowed Redirect URLs.
+- Set the Site URL to `https://zeehadhaque.zeehadhaque.workers.dev`.
+- Add `https://zeehadhaque.zeehadhaque.workers.dev` to the allowed Redirect URLs.
+- The signup handler sends Supabase email-confirmation redirects to the current Worker origin; Supabase will honor that URL after it is allowlisted.
 - After `zeehadhaque.eu.org` is approved and connected to the Worker, add `https://zeehadhaque.eu.org` as an allowed redirect and update the Site URL if it becomes the canonical URL.
 - Keep email confirmation enabled for learner accounts. The Academy only accepts a verified email session.
 
@@ -53,7 +41,7 @@ Cloudflare build settings:
 - Build command: `npm run build`
 - Deploy command: `npx wrangler deploy`
 
-Deploy from `main` after merging the Academy pull request. Confirm the build and deployment succeed before testing the API.
+Pushes to `main` trigger the existing GitHub Actions build and Cloudflare deployment. The Supabase variables are already committed in `wrangler.jsonc`; Cloudflare still requires the repository Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
 
 ## 5. First-run test
 
