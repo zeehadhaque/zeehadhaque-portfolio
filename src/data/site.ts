@@ -42,7 +42,7 @@ export const siteIdentity: SiteIdentity = {
   ],
 };
 
-export const identityPortraitAsset = "/assets/images/profile/zeehad-haque-filmmaker.webp";
+export const identityPortraitAsset = "/assets/images/profile/zeehad-haque-filmmaker.jpg";
 export const portraitAsset = "/assets/images/profile/zeehad-clean-portrait.png";
 
 export const navigationItems: readonly NavigationItem[] = [
