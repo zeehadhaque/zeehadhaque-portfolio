@@ -7,9 +7,15 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": [
+      "/api/*"
+    ]
   },
   "observability": {
     "enabled": true
+  },
+  "vars": {
+    "SUPABASE_URL": "https://khagjlnczaihgkohmpmg.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_lqi_R3QWs0pInCEemHAhoA_mrmM7i3v"
   }
 }
