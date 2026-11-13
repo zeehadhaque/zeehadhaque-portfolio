@@ -177,8 +177,26 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
       });
       const result = await response.json() as Record<string, unknown>;
       if (!response.ok) {
-        const message = typeof result.msg === "string" ? result.msg : typeof result.message === "string" ? result.message : "Account request failed. Check your details and try again.";
-        return json({ message: message.slice(0, 300) }, response.status === 429 ? 429 : 400);
+        const providerMessage = typeof result.msg === "string"
+          ? result.msg
+          : typeof result.message === "string"
+            ? result.message
+            : "Account request failed. Check your details and try again.";
+        const providerCode = typeof result.code === "string"
+          ? result.code
+          : typeof result.error_code === "string"
+            ? result.error_code
+            : "";
+        const lowerMessage = providerMessage.toLowerCase();
+        if (providerCode === "email_address_not_authorized" || lowerMessage.includes("email address not authorized")) {
+          return json({
+            message: "Academy email delivery is not enabled for public sign-ups yet. The current test mailer only sends to the Supabase organization's team addresses. The site owner needs to configure a custom SMTP provider.",
+          }, 503);
+        }
+        if (response.status === 429 || providerCode === "over_email_send_rate_limit" || lowerMessage.includes("email rate limit exceeded")) {
+          return json({ message: "The Academy has reached its email verification limit. Please try again later." }, 429);
+        }
+        return json({ message: providerMessage.slice(0, 300) }, 400);
       }
       return json(result, response.status);
     } catch { return json({ message: "Authentication service is temporarily unavailable." }, 502); }
