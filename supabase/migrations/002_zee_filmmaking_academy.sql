@@ -34,6 +34,9 @@ create table if not exists public.academy_attempts (
 );
 
 create index if not exists academy_attempts_user_time_idx on public.academy_attempts(user_id, attempted_at desc);
+create index if not exists academy_attempts_day_idx on public.academy_attempts(day);
+create index if not exists academy_day_progress_day_idx on public.academy_day_progress(day);
+create index if not exists academy_entitlements_granted_by_idx on public.academy_entitlements(granted_by);
 
 create table if not exists public.academy_entitlements (
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -67,7 +70,7 @@ as $$
   );
 $$;
 
-revoke all on function public.academy_is_verified_owner() from public;
+revoke all on function public.academy_is_verified_owner() from public, anon;
 grant execute on function public.academy_is_verified_owner() to authenticated;
 
 create or replace function public.academy_bootstrap_profile()
@@ -247,9 +250,10 @@ begin
 end;
 $$;
 
-revoke all on function public.academy_complete_day(smallint,smallint,text) from public;
-revoke all on function public.academy_grant_entitlement(uuid,text,integer,text) from public;
-revoke all on function public.academy_revoke_entitlement(uuid,text) from public;
+revoke all on function public.academy_bootstrap_profile() from public, anon, authenticated;
+revoke all on function public.academy_complete_day(smallint,smallint,text) from public, anon;
+revoke all on function public.academy_grant_entitlement(uuid,text,integer,text) from public, anon;
+revoke all on function public.academy_revoke_entitlement(uuid,text) from public, anon;
 grant execute on function public.academy_complete_day(smallint,smallint,text) to authenticated;
 grant execute on function public.academy_grant_entitlement(uuid,text,integer,text) to authenticated;
 grant execute on function public.academy_revoke_entitlement(uuid,text) to authenticated;
