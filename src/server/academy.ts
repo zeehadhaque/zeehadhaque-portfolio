@@ -155,7 +155,10 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
     let path: string;
     let payload: Record<string, unknown>;
     if (action === "signup") {
-      path = "/auth/v1/signup";
+      // Send confirmation links back to the same origin as this Worker.
+      // Supabase will honor this only after the origin is added to Auth URL allowlists.
+      const redirectTo = new URL(request.url).origin;
+      path = `/auth/v1/signup?redirect_to=${encodeURIComponent(redirectTo)}`;
       payload = { email, password, data: { display_name: String(body.displayName).trim().slice(0, 80) } };
     } else if (action === "refresh") {
       if (typeof body.refreshToken !== "string" || !body.refreshToken) return json({ message: "Session refresh token is missing. Sign in again." }, 401);
