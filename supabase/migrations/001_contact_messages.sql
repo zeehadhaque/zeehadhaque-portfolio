@@ -41,7 +41,7 @@ as $$
   );
 $$;
 
-revoke execute on function public.is_verified_zee_owner() from public;
+revoke execute on function public.is_verified_zee_owner() from public, anon;
 grant execute on function public.is_verified_zee_owner() to authenticated;
 
 drop policy if exists "verified Zeehad owner may read contact messages" on public.contact_messages;
