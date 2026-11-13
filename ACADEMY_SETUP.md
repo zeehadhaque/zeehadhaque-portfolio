@@ -31,7 +31,11 @@ In **Supabase → Authentication → URL Configuration**:
 - After `zeehadhaque.eu.org` is approved and connected to the Worker, add `https://zeehadhaque.eu.org` as an allowed redirect and update the Site URL if it becomes the canonical URL.
 - Keep email confirmation enabled for learner accounts. The Academy only accepts a verified email session.
 
-Supabase's email provider/template and SMTP deliverability are controlled by the Supabase project; confirm those are configured before inviting learners.
+The new free project currently has email/password sign-up enabled and email confirmation required. **Important:** Supabase's built-in SMTP only sends to addresses that belong to the Supabase organization and is limited to 2 messages/hour. This is a test-only mailer, not public learner email delivery. Configure a custom SMTP provider before opening registration to all learners.
+
+A no-cost SMTP option is SMTP2GO's free plan (1,000 emails/month, 200/day; 25/hour until a sender domain is verified). It supports verifying an individual sender email if you cannot configure DNS, though a verified sender domain gives better deliverability. Create the SMTP account, verify a sender, create SMTP credentials, then enter the host, port, username, password and From address in Supabase **Authentication → SMTP Settings**. Do not put SMTP credentials in Git or frontend code.
+
+Supabase's email templates and delivery are controlled by the project; new free-tier projects using the built-in email provider cannot customize the default Auth templates.
 
 ## 4. Build and deploy
 
