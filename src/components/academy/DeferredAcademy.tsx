@@ -13,9 +13,11 @@ export function DeferredAcademy() {
     const host = hostRef.current;
     if (!host) return;
 
+    const timer = window.setTimeout(() => setShouldLoad(true), 600);
+
     if (!("IntersectionObserver" in window)) {
       setShouldLoad(true);
-      return;
+      return () => window.clearTimeout(timer);
     }
 
     const observer = new IntersectionObserver(
@@ -25,11 +27,14 @@ export function DeferredAcademy() {
           observer.disconnect();
         }
       },
-      { rootMargin: "1200px 0px" },
+      { rootMargin: "1400px 0px" },
     );
 
     observer.observe(host);
-    return () => observer.disconnect();
+    return () => {
+      window.clearTimeout(timer);
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -38,7 +43,7 @@ export function DeferredAcademy() {
         <Suspense
           fallback={
             <div className="academy-deferred__loading" role="status">
-              Preparing the filmmaking academy…
+              Preparing Zee Filmmaking Academy…
             </div>
           }
         >

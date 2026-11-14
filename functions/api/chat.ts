@@ -1,3 +1,5 @@
+import { GoogleGenAI } from "@google/genai";
+
 interface CloudflareEnv {
   GEMINI_API_KEY?: string;
   GEMINI_MODEL?: string;
@@ -12,25 +14,28 @@ interface ChatBody {
   message?: unknown;
 }
 
-interface GeminiResult {
-  candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  error?: { message?: string; status?: string };
-}
-
 const MAX_MESSAGE_LENGTH = 1_000;
-const MAX_OUTPUT_TOKENS = 600;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 12;
-const DEFAULT_MODEL = "gemini-3.8-flash";
+const DEFAULT_MODEL = "gemini-3.1-flash-lite";
+const FALLBACK_MODEL = "gemini-4-hydrogen";
+
+const UNSUPPORTED_MODELS = new Set([
+  "gemini-3.8-flash",
+  "gemini-1.5-flash",
+  "gemini-1.5-pro",
+  "gemini-pro",
+  "gemini-2.0-flash",
+  "gemini-2.0-pro",
+  "gemini-2.0-flash-thinking",
+]);
 
 // Best-effort per-isolate limit. For shared/global limits, add Cloudflare Rate Limiting.
 const requestLog = new Map<string, { count: number; startedAt: number }>();
 
 const verifiedContext = `
-You are ZEE, the website assistant for filmmaker Zeehad Haque. You are not Zeehad.
-Use only the verified facts below. Never invent a biography, awards, credits, cast,
-crew, clients, reviews, ratings, release dates, achievements, personal history,
-film titles, or production information.
+You are ZEE, the website assistant for filmmaker Zeehad Haque inside his Grand Cinema Palace digital universe. You are not Zeehad.
+Use only the verified facts below (plus general, accurate filmmaking principles when explaining craft concepts). Never invent a biography, awards, credits, cast, crew, clients, reviews, ratings, release dates, achievements, personal history, unverified film titles, or production information.
 
 Verified facts:
 - Name: Zeehad Haque
@@ -39,17 +44,18 @@ Verified facts:
 - Email: zeehadhaque@gmail.com
 - WhatsApp: +8801629851155
 - Brand statement: I DON'T JUST CAPTURE FRAMES. I CREATE WORLDS.
-- The site contains eight supplied YouTube source links. The first seven titles
-  are not verified yet. One supplied title is Don't Go There — Teaser.
-- In-development projects: GHURPAK, ONUSONDHAN, SESH BIKEL: THE LAST MEETUP,
-  SHYAMOL DEEP, PROTIDDHONI, নক্ষত্রের ওপারে, ওই বাড়িটার সামনে যেও না, AUTOPSY.
-- Zee Filmmaking Academy is planned to support Bangla/English switching, a
-  filmmaking roadmap, a 30-day program, XP and ranks, lessons, examinations,
-  Cine-Arcade, interactive learning and admin-controlled entitlements.
+- Seven Grand Cinema Palace Destinations on the site:
+  1. Grand Foyer (#foyer): 4-shot cinema opening entrance, monumental architectural hall & identity typography (ZEEHAD HAQUE).
+  2. The Screening Hall (#screening-hall): IMAX-scale screening auditorium with eight archived YouTube works (SHADOW / III, Don't Go There — Teaser, and six selected archive reels). Never invent titles for the six untitled archive reels.
+  3. The Projection Room (#projection-room): Optical framing booth, fullscreen lightbox, framing, movement, craft & mobile-first toolkit (Redmi Note 14 Pro+ 5G, Blackmagic Camera, CapCut, DaVinci Resolve, FFmpeg).
+  4. The Director's Suite (#directors-suite): Biography, working method, development slate (GHURPAK, ONUSONDHAN, SESH BIKEL: THE LAST MEETUP, SHYAMOL DEEP, PROTIDDHONI, নক্ষত্রের ওপারে, ওই বাড়িটার সামনে যেও না, AUTOPSY).
+  5. Filmmaking Institute (#institute): Conservatory featuring a 30-day bilingual (English / বাংলা) curriculum with 12-topic roadmap, XP & ranks, learning streak & achievements, field reflections, examinations, Cine-Arcade, Advanced Lab, and admin-controlled entitlements.
+  6. Intelligence Chamber (#intelligence): ZEE AI interface embedded inside the palace's optical control wing.
+  7. The Grand Exit (#grand-exit): Monumental correspondence threshold & direct production channels.
 
-Personality: casual Bangladesh Banglish, friendly, warm, playful and helpful.
+Personality: casual Bangladesh Banglish, friendly, warm, sharp and helpful.
 If information is unavailable, say so naturally and suggest the visitor use the
-contact details or explore the relevant section. Keep replies concise.
+contact details or explore the relevant chamber. Keep replies concise (under 180 words).
 `;
 
 function jsonResponse(payload: unknown, status = 200): Response {
@@ -80,22 +86,38 @@ function isRateLimited(key: string): boolean {
   return current.count > MAX_REQUESTS_PER_WINDOW;
 }
 
+function extractStatusCode(error: unknown): number {
+  if (error && typeof error === "object" && "status" in error) {
+    const status = (error as { status?: unknown }).status;
+    if (typeof status === "number") return status;
+  }
+  return 502;
+}
+
 function isModelAvailabilityError(status: number, details: string): boolean {
-  if (status === 404 || status === 410) return true;
+  if (status === 404 || status === 410 || status === 504 || status === 408) return true;
   return status === 400 && /model|not found|not supported|unavailable|shut down|deprecated/i.test(details);
 }
 
-function providerErrorMessage(status: number): string {
-  if (status === 401 || status === 403) {
-    return "ZEE's AI connection needs its API key checked by the site owner.";
+function providerErrorMessage(status: number, details: string): string {
+  if (status === 401 || status === 403 || /API_KEY_INVALID|PERMISSION_DENIED|API key/i.test(details)) {
+    return "ZEE's AI connection needs a valid Gemini API key configured in Settings > Secrets.";
   }
-  if (status === 429) {
+  if (status === 429 || /RESOURCE_EXHAUSTED/i.test(details)) {
     return "ZEE is temporarily busy. Please try again in a minute.";
   }
-  if (status === 404 || status === 410) {
-    return "ZEE's selected AI model is unavailable. The site owner needs to check the model setting.";
+  if (status === 404 || status === 410 || /NOT_FOUND/i.test(details)) {
+    return "ZEE's selected AI model is unavailable. Please check the model setting.";
   }
   return "ZEE is having trouble reaching its AI service. Please try again shortly.";
+}
+
+function resolveModel(configured?: string): string {
+  const candidate = configured?.trim();
+  if (!candidate || UNSUPPORTED_MODELS.has(candidate)) {
+    return DEFAULT_MODEL;
+  }
+  return candidate;
 }
 
 export async function onRequestPost({ request, env }: PagesContext): Promise<Response> {
@@ -117,72 +139,58 @@ export async function onRequestPost({ request, env }: PagesContext): Promise<Res
 
   const apiKey = env.GEMINI_API_KEY?.trim();
   if (!apiKey) {
-    return jsonResponse({ message: "ZEE is not connected yet. The site owner needs to add the Gemini API key in Cloudflare." }, 503);
+    return jsonResponse({ message: "ZEE is not connected yet. Please configure GEMINI_API_KEY in Settings > Secrets." }, 503);
   }
 
-  const configuredModel = env.GEMINI_MODEL?.trim() || DEFAULT_MODEL;
-  const modelsToTry = configuredModel === DEFAULT_MODEL
-    ? [DEFAULT_MODEL]
-    : [configuredModel, DEFAULT_MODEL];
+  const ai = new GoogleGenAI({
+    apiKey,
+    httpOptions: {
+      timeout: 15_000,
+      retryOptions: { attempts: 2, initialDelay: 0.5 },
+      headers: {
+        "User-Agent": "aistudio-build",
+      },
+    },
+  });
 
-  try {
-    for (const model of modelsToTry) {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-      const geminiResponse = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
+  const configuredModel = resolveModel(env.GEMINI_MODEL);
+  const modelsToTry = Array.from(new Set([configuredModel, DEFAULT_MODEL, FALLBACK_MODEL]));
+
+  for (const model of modelsToTry) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: message,
+        config: {
+          systemInstruction: verifiedContext,
         },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: verifiedContext }] },
-          contents: [{ role: "user", parts: [{ text: message }] }],
-          generationConfig: {
-            temperature: 0.55,
-            maxOutputTokens: MAX_OUTPUT_TOKENS,
-          },
-        }),
       });
 
-      if (!geminiResponse.ok) {
-        const details = await geminiResponse.text();
-        // Never log the request URL: it contains the private API key.
-        console.error("Gemini request failed", {
-          model,
-          status: geminiResponse.status,
-          details: details.slice(0, 700),
-        });
-
-        const canTryFallback = model !== DEFAULT_MODEL
-          && isModelAvailabilityError(geminiResponse.status, details);
-        if (canTryFallback) continue;
-
-        return jsonResponse({
-          message: providerErrorMessage(geminiResponse.status),
-        }, 502);
-      }
-
-      const data = await geminiResponse.json() as GeminiResult;
-      const reply = data.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text ?? "").join("").trim();
-
+      const reply = response.text?.trim();
       if (!reply) {
-        console.error("Gemini returned an empty candidate", { model });
+        console.warn("Gemini returned an empty response", { model });
         return jsonResponse({
           message: "ZEE couldn't form a clear answer. Please try asking in a different way.",
         }, 502);
       }
 
       return jsonResponse({ reply: reply.slice(0, 3_000) });
-    }
+    } catch (error) {
+      const status = extractStatusCode(error);
+      const details = error instanceof Error ? error.message : String(error);
+      console.warn("Gemini request failed:", model, status, details.slice(0, 300));
 
-    return jsonResponse({
-      message: "ZEE's AI model is currently unavailable. Please try again later.",
-    }, 502);
-  } catch (error) {
-    console.error("Gemini connection error", error instanceof Error ? error.message : "Unknown error");
-    return jsonResponse({
-      message: "ZEE is unavailable right now. Please try again shortly.",
-    }, 502);
+      const isLastModel = model === modelsToTry[modelsToTry.length - 1];
+      const canTryFallback = !isLastModel && isModelAvailabilityError(status, details);
+      if (canTryFallback) continue;
+
+      return jsonResponse({
+        message: providerErrorMessage(status, details),
+      }, 502);
+    }
   }
+
+  return jsonResponse({
+    message: "ZEE's AI model is currently unavailable. Please try again later.",
+  }, 502);
 }

@@ -42,18 +42,15 @@ export const siteIdentity: SiteIdentity = {
   ],
 };
 
-export const identityPortraitAsset = "/assets/images/profile/zeehad-haque-filmmaker.jpg";
-export const portraitAsset = "/assets/images/profile/zeehad-clean-portrait.png";
+export const identityPortraitAsset = "/assets/images/profile/zeehad-obsidian-portrait.jpg";
+export const portraitAsset = "/assets/images/profile/zeehad-obsidian-portrait.jpg";
 
 export const navigationItems: readonly NavigationItem[] = [
-  { label: "Home", href: "#home" },
-  { label: "Films", href: "#films" },
-  { label: "Frames", href: "#frame-archive" },
-  { label: "On Set", href: "#on-set" },
-  { label: "Off Set", href: "#off-set" },
-  { label: "Projects", href: "#projects" },
-  { label: "Academy", href: "#academy" },
-  { label: "Contact", href: "#contact" },
+  { label: "Foyer", href: "#foyer" },
+  { label: "Screenings", href: "#screening-hall" },
+  { label: "Projection", href: "#projection-room" },
+  { label: "Suite", href: "#directors-suite" },
+  { label: "Institute", href: "#institute" },
 ];
 
 export const filmProjects: readonly FilmProject[] = [
