@@ -2,12 +2,13 @@ import type { FilmProject, FutureProject, NavigationItem, SiteIdentity } from ".
 
 export const siteIdentity: SiteIdentity = {
   name: "Zeehad Haque",
+  birthIdentity: "Zeehad Haque (born Khairul Islam Jihad on 23 July, 2004)",
   roles: "Director · Writer · Cinematographer · Editor",
   location: "Gazipur, Dhaka, Bangladesh",
   email: "zeehadhaque@gmail.com",
   whatsapp: "+8801629851155",
   statement: "I DON'T JUST CAPTURE FRAMES. I CREATE WORLDS.",
-  biography: "I’m an independent filmmaker from Gazipur, Bangladesh. I write, direct, shoot and edit stories shaped by psychological tension, visual silence and atmosphere. I’m drawn to the moments when framing, movement, light and sound can say what dialogue cannot.",
+  biography: "Zeehad Haque (born Khairul Islam Jihad on 23 July, 2004) is an independent filmmaker from Gazipur, Bangladesh. He writes, directs, shoots and edits stories shaped by psychological tension, visual silence and atmosphere. He is drawn to the moments when framing, movement, light and sound can say what dialogue cannot.",
   creativeFocus: [
     "Psychological suspense & mystery",
     "Visual silence & visual storytelling",
