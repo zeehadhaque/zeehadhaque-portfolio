@@ -82,7 +82,6 @@ function FramingDiagram({ className, ariaLabel }: { className: string; ariaLabel
       <rect className="frame-study__glass" x="8" y="9" width="384" height="162" rx="2" />
       <path className="frame-study__grid" d="M136 9V171 M264 9V171 M8 63H392 M8 117H392" />
 
-      {className === "frame-study__wide" ? null : null}
       {className.includes("wide") && (
         <>
           <path className="frame-study__guide" d="M136 9V171 M264 9V171 M8 63H392 M8 117H392" />
