@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Check, CheckCheck, ChevronRight, Inbox, LockKeyhole, LogOut, Mail, MailOpen, RefreshCw, Search, ShieldCheck, UserRound } from "lucide-react";
+import { Check, CheckCheck, ChevronRight, Inbox, Instagram, LockKeyhole, LogOut, Mail, MailOpen, RefreshCw, Search, ShieldCheck, UserRound } from "lucide-react";
 import "../styles/inbox.css";
 import { CastleUniverse } from "../components/three/CastleUniverse";
 import type { ChamberId } from "../utils/castleConfig";
@@ -9,6 +9,7 @@ const SUPABASE_URL = "https://khagjlnczaihgkohmpmg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_lqi_R3QWs0pInCEemHAhoA_mrmM7i3v";
 const OWNER_EMAIL = "zeehadhaque@gmail.com";
 const SESSION_KEY = "zee-owner-inbox-session-v1";
+const INSTAGRAM_URL = "https://www.instagram.com/heyyfalgun/";
 
 type Session = { access_token: string; refresh_token: string; expires_at: number };
 type ContactMessage = { id: string; name: string; email: string; subject: string; message: string; created_at: string; is_read: boolean };
@@ -246,12 +247,12 @@ export function InboxApp() {
     </main>
   );
 
+
   return (
-    <main className="zi-page">
+    <main className="zi-page zi-journey-page">
       <CastleUniverse activeChamber={activeChamber} scrollProgress={scrollProgress} liteMode={false} reducedMotion={reducedMotion} />
-      <div className="zi-app-shell">
-        <div className="zi-cinematic-hero">
-        <header className="zi-header">
+      <div className="zi-app-shell zi-journey-shell">
+        <header className="zi-header zi-fixed-header">
           <a className="zi-brand" href="/"><span className="zi-brand-mark">Z</span><span>ZEEHAD <b>INBOX</b></span></a>
           <div className="zi-header-actions">
             <span className="zi-private-label"><span /> PRIVATE</span>
@@ -259,80 +260,129 @@ export function InboxApp() {
             <button className="zi-logout-button" type="button" onClick={logout}><LogOut size={15} /><span>Sign out</span></button>
           </div>
         </header>
-        <section className="zi-hero-copy zi-reveal">
-          <p className="zi-eyebrow">THE PRIVATE COMMUNICATION CHAMBER · EST. 2026</p>
-          <h1 className="zi-hero-title"><span data-depth="PRIVATE">PRIVATE</span><span className="zi-hero-title-accent" data-depth="ARCHIVE">ARCHIVE</span></h1>
-          <p className="zi-hero-copyline">A quiet room for every message, thought and opportunity sent your way.</p>
-          <a className="zi-scroll-cue" href="#zi-messages"><span>SCROLL TO ENTER THE CHAMBER</span><span className="zi-scroll-cue-line" /></a>
-        </section>
-        <div className="zi-hero-coordinate" aria-hidden="true"><span>01 / 07</span><span>THE GRAND FOYER</span><span>23° 48′ 00″ N · 90° 24′ 00″ E</span></div>
-        </div>
-        <section className="zi-content-section" id="zi-messages">
-        <section className="zi-intro zi-reveal">
-          <div><p className="zi-eyebrow">YOUR PRIVATE MESSAGE ARCHIVE</p><h2>Inbox<span>.</span></h2><p className="zi-intro-copy">Messages sent through your filmmaker portfolio.</p></div>
-          <div className="zi-summary">
-            <div><span className="zi-summary-value">{messages.length}</span><span className="zi-summary-label">TOTAL MESSAGES</span></div>
-            <div className="zi-summary-divider" />
-            <div><span className="zi-summary-value">{unreadCount}</span><span className="zi-summary-label">UNREAD</span></div>
+
+        <nav className="zi-chamber-rail" aria-label="Mansion chambers">
+          <span className="zi-rail-track"><span className="zi-rail-fill" /></span>
+          <a href="#zi-grand-foyer" className={activeChamber === "foyer" ? "active" : ""} aria-label="01 Grand Foyer">01</a>
+          <a href="#zi-foyer-records" className={activeChamber === "screening-hall" ? "active" : ""} aria-label="02 Foyer Records">02</a>
+          <a href="#zi-message-gallery" className={activeChamber === "projection-room" ? "active" : ""} aria-label="03 Message Gallery">03</a>
+          <a href="#zi-reading-room" className={activeChamber === "directors-suite" ? "active" : ""} aria-label="04 Reading Room">04</a>
+          <a href="#zi-sender-study" className={activeChamber === "institute" ? "active" : ""} aria-label="05 Sender Study">05</a>
+          <a href="#zi-archive-ledger" className={activeChamber === "intelligence" ? "active" : ""} aria-label="06 Archive Ledger">06</a>
+          <a href="#zi-grand-exit" className={activeChamber === "grand-exit" ? "active" : ""} aria-label="07 Grand Exit">07</a>
+        </nav>
+
+        <section className="zi-stage zi-stage-hero" id="zi-grand-foyer">
+          <div className="zi-stage-frame zi-hero-frame">
+            <p className="zi-eyebrow zi-reveal">THE PRIVATE COMMUNICATION CHAMBER · EST. 2026</p>
+            <h1 className="zi-hero-title zi-reveal"><span>PRIVATE</span><span className="zi-hero-title-accent">ARCHIVE</span></h1>
+            <p className="zi-hero-copyline zi-reveal">A private passage through every message, thought and opportunity sent your way.</p>
+            <a className="zi-scroll-cue" href="#zi-foyer-records"><span>DESCEND INTO THE MANSION</span><span className="zi-scroll-cue-line" /></a>
+            <div className="zi-stage-index"><span>CHAMBER 01</span><span>THE GRAND FOYER</span></div>
           </div>
         </section>
-        {actionError && <p className="zi-inline-error" role="alert">{actionError}</p>}
-        <section className={"zi-workspace" + (selected ? " zi-has-selection" : "")}>
-          <aside className="zi-list-panel zi-reveal zi-depth-card">
-            <div className="zi-list-heading">
-              <div className="zi-list-title"><Inbox size={17} /><span>ALL MESSAGES</span><b>{messages.length}</b></div>
-              <div className="zi-filter-tabs" role="group" aria-label="Message filter">
-                <button type="button" className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>All</button>
-                <button type="button" className={filter === "unread" ? "active" : ""} onClick={() => setFilter("unread")}>Unread <span>{unreadCount}</span></button>
-              </div>
+
+        <section className="zi-stage" id="zi-foyer-records">
+          <div className="zi-stage-frame zi-stage-frame-narrow">
+            <div className="zi-stage-heading zi-reveal"><p className="zi-eyebrow">CHAMBER 02 · THE FOYER RECORDS</p><h2 className="zi-stage-title">First look<span>.</span></h2><p className="zi-stage-description">A quiet overview of everything that has arrived at your door.</p></div>
+            <div className="zi-stat-columns zi-reveal">
+              <article className="zi-stat-plinth"><span className="zi-stat-number">{String(messages.length).padStart(2, "0")}</span><span className="zi-stat-label">TOTAL ARRIVALS</span><span className="zi-stat-detail">Every saved submission</span></article>
+              <article className="zi-stat-plinth zi-stat-plinth-accent"><span className="zi-stat-number">{String(unreadCount).padStart(2, "0")}</span><span className="zi-stat-label">UNREAD NOTES</span><span className="zi-stat-detail">Waiting to be discovered</span></article>
             </div>
-            <label className="zi-search"><Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search messages…" />{search && <button type="button" aria-label="Clear search" onClick={() => setSearch("")}>×</button>}</label>
-            <div className="zi-message-list">
-              {visible.length === 0 ? (
-                <div className="zi-list-empty"><Mail size={23} /><p>{messages.length === 0 ? "Your inbox is empty." : "No messages match this view."}</p><span>{messages.length === 0 ? "New contact submissions will appear here." : "Try another search or filter."}</span></div>
-              ) : visible.map((item) => (
-                <button type="button" className={"zi-message-row" + (selectedId === item.id ? " selected" : "") + (item.is_read ? " read" : " unread")} key={item.id} onClick={() => setSelectedId(item.id)}>
-                  <span className="zi-avatar">{item.name.trim().charAt(0).toUpperCase() || "?"}</span>
-                  <span className="zi-row-content">
-                    <span className="zi-row-top"><strong>{item.name}</strong><time dateTime={item.created_at}>{dateLabel(item.created_at, true)}</time></span>
-                    <span className="zi-row-subject">{item.subject || "No subject"}</span>
-                    <span className="zi-row-preview">{item.message}</span>
-                  </span>
-                  {!item.is_read && <span className="zi-unread-dot" aria-label="Unread" />}
-                </button>
-              ))}
+            {actionError && <p className="zi-inline-error" role="alert">{actionError}</p>}
+            <div className="zi-latest-plaque zi-reveal">
+              <div className="zi-plaque-top"><span>THE LATEST ARRIVAL</span><span>{messages[0] ? dateLabel(messages[0].created_at, true) : "NO ARRIVALS"}</span></div>
+              {messages[0] ? <><p className="zi-latest-name">{messages[0].name}</p><p className="zi-latest-subject">{messages[0].subject || "No subject"}</p><p className="zi-latest-preview">{messages[0].message}</p><a className="zi-text-link" href="#zi-message-gallery">EXPLORE THE MESSAGE GALLERY <ChevronRight size={14} /></a></> : <div className="zi-empty-copy"><Mail size={19} /><span>Your first incoming message will appear here.</span></div>}
             </div>
-            <div className="zi-list-footer"><ShieldCheck size={13} /> Private messages · Owner access only</div>
-          </aside>
-          <section className="zi-detail-panel zi-reveal zi-depth-card" aria-live="polite">
-            {selected ? (
-              <>
-                <div className="zi-detail-top">
-                  <button className="zi-mobile-back" type="button" onClick={() => setSelectedId(null)}><ArrowLeft size={16} /> Back to messages</button>
-                  <div className="zi-detail-actions">
-                    <span className={selected.is_read ? "zi-status read" : "zi-status unread"}>{selected.is_read ? <CheckCheck size={14} /> : <Mail size={14} />}{selected.is_read ? "READ" : "UNREAD"}</span>
-                    <button className="zi-mark-button" type="button" onClick={() => void toggleRead(selected)} disabled={updating}>{selected.is_read ? <Mail size={15} /> : <Check size={15} />}{selected.is_read ? "Mark unread" : "Mark as read"}</button>
-                  </div>
+            <div className="zi-stage-index"><span>02 / 07</span><span>THE FOYER RECORDS</span></div>
+          </div>
+        </section>
+
+        <section className="zi-stage" id="zi-message-gallery">
+          <div className="zi-stage-frame zi-stage-frame-gallery">
+            <div className="zi-stage-heading zi-reveal"><p className="zi-eyebrow">CHAMBER 03 · THE MESSAGE GALLERY</p><h2 className="zi-stage-title">Arrivals<span>.</span></h2><p className="zi-stage-description">Move through the archive. Choose one message before descending further.</p></div>
+            <div className="zi-gallery-console zi-reveal">
+              <div className="zi-gallery-toolbar">
+                <div className="zi-list-title"><Inbox size={17} /><span>INCOMING MESSAGES</span><b>{visible.length}</b></div>
+                <div className="zi-filter-tabs" role="group" aria-label="Message filter">
+                  <button type="button" className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>All</button>
+                  <button type="button" className={filter === "unread" ? "active" : ""} onClick={() => setFilter("unread")}>Unread <span>{unreadCount}</span></button>
                 </div>
-                <article className="zi-message-detail">
-                  <p className="zi-eyebrow">INCOMING MESSAGE</p>
-                  <h2>{selected.subject || "No subject"}</h2>
-                  <div className="zi-sender-card">
-                    <span className="zi-avatar zi-avatar-large">{selected.name.trim().charAt(0).toUpperCase() || "?"}</span>
-                    <div className="zi-sender-info"><strong>{selected.name}</strong><a href={"mailto:" + selected.email}>{selected.email}</a></div>
-                    <time dateTime={selected.created_at}>{dateLabel(selected.created_at)}</time>
-                  </div>
-                  <div className="zi-message-body"><p>{selected.message}</p></div>
-                  <div className="zi-message-meta"><MailOpen size={14} /> Received {dateLabel(selected.created_at)}</div>
-                </article>
-              </>
-            ) : (
-              <div className="zi-detail-empty"><div className="zi-empty-icon"><MailOpen size={25} /></div><p className="zi-eyebrow">MESSAGE PREVIEW</p><h2>Select a message</h2><p>Choose a message from the list to read its full details.</p></div>
-            )}
-          </section>
+              </div>
+              <label className="zi-search"><Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search the archive…" />{search && <button type="button" aria-label="Clear search" onClick={() => setSearch("")}>×</button>}</label>
+              <div className="zi-message-list zi-gallery-list">
+                {visible.length === 0 ? <div className="zi-list-empty"><Mail size={23} /><p>{messages.length === 0 ? "The gallery is empty." : "No messages match this view."}</p><span>{messages.length === 0 ? "New contact submissions will appear here." : "Try another search or filter."}</span></div> :
+                  visible.map((item) => (
+                    <button type="button" className={"zi-message-row" + (selectedId === item.id ? " selected" : "") + (item.is_read ? " read" : " unread")} key={item.id} onClick={() => setSelectedId(item.id)}>
+                      <span className="zi-avatar">{item.name.trim().charAt(0).toUpperCase() || "?"}</span>
+                      <span className="zi-row-content"><span className="zi-row-top"><strong>{item.name}</strong><time dateTime={item.created_at}>{dateLabel(item.created_at, true)}</time></span><span className="zi-row-subject">{item.subject || "No subject"}</span><span className="zi-row-preview">{item.message}</span></span>
+                      {!item.is_read && <span className="zi-unread-dot" aria-label="Unread" />}
+                    </button>
+                  ))}
+              </div>
+              <div className="zi-list-footer"><ShieldCheck size={13} /> Private archive · Verified owner access</div>
+            </div>
+            <div className="zi-gallery-next"><span>{selected ? "ONE MESSAGE SELECTED" : "SELECT A MESSAGE TO CONTINUE"}</span><a className={"zi-enter-button" + (!selected ? " is-disabled" : "")} href={selected ? "#zi-reading-room" : "#zi-message-gallery"} aria-disabled={!selected}>CONTINUE DEEPER <ChevronRight size={15} /></a></div>
+            <div className="zi-stage-index"><span>03 / 07</span><span>THE MESSAGE GALLERY</span></div>
+          </div>
         </section>
-        <footer className="zi-footer"><span>© {new Date().getFullYear()} ZEEHAD HAQUE</span><span>PRIVATE MESSAGE ARCHIVE · END OF CHAMBER</span></footer>
+
+        <section className="zi-stage" id="zi-reading-room">
+          <div className="zi-stage-frame zi-stage-frame-narrow">
+            <div className="zi-stage-heading zi-reveal"><p className="zi-eyebrow">CHAMBER 04 · THE PRIVATE READING ROOM</p><h2 className="zi-stage-title">The message<span>.</span></h2><p className="zi-stage-description">Step closer. The selected message is revealed in full.</p></div>
+            {selected ? <article className="zi-reading-plaque zi-reveal">
+              <div className="zi-detail-top"><span className={selected.is_read ? "zi-status read" : "zi-status unread"}>{selected.is_read ? <CheckCheck size={14} /> : <Mail size={14} />}{selected.is_read ? "READ" : "UNREAD"}</span><span className="zi-reading-date">{dateLabel(selected.created_at)}</span></div>
+              <h3>{selected.subject || "No subject"}</h3><div className="zi-message-body"><p>{selected.message}</p></div>
+              <a className="zi-text-link" href="#zi-sender-study">CONTINUE TO SENDER DETAILS <ChevronRight size={14} /></a>
+            </article> : <div className="zi-reading-plaque zi-empty-reading zi-reveal"><div className="zi-empty-icon"><MailOpen size={25} /></div><h3>No message selected</h3><p>Return to the Message Gallery and choose an arrival to read its full contents.</p><a className="zi-text-link" href="#zi-message-gallery">BACK TO MESSAGE GALLERY <ChevronRight size={14} /></a></div>}
+            <div className="zi-stage-index"><span>04 / 07</span><span>THE PRIVATE READING ROOM</span></div>
+          </div>
         </section>
+
+        <section className="zi-stage" id="zi-sender-study">
+          <div className="zi-stage-frame zi-stage-frame-narrow">
+            <div className="zi-stage-heading zi-reveal"><p className="zi-eyebrow">CHAMBER 05 · THE SENDER STUDY</p><h2 className="zi-stage-title">Who reached out<span>?</span></h2><p className="zi-stage-description">The sender's details, preserved with the original message.</p></div>
+            {selected ? <article className="zi-sender-study-card zi-reveal">
+              <div className="zi-sender-monogram">{selected.name.trim().charAt(0).toUpperCase() || "?"}</div><p className="zi-sender-label">MESSAGE RECEIVED FROM</p><h3>{selected.name}</h3>
+              <a className="zi-sender-email" href={"mailto:" + selected.email}>{selected.email}</a>
+              <div className="zi-sender-facts"><div><span>RECEIVED</span><strong>{dateLabel(selected.created_at)}</strong></div><div><span>READ STATUS</span><strong className={selected.is_read ? "zi-read-text" : "zi-unread-text"}>{selected.is_read ? "Read" : "Unread"}</strong></div></div>
+              <button className="zi-mark-button zi-mark-large" type="button" onClick={() => void toggleRead(selected)} disabled={updating}>{selected.is_read ? <Mail size={15} /> : <Check size={15} />}{selected.is_read ? "Mark as unread" : "Mark as read"}</button>
+            </article> : <div className="zi-reading-plaque zi-empty-reading zi-reveal"><h3>Sender details are waiting</h3><p>Select a message in the Message Gallery first.</p></div>}
+            <div className="zi-stage-index"><span>05 / 07</span><span>THE SENDER STUDY</span></div>
+          </div>
+        </section>
+
+        <section className="zi-stage" id="zi-archive-ledger">
+          <div className="zi-stage-frame zi-stage-frame-ledger">
+            <div className="zi-stage-heading zi-reveal"><p className="zi-eyebrow">CHAMBER 06 · THE ARCHIVE LEDGER</p><h2 className="zi-stage-title">Nothing lost<span>.</span></h2><p className="zi-stage-description">A chronological record of every submission kept in your private archive.</p></div>
+            <div className="zi-ledger-summary zi-reveal"><span><b>{messages.length}</b> STORED</span><span><b>{unreadCount}</b> UNREAD</span><span><b>{messages.length - unreadCount}</b> READ</span></div>
+            <div className="zi-ledger-list zi-reveal">
+              {messages.length === 0 ? <div className="zi-ledger-empty"><Inbox size={22} /><span>Your archive will begin with the first message submitted through your portfolio.</span></div> :
+                messages.map((item, index) => (
+                  <button key={item.id} className={"zi-ledger-row" + (selectedId === item.id ? " active" : "")} type="button" onClick={() => setSelectedId(item.id)}>
+                    <span className="zi-ledger-number">{String(index + 1).padStart(2, "0")}</span><span className="zi-ledger-main"><strong>{item.subject || "No subject"}</strong><small>{item.name} · {dateLabel(item.created_at, true)}</small></span>
+                    <span className={"zi-ledger-status" + (item.is_read ? " read" : " unread")}>{item.is_read ? "READ" : "UNREAD"}</span><ChevronRight size={15} />
+                  </button>
+                ))}
+            </div>
+            {actionError && <p className="zi-inline-error" role="alert">{actionError}</p>}
+            <div className="zi-stage-index"><span>06 / 07</span><span>THE ARCHIVE LEDGER</span></div>
+          </div>
+        </section>
+
+        <section className="zi-stage zi-stage-exit" id="zi-grand-exit">
+          <div className="zi-stage-frame zi-exit-frame">
+            <p className="zi-eyebrow zi-reveal">CHAMBER 07 · THE GRAND EXIT</p>
+            <div className="zi-exit-emblem zi-reveal"><Instagram size={32} strokeWidth={1.2} /></div>
+            <h2 className="zi-exit-title zi-reveal">Beyond the frame<span>.</span></h2>
+            <p className="zi-exit-copy zi-reveal">The archive ends here. The creative journey continues elsewhere.</p>
+            <a className="zi-instagram-portal zi-reveal" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"><span className="zi-instagram-icon"><Instagram size={19} /></span><span><small>FOLLOW THE JOURNEY</small><strong>@heyyfalgun</strong></span><ChevronRight size={19} /></a>
+            <a className="zi-return-top" href="#zi-grand-foyer">RETURN TO THE GRAND FOYER ↑</a>
+            <div className="zi-stage-index"><span>07 / 07</span><span>THE GRAND EXIT · INSTAGRAM</span></div>
+          </div>
+        </section>
+
+        <footer className="zi-journey-footer"><span>© {new Date().getFullYear()} ZEEHAD HAQUE</span><span>THE INFINITE PRIVATE ARCHIVE</span></footer>
       </div>
     </main>
   );
