@@ -8,6 +8,7 @@ import { CastleUniverse } from "../components/three/CastleUniverse";
 import { ZeeAIAssistant } from "../components/zee-ai/ZeeAIAssistant";
 import { useActiveSection } from "../hooks/useActiveSection";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useCinematicMotion } from "../hooks/useCinematicMotion";
 import {
   normalizeActiveChamber,
   resolveInitialLiteMode,
@@ -27,6 +28,7 @@ const SECTION_IDS = [
 
 export function App() {
   const reducedMotion = useReducedMotion();
+  useCinematicMotion(!isLoading);
   const activeSection = useActiveSection(SECTION_IDS);
   const activeChamber = useMemo(
     () => normalizeActiveChamber(activeSection),
