@@ -1,6 +1,6 @@
 import { handleAcademyRequest, type AcademyWorkerEnv } from "./server/academy";
 import { onRequestPost as handleChatPost } from "../functions/api/chat";
-import { onRequestGet as handleContactGet, onRequestPost as handleContactPost } from "../functions/api/contact";
+import { onRequestGet as handleContactGet, onRequestPatch as handleContactPatch, onRequestPost as handleContactPost } from "../functions/api/contact";
 
 interface WorkerEnv extends AcademyWorkerEnv {
   GEMINI_API_KEY?: string;
@@ -82,6 +82,7 @@ export default {
     if (url.pathname === "/api/contact" || url.pathname === "/api/contact/") {
       if (request.method === "GET") return handleContactGet({ request, env });
       if (request.method === "POST") return handleContactPost({ request, env });
+      if (request.method === "PATCH") return handleContactPatch({ request, env });
       return json({ message: "Method not allowed." }, 405);
     }
 
