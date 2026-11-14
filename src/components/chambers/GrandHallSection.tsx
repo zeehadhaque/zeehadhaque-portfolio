@@ -35,6 +35,7 @@ export function GrandHallSection() {
             </span>
           </h1>
           <p className="origin-monument__roles">{siteIdentity.roles}</p>
+          <p className="origin-monument__birth identity-kicker">{siteIdentity.birthIdentity}</p>
         </div>
 
         <div className="origin-stage">
