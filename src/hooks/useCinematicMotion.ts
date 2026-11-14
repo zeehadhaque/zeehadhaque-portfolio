@@ -32,6 +32,19 @@ const REVEAL_SELECTOR = [
   ".contact-console__head",
   ".contact-console > label:not(.contact-console__trap)",
   ".contact-console__actions",
+  ".academy-hero__copy",
+  ".academy-hero__art",
+  ".academy-nav",
+  ".academy-stat",
+  ".academy-recommendations",
+  ".academy-roadmap",
+  ".academy-module-list",
+  ".academy-topic-card",
+  ".academy-day-grid > *",
+  ".academy-lesson",
+  ".academy-exam",
+  ".academy-exam-question",
+  ".academy-game-card",
 ].join(",");
 
 const TILT_SELECTOR = [
