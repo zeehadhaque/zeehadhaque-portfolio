@@ -6,21 +6,32 @@ const REVEAL_SELECTOR = [
   ".origin-monument",
   ".origin-stage__editorial > *",
   ".origin-stage__monolith",
-  ".foyer-portals > *",
+  ".foyer-portal-card",
   ".origin-horizon__item",
   ".filmography-filters",
   ".spotlight-plate",
   ".ledger-reel",
   ".frame-stage",
+  ".frame-stage__ledger",
   ".frame-plate-btn",
   ".frame-pillar",
-  ".frame-toolkit",
+  ".frame-toolkit__intro",
+  ".frame-toolkit__list li",
   ".suite-atmosphere-banner",
-  ".auteur-monograph__left",
+  ".auteur-portrait",
+  ".auteur-essay__lead",
+  ".auteur-focus",
   ".auteur-method",
-  ".auteur-slates__col",
-  ".intelligence-stage__content > *",
-  ".contact-sanctuary > *",
+  ".auteur-method__list li",
+  ".dossier-item",
+  ".screenplay-slate li",
+  ".intelligence-core-emblem",
+  ".intelligence-stage__copy > *",
+  ".contact-sanctuary__info",
+  ".contact-sanctuary__channels > *",
+  ".contact-console__head",
+  ".contact-console > label:not(.contact-console__trap)",
+  ".contact-console__actions",
 ].join(",");
 
 const TILT_SELECTOR = [
@@ -57,6 +68,7 @@ export function useCinematicMotion(enabled: boolean): void {
     );
 
     let revealObserver: IntersectionObserver | null = null;
+    let contentObserver: MutationObserver | null = null;
 
     if ("IntersectionObserver" in window) {
       revealObserver = new IntersectionObserver(
@@ -71,18 +83,41 @@ export function useCinematicMotion(enabled: boolean): void {
         {
           root: null,
           rootMargin: "0px 0px -9% 0px",
-          threshold: 0.12,
+          threshold: 0.08,
         },
       );
 
-      revealElements.forEach((element, index) => {
+      let revealIndex = 0;
+      const prepareReveal = (element: HTMLElement) => {
+        if (element.classList.contains("cinema-reveal")) return;
         element.classList.add("cinema-reveal");
         element.style.setProperty(
           "--cinema-stagger",
-          `${(index % 6) * 72}ms`,
+          `${(revealIndex % 7) * 78}ms`,
         );
+        revealIndex += 1;
         revealObserver?.observe(element);
+      };
+
+      revealElements.forEach(prepareReveal);
+
+      // The Academy is lazy-loaded; observe newly mounted content too, so its
+      // modules join the same scroll-led reveal choreography.
+      contentObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          mutation.addedNodes.forEach((node) => {
+            if (!(node instanceof HTMLElement)) return;
+            if (node.matches(REVEAL_SELECTOR)) prepareReveal(node);
+            node.querySelectorAll<HTMLElement>(REVEAL_SELECTOR).forEach(prepareReveal);
+          });
+        }
       });
+      contentObserver.observe(document.querySelector(".identity-main") ?? document.body, {
+        childList: true,
+        subtree: true,
+      });
+    } else {
+      revealElements.forEach((element) => element.classList.add("is-in-view"));
     }
 
     const sections = Array.from(
@@ -192,6 +227,7 @@ export function useCinematicMotion(enabled: boolean): void {
 
     return () => {
       revealObserver?.disconnect();
+      contentObserver?.disconnect();
       window.cancelAnimationFrame(scrollFrame);
       window.removeEventListener("scroll", requestDepthUpdate);
       window.removeEventListener("resize", requestDepthUpdate);
