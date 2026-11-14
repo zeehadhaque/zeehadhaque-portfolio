@@ -109,11 +109,17 @@ export function InboxApp() {
   }, []);
 
   useEffect(() => {
+    const root = document.querySelector<HTMLElement>(".zi-journey-page");
     const elements = Array.from(document.querySelectorAll<HTMLElement>(".zi-reveal"));
+    if (!elements.length) return;
+
+    // Content stays visible by default. The ready flag enables the scroll reveal
+    // only after the observer is attached, so a failed observer can never blank the page.
     if (!("IntersectionObserver" in window)) {
       elements.forEach((element) => element.classList.add("is-visible"));
       return;
     }
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
@@ -121,12 +127,32 @@ export function InboxApp() {
         element.classList.add("is-visible");
         observer.unobserve(element);
       });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.04 });
+
     elements.forEach((element, index) => {
       element.style.setProperty("--zi-stagger", `${(index % 7) * 85}ms`);
       observer.observe(element);
     });
-    return () => observer.disconnect();
+
+    if (root) root.dataset.revealReady = "true";
+
+    // Fail-safe for browsers/extensions that expose IntersectionObserver but
+    // fail to dispatch its first callback: reveal the opening viewport.
+    const fallback = window.setTimeout(() => {
+      elements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        if (rect.bottom >= 0 && rect.top <= window.innerHeight * 1.15) {
+          element.classList.add("is-visible");
+          observer.unobserve(element);
+        }
+      });
+    }, 900);
+
+    return () => {
+      window.clearTimeout(fallback);
+      observer.disconnect();
+      if (root) delete root.dataset.revealReady;
+    };
   }, [session, messages.length, selectedId]);
 
   const unreadCount = useMemo(() => messages.filter((item) => !item.is_read).length, [messages]);
@@ -232,7 +258,7 @@ export function InboxApp() {
   if (!session) return (
     <main className="zi-page zi-centered">
       <CastleUniverse activeChamber={activeChamber} scrollProgress={scrollProgress} liteMode={false} reducedMotion={reducedMotion} />
-      <div className="zi-login-wrap zi-reveal">
+      <div className="zi-login-wrap">
         <a className="zi-brand" href="/"><span className="zi-brand-mark">Z</span><span>ZEEHAD <b>INBOX</b></span></a>
         <section className="zi-login-card">
           <div className="zi-lock-icon"><LockKeyhole size={21} /></div>
