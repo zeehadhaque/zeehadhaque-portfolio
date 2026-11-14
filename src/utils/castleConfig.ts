@@ -205,6 +205,23 @@ function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
+function catmullRom(
+  p0: number,
+  p1: number,
+  p2: number,
+  p3: number,
+  t: number,
+): number {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  return 0.5 * (
+    2 * p1 +
+    (-p0 + p2) * t +
+    (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+    (-p0 + 3 * p1 - 3 * p2 + p3) * t3
+  );
+}
+
 export function clamp01(value: number): number {
   return Math.min(1, Math.max(0, Number.isFinite(value) ? value : 0));
 }
@@ -308,15 +325,19 @@ export function interpolateCameraPose(scrollProgress: number): CameraWaypoint {
   const smoothT = localT * localT * (3 - 2 * localT);
   const start = CHAMBER_CAMERA_WAYPOINTS[index];
   const end = CHAMBER_CAMERA_WAYPOINTS[index + 1];
+  const previous = CHAMBER_CAMERA_WAYPOINTS[Math.max(0, index - 1)];
+  const next = CHAMBER_CAMERA_WAYPOINTS[Math.min(segments, index + 2)];
 
+  // A Catmull–Rom rail keeps camera velocity continuous as it crosses
+  // each chamber instead of easing to a stop at every doorway.
   return {
     chamber: end.chamber,
-    posX: lerp(start.posX, end.posX, smoothT),
-    posY: lerp(start.posY, end.posY, smoothT),
-    posZ: lerp(start.posZ, end.posZ, smoothT),
-    lookX: lerp(start.lookX, end.lookX, smoothT),
-    lookY: lerp(start.lookY, end.lookY, smoothT),
-    lookZ: lerp(start.lookZ, end.lookZ, smoothT),
+    posX: catmullRom(previous.posX, start.posX, end.posX, next.posX, localT),
+    posY: catmullRom(previous.posY, start.posY, end.posY, next.posY, localT),
+    posZ: catmullRom(previous.posZ, start.posZ, end.posZ, next.posZ, localT),
+    lookX: catmullRom(previous.lookX, start.lookX, end.lookX, next.lookX, localT),
+    lookY: catmullRom(previous.lookY, start.lookY, end.lookY, next.lookY, localT),
+    lookZ: catmullRom(previous.lookZ, start.lookZ, end.lookZ, next.lookZ, localT),
     fov: lerp(start.fov, end.fov, smoothT),
     beamIntensity: lerp(start.beamIntensity, end.beamIntensity, smoothT),
   };
