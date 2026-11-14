@@ -96,75 +96,86 @@
 
     <!-- Structured Data -->
     <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "Person",
+      "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#person",
+      "name": "Zeehad Haque",
+      "alternateName": "Khairul Islam Jihad",
+      "birthDate": "2004-07-23",
+      "birthPlace": {
+        "@type": "Place",
+        "name": "Mymensingh, Bangladesh"
+      },
+      "url": "https://zeehadhaque.zeehadhaque.workers.dev/",
+      "image": "https://zeehadhaque.zeehadhaque.workers.dev/assets/images/profile/zeehad-obsidian-portrait.jpg",
+      "description": "Zeehad Haque (born Khairul Islam Jihad on 23 July, 2004) is an independent filmmaker from Bangladesh, working as a director, writer, cinematographer and editor.",
+      "jobTitle": [
+        "Filmmaker",
+        "Film Director",
+        "Screenwriter",
+        "Cinematographer",
+        "Film Editor",
+        "Actor"
+      ],
+      "alumniOf": [
         {
-          "@type": "Person",
-          "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#person",
-          "name": "Zeehad Haque",
-          "alternateName": "Khairul Islam Jihad",
-          "birthDate": "2004-07-23",
-          "birthPlace": { "@type": "Place", "name": "Mymensingh, Bangladesh" },
-          "alternateName": "Khairul Islam Jihad",
-          "birthDate": "2004-07-23",
-          "url": "https://zeehadhaque.zeehadhaque.workers.dev/",
-          "image": "https://zeehadhaque.zeehadhaque.workers.dev/assets/images/profile/zeehad-obsidian-portrait.jpg",
-          "description": "Zeehad Haque (born Khairul Islam Jihad on 23 July, 2004) is an independent filmmaker from Bangladesh, working as a director, writer, cinematographer and editor.",
-          "jobTitle": [
-            "Filmmaker",
-            "Film Director",
-            "Screenwriter",
-            "Cinematographer",
-            "Film Editor",
-            "Actor"
-          ],
-          "alumniOf": [
-            { "@type": "EducationalOrganization", "name": "Shahid Cadet Academy, Monipur Branch" },
-            { "@type": "CollegeOrUniversity", "name": "Sreepur Government College" }
-          ],
-          "sameAs": [
-                    "https://www.themoviedb.org/person/6603477-zeehad-haque",
-                    "https://www.imdb.com/user/p.gtnf5csbffkwzrbmsvkfa2pssm",
-                    "https://www.moviefone.com/celebrity/zeehad-haque/MOhuPZ93XNEPeyMAzAhNn4/main/",
-                    "https://filmfreeway.com/ZeehadHaque",
-                    "https://www.youtube.com/@zeehadhaque",
-                    "https://www.instagram.com/heyyfalgun/",
-                    "https://www.wikidata.org/wiki/Q142020060"
-          ],
-          "address": {
-            "@type": "PostalAddress",
-            "addressCountry": "BD"
-          }
+          "@type": "EducationalOrganization",
+          "name": "Shahid Cadet Academy, Monipur Branch"
         },
         {
-          "@type": "WebSite",
-          "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#website",
-          "url": "https://zeehadhaque.zeehadhaque.workers.dev/",
-          "name": "Zeehad Haque",
-          "description": "Official portfolio of independent filmmaker Zeehad Haque.",
-          "publisher": {
-            "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#person"
-          },
-          "inLanguage": "en"
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#webpage",
-          "url": "https://zeehadhaque.zeehadhaque.workers.dev/",
-          "name": "Zeehad Haque — Independent Filmmaker",
-          "description": "Official portfolio featuring original films, visual storytelling, screenplays and creative work by Zeehad Haque.",
-          "isPartOf": {
-            "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#website"
-          },
-          "about": {
-            "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#person"
-          },
-          "inLanguage": "en"
+          "@type": "CollegeOrUniversity",
+          "name": "Sreepur Government College"
         }
-      ]
+      ],
+      "sameAs": [
+        "https://www.themoviedb.org/person/6603477-zeehad-haque",
+        "https://www.moviefone.com/celebrity/zeehad-haque/MOhuPZ93XNEPeyMAzAhNn4/main/",
+        "https://filmfreeway.com/ZeehadHaque",
+        "https://www.youtube.com/@zeehadhaque",
+        "https://www.instagram.com/heyyfalgun/",
+        "https://www.wikidata.org/wiki/Q142020060"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "BD"
+      },
+      "identifier": {
+        "@type": "PropertyValue",
+        "propertyID": "IMDb Contributor Profile",
+        "value": "https://www.imdb.com/user/p.gtnf5csbffkwzrbmsvkfa2pssm"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#website",
+      "url": "https://zeehadhaque.zeehadhaque.workers.dev/",
+      "name": "Zeehad Haque",
+      "description": "Official portfolio of independent filmmaker Zeehad Haque.",
+      "publisher": {
+        "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#person"
+      },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#webpage",
+      "url": "https://zeehadhaque.zeehadhaque.workers.dev/",
+      "name": "Zeehad Haque — Independent Filmmaker",
+      "description": "Official portfolio featuring original films, visual storytelling, screenplays and creative work by Zeehad Haque.",
+      "isPartOf": {
+        "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#website"
+      },
+      "about": {
+        "@id": "https://zeehadhaque.zeehadhaque.workers.dev/#person"
+      },
+      "inLanguage": "en"
     }
-    </script>
+  ]
+}
+</script>
   </head>
 
   <body>
