@@ -4030,3 +4030,177 @@ select:focus-visible {
     transition: none;
   }
 }
+
+
+/* Screening Hall refinement — balanced film-card proportions. */
+.identity-main .filmography-spotlight {
+  grid-template-columns: repeat(2, minmax(0, 27rem));
+  justify-content: space-between;
+  align-items: start;
+  gap: clamp(1.5rem, 5vw, 5rem);
+  margin: 0 0 1.6rem;
+}
+
+.identity-main .spotlight-plate {
+  width: 100%;
+  max-width: 27rem;
+  min-width: 0;
+}
+
+.identity-main .spotlight-plate__trigger {
+  width: 100%;
+  height: auto;
+}
+
+.identity-main .spotlight-plate__poster {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: none;
+}
+
+.identity-main .spotlight-plate__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.identity-main .spotlight-plate__body {
+  gap: .32rem;
+  padding: .72rem .82rem .82rem;
+}
+
+.identity-main .spotlight-plate__body h3 {
+  font-size: clamp(1.08rem, 1.45vw, 1.38rem);
+  line-height: 1.12;
+}
+
+.identity-main .spotlight-plate__desc {
+  max-width: 44ch;
+  font-size: .7rem;
+  line-height: 1.48;
+}
+
+.identity-main .spotlight-plate__meta,
+.identity-main .spotlight-plate__cta {
+  font-size: .58rem;
+  line-height: 1.45;
+}
+
+.identity-main .spotlight-plate__badge {
+  top: .65rem;
+  left: .65rem;
+  padding: .2rem .42rem;
+  font-size: .52rem;
+}
+
+.identity-main .spotlight-plate__play {
+  right: .7rem;
+  bottom: .7rem;
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.identity-main .filmography-ledger {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: .7rem clamp(1rem, 2.5vw, 2rem);
+}
+
+.identity-main .ledger-reel {
+  width: 100%;
+  max-width: 34rem;
+  min-width: 0;
+}
+
+.identity-main .ledger-reel__trigger {
+  grid-template-columns: minmax(6.25rem, 7rem) minmax(0, 1fr);
+  align-items: center;
+  min-height: 0;
+}
+
+.identity-main .ledger-reel__poster {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  overflow: hidden;
+}
+
+.identity-main .ledger-reel__poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.identity-main .ledger-reel__copy h3 {
+  font-size: .98rem;
+  line-height: 1.2;
+}
+
+.identity-main .ledger-reel__copy p {
+  font-size: .67rem;
+  line-height: 1.42;
+}
+
+.identity-main .identity-modal__dialog--screening {
+  width: min(58rem, calc(100vw - 2rem));
+}
+
+.identity-main .screening-frame {
+  width: 100%;
+  max-width: 56rem;
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
+}
+
+@media (max-width: 980px) {
+  .identity-main .filmography-spotlight {
+    grid-template-columns: repeat(2, minmax(0, 27rem));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .identity-main .filmography-spotlight {
+    grid-template-columns: minmax(0, 27rem);
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .identity-main .spotlight-plate {
+    max-width: 27rem;
+    justify-self: center;
+  }
+
+  .identity-main .filmography-ledger {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: .65rem;
+  }
+
+  .identity-main .ledger-reel {
+    max-width: 34rem;
+  }
+
+  .identity-main .ledger-reel__trigger {
+    grid-template-columns: minmax(6rem, 7rem) minmax(0, 1fr);
+  }
+
+  .identity-main .identity-modal__dialog--screening {
+    width: calc(100vw - 1rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .identity-main .ledger-reel__trigger {
+    grid-template-columns: 5.6rem minmax(0, 1fr);
+    gap: .65rem;
+    padding: .45rem;
+  }
+
+  .identity-main .ledger-reel__copy p {
+    font-size: .63rem;
+  }
+}
