@@ -75,8 +75,6 @@ export function GrandHallSection() {
                 <img
                   src={identityPortraitAsset}
                   alt="Zeehad Haque — independent filmmaker, director, writer, cinematographer and editor from Bangladesh"
-                  width="960"
-                  height="1078"
                   fetchPriority="high"
                   referrerPolicy="no-referrer"
                   onError={() => setPortraitFailed(true)}
