@@ -17,6 +17,9 @@ interface ContactPayload {
   website?: unknown;
 }
 
+interface InboxUpdatePayload { id?: unknown; is_read?: unknown }
+}
+
 interface SupabaseUser {
   email?: string;
   email_confirmed_at?: string | null;
@@ -105,13 +108,46 @@ export async function onRequestGet({ request, env }: PagesContext): Promise<Resp
 
   try {
     const response = await fetch(
-      `${config.url}/rest/v1/contact_messages?select=id,name,email,subject,message,created_at&order=created_at.desc`,
+      `${config.url}/rest/v1/contact_messages?select=id,name,email,subject,message,created_at,is_read&order=created_at.desc`,
       { headers: { apikey: config.key, Authorization: ownerToken, Accept: 'application/json' } },
     );
     if (!response.ok) return jsonResponse({ message: 'Inbox could not be loaded.' }, 502);
     return jsonResponse({ messages: await response.json() });
   } catch {
     return jsonResponse({ message: 'Inbox could not be loaded.' }, 502);
+  }
+}
+
+export async function onRequestPatch({ request, env }: PagesContext): Promise<Response> {
+  const config = supabaseConfig(env);
+  if (!config) return jsonResponse({ message: 'Contact service is not configured.' }, 503);
+  const ownerToken = await getVerifiedOwner(request, config);
+  if (!ownerToken) return jsonResponse({ message: 'Verified owner access required.' }, 401);
+
+  let payload: InboxUpdatePayload;
+  try {
+    const raw = await request.text();
+    if (raw.length > 1_000) return jsonResponse({ message: 'Invalid update.' }, 413);
+    payload = JSON.parse(raw) as InboxUpdatePayload;
+  } catch {
+    return jsonResponse({ message: 'Please submit a valid update.' }, 400);
+  }
+
+  const id = text(payload.id, 64);
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) || typeof payload.is_read !== 'boolean') {
+    return jsonResponse({ message: 'Invalid read status update.' }, 400);
+  }
+
+  try {
+    const response = await fetch(`${config.url}/rest/v1/contact_messages?id=eq.${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { apikey: config.key, Authorization: ownerToken, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ is_read: payload.is_read }),
+    });
+    if (!response.ok) return jsonResponse({ message: 'Read status could not be updated.' }, 502);
+    return jsonResponse({ ok: true });
+  } catch {
+    return jsonResponse({ message: 'Read status could not be updated.' }, 502);
   }
 }
 
