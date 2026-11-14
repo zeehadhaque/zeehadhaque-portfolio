@@ -26,6 +26,37 @@ const SECTION_IDS = [
   "grand-exit",
 ];
 
+function getPalaceScrollProgress(): number {
+  const fallbackMax = Math.max(
+    1,
+    document.documentElement.scrollHeight - window.innerHeight,
+  );
+  const fallback = Math.min(1, Math.max(0, window.scrollY / fallbackMax));
+  const starts = SECTION_IDS.map((id) => {
+    const section = document.getElementById(id);
+    return section ? section.getBoundingClientRect().top + window.scrollY : null;
+  });
+
+  // If a chamber has not mounted yet, preserve the safe document-based path.
+  if (starts.some((value) => value === null)) return fallback;
+  const anchors = starts as number[];
+  if (anchors.length < 2) return fallback;
+
+  const y = Math.max(0, window.scrollY);
+  if (y <= anchors[0]) return 0;
+
+  for (let index = 0; index < anchors.length - 1; index += 1) {
+    const start = anchors[index];
+    const end = anchors[index + 1];
+    if (y <= end) {
+      const local = Math.min(1, Math.max(0, (y - start) / Math.max(1, end - start)));
+      return (index + local) / (anchors.length - 1);
+    }
+  }
+
+  return 1;
+}
+
 export function App() {
   const reducedMotion = useReducedMotion();
   const activeSection = useActiveSection(SECTION_IDS);
@@ -88,11 +119,7 @@ export function App() {
     let raf = 0;
     const updateScroll = () => {
       raf = 0;
-      const maxScroll = Math.max(
-        1,
-        document.documentElement.scrollHeight - window.innerHeight,
-      );
-      setScrollProgress(Math.min(1, Math.max(0, window.scrollY / maxScroll)));
+      setScrollProgress(getPalaceScrollProgress());
     };
     const onScroll = () => {
       if (raf) return;
