@@ -44,7 +44,7 @@ export const siteIdentity: SiteIdentity = {
 };
 
 export const identityPortraitAsset = "/assets/images/profile/zeehad-obsidian-portrait.jpg";
-export const portraitAsset = "/assets/images/profile/zeehad-obsidian-portrait.jpg";
+export const portraitAsset = "/assets/images/profile/zeehad-clean-portrait.png";
 
 export const navigationItems: readonly NavigationItem[] = [
   { label: "Foyer", href: "#foyer" },
