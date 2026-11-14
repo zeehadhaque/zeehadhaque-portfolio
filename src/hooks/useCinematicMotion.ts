@@ -108,6 +108,14 @@ export function useCinematicMotion(enabled: boolean): void {
           "--cinema-stagger",
           `${(revealIndex % 7) * 78}ms`,
         );
+        element.style.setProperty(
+          "--cinema-enter-x",
+          revealIndex % 2 === 0 ? "-42px" : "42px",
+        );
+        element.style.setProperty(
+          "--cinema-enter-rotate",
+          revealIndex % 2 === 0 ? "1.25deg" : "-1.25deg",
+        );
         revealIndex += 1;
         revealObserver?.observe(element);
       };
@@ -251,6 +259,8 @@ export function useCinematicMotion(enabled: boolean): void {
       revealElements.forEach((element) => {
         element.classList.remove("cinema-reveal", "is-in-view");
         element.style.removeProperty("--cinema-stagger");
+        element.style.removeProperty("--cinema-enter-x");
+        element.style.removeProperty("--cinema-enter-rotate");
       });
       sections.forEach((section) => {
         section.style.removeProperty("--section-progress");
