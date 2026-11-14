@@ -18,7 +18,6 @@ interface ContactPayload {
 }
 
 interface InboxUpdatePayload { id?: unknown; is_read?: unknown }
-}
 
 interface SupabaseUser {
   email?: string;
