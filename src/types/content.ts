@@ -1,5 +1,6 @@
 export interface SiteIdentity {
   name: string;
+  birthIdentity: string;
   roles: string;
   location: string;
   email: string;
