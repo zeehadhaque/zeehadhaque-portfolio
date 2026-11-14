@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { Check, CheckCheck, ChevronRight, Inbox, Instagram, LockKeyhole, LogOut, Mail, MailOpen, RefreshCw, Search, ShieldCheck, UserRound } from "lucide-react";
+import { Check, CheckCheck, ChevronRight, Inbox, LockKeyhole, LogOut, Mail, MailOpen, RefreshCw, Search, ShieldCheck, UserRound } from "lucide-react";
 import "../styles/inbox.css";
 import { CastleUniverse } from "../components/three/CastleUniverse";
 import type { ChamberId } from "../utils/castleConfig";
@@ -17,6 +17,16 @@ type AuthPayload = { access_token?: string; refresh_token?: string; expires_at?:
 type AuthUser = { email?: string; email_confirmed_at?: string | null };
 
 const INBOX_CHAMBERS: ChamberId[] = ["foyer", "screening-hall", "projection-room", "directors-suite", "institute", "intelligence", "grand-exit"];
+
+function InstagramMark({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 function storedSession(): Session | null {
   try {
@@ -373,10 +383,10 @@ export function InboxApp() {
         <section className="zi-stage zi-stage-exit" id="zi-grand-exit">
           <div className="zi-stage-frame zi-exit-frame">
             <p className="zi-eyebrow zi-reveal">CHAMBER 07 · THE GRAND EXIT</p>
-            <div className="zi-exit-emblem zi-reveal"><Instagram size={32} strokeWidth={1.2} /></div>
+            <div className="zi-exit-emblem zi-reveal"><InstagramMark size={32} /></div>
             <h2 className="zi-exit-title zi-reveal">Beyond the frame<span>.</span></h2>
             <p className="zi-exit-copy zi-reveal">The archive ends here. The creative journey continues elsewhere.</p>
-            <a className="zi-instagram-portal zi-reveal" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"><span className="zi-instagram-icon"><Instagram size={19} /></span><span><small>FOLLOW THE JOURNEY</small><strong>@heyyfalgun</strong></span><ChevronRight size={19} /></a>
+            <a className="zi-instagram-portal zi-reveal" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"><span className="zi-instagram-icon"><InstagramMark size={19} /></span><span><small>FOLLOW THE JOURNEY</small><strong>@heyyfalgun</strong></span><ChevronRight size={19} /></a>
             <a className="zi-return-top" href="#zi-grand-foyer">RETURN TO THE GRAND FOYER ↑</a>
             <div className="zi-stage-index"><span>07 / 07</span><span>THE GRAND EXIT · INSTAGRAM</span></div>
           </div>
