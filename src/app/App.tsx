@@ -28,7 +28,6 @@ const SECTION_IDS = [
 
 export function App() {
   const reducedMotion = useReducedMotion();
-  useCinematicMotion(!isLoading);
   const activeSection = useActiveSection(SECTION_IDS);
   const activeChamber = useMemo(
     () => normalizeActiveChamber(activeSection),
@@ -44,6 +43,8 @@ export function App() {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [intelligenceSignal, setIntelligenceSignal] = useState(0);
+
+  useCinematicMotion(!isLoading);
 
   const [liteMode, setLiteMode] = useState<boolean>(() => {
     let stored: string | null = null;
