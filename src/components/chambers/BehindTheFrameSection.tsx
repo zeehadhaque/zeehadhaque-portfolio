@@ -25,6 +25,24 @@ export function BehindTheFrameSection() {
       <span id="process" className="anchor-alias" aria-hidden="true" />
       <span id="projects" className="anchor-alias" aria-hidden="true" />
 
+      {/* Key the clean portrait's near-white studio backdrop so the palace theme shows through. */}
+      <svg className="auteur-filter-defs" aria-hidden="true" focusable="false" width="0" height="0">
+        <defs>
+          <filter id="auteur-portrait-white-key" colorInterpolationFilters="sRGB" x="-3%" y="-3%" width="106%" height="106%">
+            <feColorMatrix
+              type="matrix"
+              values="1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 -4.5 0 4.5"
+            />
+            <feComponentTransfer>
+              <feFuncA type="table" tableValues="0 0 0.015 0.06 0.18 0.45 0.78 1" />
+            </feComponentTransfer>
+          </filter>
+        </defs>
+      </svg>
+
       <div className="castle-shell">
         <div className="dest-head">
           <div>
@@ -66,6 +84,7 @@ export function BehindTheFrameSection() {
                   width="960"
                   height="1078"
                   referrerPolicy="no-referrer"
+                  style={{ filter: "url(#auteur-portrait-white-key)" }}
                   onError={() => setPortraitFailed(true)}
                 />
               ) : (
