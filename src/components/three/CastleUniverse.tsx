@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import palaceAuditoriumImg from "../../assets/images/palace_imax_auditorium_1794660878336.jpg";
 import {
+  CHAMBER_CAMERA_WAYPOINTS,
   computeOpeningShotState,
   interpolateCameraPose,
   type ChamberId,
@@ -199,12 +200,18 @@ export function CastleUniverse({
       const pose = openingShot ?? interpolateCameraPose(current.scrollProgress);
 
       const parallaxScale = current.reducedMotion || current.isOpening ? 0 : 1;
-      const targetX = pose.posX + current.pointerX * 0.65 * parallaxScale;
+      const travelPhase = current.scrollProgress * (CHAMBER_CAMERA_WAYPOINTS.length - 1);
+      const corridorTurn = Math.sin(travelPhase * Math.PI) * parallaxScale;
+      const lateralDrift = corridorTurn * 0.62;
+      const gazeTurn = corridorTurn * 1.75;
+      const cameraBank = Math.sin(travelPhase * Math.PI * 2) * 0.012 * parallaxScale;
+      const targetX =
+        pose.posX + lateralDrift + current.pointerX * 0.65 * parallaxScale;
       const targetY = pose.posY - current.pointerY * 0.35 * parallaxScale;
 
       _desiredPos.set(targetX, targetY, pose.posZ);
       _desiredLook.set(
-        pose.lookX + current.pointerX * 0.45 * parallaxScale,
+        pose.lookX + gazeTurn + current.pointerX * 0.45 * parallaxScale,
         pose.lookY - current.pointerY * 0.25 * parallaxScale,
         pose.lookZ,
       );
@@ -256,6 +263,7 @@ export function CastleUniverse({
         camera.updateProjectionMatrix();
       }
       camera.lookAt(_currentLook);
+      if (cameraBank !== 0) camera.rotateZ(cameraBank);
 
       if (!current.reducedMotion) {
         castle.chandelierGroup.rotation.y += dt * 0.08;
