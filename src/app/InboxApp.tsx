@@ -1,6 +1,9 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Check, CheckCheck, ChevronRight, Inbox, LockKeyhole, LogOut, Mail, MailOpen, RefreshCw, Search, ShieldCheck, UserRound } from "lucide-react";
 import "../styles/inbox.css";
+import { CastleUniverse } from "../components/three/CastleUniverse";
+import type { ChamberId } from "../utils/castleConfig";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
 const SUPABASE_URL = "https://khagjlnczaihgkohmpmg.supabase.co";
 const SUPABASE_KEY = "sb_publishable_lqi_R3QWs0pInCEemHAhoA_mrmM7i3v";
@@ -11,6 +14,8 @@ type Session = { access_token: string; refresh_token: string; expires_at: number
 type ContactMessage = { id: string; name: string; email: string; subject: string; message: string; created_at: string; is_read: boolean };
 type AuthPayload = { access_token?: string; refresh_token?: string; expires_at?: number; expires_in?: number; message?: string; msg?: string; error_description?: string };
 type AuthUser = { email?: string; email_confirmed_at?: string | null };
+
+const INBOX_CHAMBERS: ChamberId[] = ["foyer", "screening-hall", "projection-room", "directors-suite", "institute", "intelligence", "grand-exit"];
 
 function storedSession(): Session | null {
   try {
@@ -52,6 +57,9 @@ function dateLabel(value: string, compact = false): string {
 }
 
 export function InboxApp() {
+  const reducedMotion = useReducedMotion();
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const activeChamber = INBOX_CHAMBERS[Math.min(INBOX_CHAMBERS.length - 1, Math.floor(scrollProgress * INBOX_CHAMBERS.length))];
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
@@ -64,6 +72,51 @@ export function InboxApp() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    let frame = 0;
+    const updateProgress = () => {
+      frame = 0;
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+      setScrollProgress(progress);
+      document.documentElement.style.setProperty("--zi-scroll-progress", progress.toFixed(4));
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateProgress);
+    };
+    updateProgress();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      document.documentElement.style.removeProperty("--zi-scroll-progress");
+    };
+  }, []);
+
+  useEffect(() => {
+    const elements = Array.from(document.querySelectorAll<HTMLElement>(".zi-reveal"));
+    if (!("IntersectionObserver" in window)) {
+      elements.forEach((element) => element.classList.add("is-visible"));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const element = entry.target as HTMLElement;
+        element.classList.add("is-visible");
+        observer.unobserve(element);
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    elements.forEach((element, index) => {
+      element.style.setProperty("--zi-stagger", `${(index % 7) * 85}ms`);
+      observer.observe(element);
+    });
+    return () => observer.disconnect();
+  }, [session, messages.length, selectedId]);
 
   const unreadCount = useMemo(() => messages.filter((item) => !item.is_read).length, [messages]);
   const selected = useMemo(() => messages.find((item) => item.id === selectedId) ?? null, [messages, selectedId]);
@@ -167,7 +220,8 @@ export function InboxApp() {
 
   if (!session) return (
     <main className="zi-page zi-centered">
-      <div className="zi-login-wrap">
+      <CastleUniverse activeChamber={activeChamber} scrollProgress={scrollProgress} liteMode={false} reducedMotion={reducedMotion} />
+      <div className="zi-login-wrap zi-reveal">
         <a className="zi-brand" href="/"><span className="zi-brand-mark">Z</span><span>ZEEHAD <b>INBOX</b></span></a>
         <section className="zi-login-card">
           <div className="zi-lock-icon"><LockKeyhole size={21} /></div>
@@ -194,7 +248,9 @@ export function InboxApp() {
 
   return (
     <main className="zi-page">
+      <CastleUniverse activeChamber={activeChamber} scrollProgress={scrollProgress} liteMode={false} reducedMotion={reducedMotion} />
       <div className="zi-app-shell">
+        <div className="zi-cinematic-hero">
         <header className="zi-header">
           <a className="zi-brand" href="/"><span className="zi-brand-mark">Z</span><span>ZEEHAD <b>INBOX</b></span></a>
           <div className="zi-header-actions">
@@ -203,8 +259,17 @@ export function InboxApp() {
             <button className="zi-logout-button" type="button" onClick={logout}><LogOut size={15} /><span>Sign out</span></button>
           </div>
         </header>
-        <section className="zi-intro">
-          <div><p className="zi-eyebrow">YOUR PRIVATE MESSAGE ARCHIVE</p><h1>Inbox<span>.</span></h1><p className="zi-intro-copy">Messages sent through your filmmaker portfolio.</p></div>
+        <section className="zi-hero-copy zi-reveal">
+          <p className="zi-eyebrow">THE PRIVATE COMMUNICATION CHAMBER · EST. 2026</p>
+          <h1 className="zi-hero-title"><span data-depth="PRIVATE">PRIVATE</span><span className="zi-hero-title-accent" data-depth="ARCHIVE">ARCHIVE</span></h1>
+          <p className="zi-hero-copyline">A quiet room for every message, thought and opportunity sent your way.</p>
+          <a className="zi-scroll-cue" href="#zi-messages"><span>SCROLL TO ENTER THE CHAMBER</span><span className="zi-scroll-cue-line" /></a>
+        </section>
+        <div className="zi-hero-coordinate" aria-hidden="true"><span>01 / 07</span><span>THE GRAND FOYER</span><span>23° 48′ 00″ N · 90° 24′ 00″ E</span></div>
+        </div>
+        <section className="zi-content-section" id="zi-messages">
+        <section className="zi-intro zi-reveal">
+          <div><p className="zi-eyebrow">YOUR PRIVATE MESSAGE ARCHIVE</p><h2>Inbox<span>.</span></h2><p className="zi-intro-copy">Messages sent through your filmmaker portfolio.</p></div>
           <div className="zi-summary">
             <div><span className="zi-summary-value">{messages.length}</span><span className="zi-summary-label">TOTAL MESSAGES</span></div>
             <div className="zi-summary-divider" />
@@ -213,7 +278,7 @@ export function InboxApp() {
         </section>
         {actionError && <p className="zi-inline-error" role="alert">{actionError}</p>}
         <section className={"zi-workspace" + (selected ? " zi-has-selection" : "")}>
-          <aside className="zi-list-panel">
+          <aside className="zi-list-panel zi-reveal zi-depth-card">
             <div className="zi-list-heading">
               <div className="zi-list-title"><Inbox size={17} /><span>ALL MESSAGES</span><b>{messages.length}</b></div>
               <div className="zi-filter-tabs" role="group" aria-label="Message filter">
@@ -239,7 +304,7 @@ export function InboxApp() {
             </div>
             <div className="zi-list-footer"><ShieldCheck size={13} /> Private messages · Owner access only</div>
           </aside>
-          <section className="zi-detail-panel" aria-live="polite">
+          <section className="zi-detail-panel zi-reveal zi-depth-card" aria-live="polite">
             {selected ? (
               <>
                 <div className="zi-detail-top">
@@ -266,7 +331,8 @@ export function InboxApp() {
             )}
           </section>
         </section>
-        <footer className="zi-footer"><span>© {new Date().getFullYear()} ZEEHAD HAQUE</span><span>PRIVATE MESSAGE ARCHIVE</span></footer>
+        <footer className="zi-footer"><span>© {new Date().getFullYear()} ZEEHAD HAQUE</span><span>PRIVATE MESSAGE ARCHIVE · END OF CHAMBER</span></footer>
+        </section>
       </div>
     </main>
   );
