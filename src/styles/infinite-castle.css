@@ -2392,3 +2392,148 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* Filmmaker Identity & Portrait Switcher Enhancements */
+.portrait-mode-switcher {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  z-index: 5;
+}
+
+.switcher-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  background: rgba(9, 20, 38, 0.6);
+  color: rgba(220, 235, 255, 0.65);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+}
+
+.switcher-pill:hover {
+  border-color: var(--color-cyan-glow);
+  color: #fff;
+}
+
+.switcher-pill.active {
+  border-color: var(--color-cyan-glow);
+  background: rgba(125, 187, 255, 0.18);
+  color: var(--color-cyan-glow);
+  box-shadow: 0 0 12px rgba(125, 187, 255, 0.3);
+}
+
+.filmmaker-identity-banner {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border-glow);
+  border-radius: 8px;
+  padding: 2.5rem;
+  margin-bottom: 3.5rem;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(125, 187, 255, 0.15);
+}
+
+.identity-banner-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.identity-banner-image-box {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(125, 187, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.identity-banner-img {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.identity-banner-image-box:hover .identity-banner-img {
+  transform: scale(1.03);
+}
+
+.identity-badge-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  background: rgba(5, 8, 16, 0.9);
+  border-top: 1px solid rgba(125, 187, 255, 0.15);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(125, 187, 255, 0.7);
+}
+
+.identity-banner-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+
+.identity-banner-subtitle {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--color-cyan-glow);
+  margin-bottom: 1.25rem;
+}
+
+.identity-banner-quote {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--color-highlight);
+  border-left: 2px solid var(--color-gold);
+  padding-left: 1rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.identity-banner-body {
+  font-size: 0.92rem;
+  color: rgba(220, 235, 255, 0.75);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+
+.identity-disciplines-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.discipline-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.7rem;
+  background: rgba(125, 187, 255, 0.08);
+  border: 1px solid rgba(125, 187, 255, 0.2);
+  border-radius: 3px;
+  color: var(--color-cyan-glow);
+}
+
+@media (max-width: 900px) {
+  .identity-banner-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

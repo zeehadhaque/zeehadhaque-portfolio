@@ -1,4 +1,5 @@
-import { ChevronDown, Film, Play, Compass, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Film, Play, Compass, ExternalLink, Camera, User } from "lucide-react";
 import { SITE_CONFIG } from "../../data/siteConfig";
 
 interface HeroFoyerProps {
@@ -7,6 +8,8 @@ interface HeroFoyerProps {
 }
 
 export function HeroFoyer({ onEnter, onOpenVideo }: HeroFoyerProps) {
+  const [portraitMode, setPortraitMode] = useState<"location" | "clean">("location");
+
   return (
     <section id="foyer" className="castle-section hero-foyer-section">
       <div className="foyer-container">
@@ -79,21 +82,55 @@ export function HeroFoyer({ onEnter, onOpenVideo }: HeroFoyerProps) {
             </div>
           </div>
 
-          {/* Right Column: Clean Original Portrait */}
+          {/* Right Column: Original Filmmaker Identity Portrait */}
           <div className="foyer-portrait-frame">
             <div className="portrait-glass-backdrop" />
+
+            {/* Portrait Mode Switcher */}
+            <div className="portrait-mode-switcher font-mono">
+              <button
+                type="button"
+                onClick={() => setPortraitMode("location")}
+                className={`switcher-pill ${portraitMode === "location" ? "active" : ""}`}
+              >
+                <Camera size={12} />
+                <span>Filmmaker Identity</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPortraitMode("clean")}
+                className={`switcher-pill ${portraitMode === "clean" ? "active" : ""}`}
+              >
+                <User size={12} />
+                <span>Studio Portrait</span>
+              </button>
+            </div>
+
             <div className="portrait-image-wrapper">
               <img
-                src="/assets/images/profile/zeehad-clean-portrait.png"
-                alt="Zeehad Haque — Independent Filmmaker & Director"
+                src={
+                  portraitMode === "location"
+                    ? SITE_CONFIG.filmmakerLocationImage
+                    : SITE_CONFIG.cleanPortraitImage
+                }
+                alt={`Zeehad Haque — ${
+                  portraitMode === "location"
+                    ? "Filmmaker Identity On Location"
+                    : "Studio Portrait"
+                }`}
                 className="portrait-image"
                 loading="eager"
               />
               <div className="portrait-shimmer" />
             </div>
+
             <div className="portrait-telemetry-tag font-mono">
-              <span>FIG. 01 — AUTEUR IDENTITY</span>
-              <span>SHA-256 VERIFIED</span>
+              <span>
+                {portraitMode === "location"
+                  ? "FIG. 01 — FILMMAKER IDENTITY (LOCATION SCOUT)"
+                  : "FIG. 02 — STUDIO STUDY (SHA-256)"}
+              </span>
+              <span>VERIFIED AUTEUR</span>
             </div>
           </div>
         </div>

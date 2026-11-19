@@ -1,4 +1,4 @@
-import { Video, Scroll, Cpu, Layers } from "lucide-react";
+import { Video, Scroll, Cpu, Layers, MapPin, Compass, Sparkles } from "lucide-react";
 import { SITE_CONFIG } from "../../data/siteConfig";
 
 export function DirectorsSuite() {
@@ -15,6 +15,59 @@ export function DirectorsSuite() {
           Where constraints convert into distinct visual signatures. Mobile-first 4K capture,
           meticulous color science, and psychoacoustic audio design.
         </p>
+      </div>
+
+      {/* Filmmaker Identity Showcase Card */}
+      <div className="filmmaker-identity-banner">
+        <div className="identity-banner-grid">
+          <div className="identity-banner-image-box">
+            <img
+              src={SITE_CONFIG.filmmakerLocationImage}
+              alt="Zeehad Haque — Filmmaker Identity On Location"
+              className="identity-banner-img"
+              loading="lazy"
+            />
+            <div className="identity-badge-tag font-mono">
+              <MapPin size={12} />
+              <span>ON-LOCATION SCOUTING // NATURAL GEOGRAPHY</span>
+            </div>
+          </div>
+
+          <div className="identity-banner-text-box">
+            <div className="section-pill gold-pill">
+              <Compass size={12} />
+              <span>AUTEUR FILMMAKER IDENTITY</span>
+            </div>
+            <h3 className="identity-banner-title">
+              Zeehad Haque — The Filmmaker&apos;s Gaze
+            </h3>
+            <p className="identity-banner-subtitle font-mono">
+              {SITE_CONFIG.birthIdentity} · {SITE_CONFIG.location}
+            </p>
+
+            <blockquote className="identity-banner-quote">
+              &ldquo;Cinema is not born in pristine air-conditioned studios; it is discovered
+              in the silence of riverbeds, the weight of stone, and the unpredictable angles
+              of raw sunlight.&rdquo;
+            </blockquote>
+
+            <p className="identity-banner-body">
+              Operating independently across Bangladesh, Zeehad treats terrain and natural elements
+              as integral dramatic characters. Whether framing psychological suspense in
+              claustrophobic corridors or expansive mountain horizons, his mobile-first methodology
+              demands complete intentionality in every frame.
+            </p>
+
+            <div className="identity-disciplines-row font-mono">
+              <span className="discipline-tag">
+                <Sparkles size={11} /> DIRECTOR
+              </span>
+              <span className="discipline-tag">WRITER</span>
+              <span className="discipline-tag">CINEMATOGRAPHER</span>
+              <span className="discipline-tag">EDITOR</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Craft Pillars */}

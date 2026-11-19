@@ -12,6 +12,8 @@ export const SITE_CONFIG = {
   brandStatement: "STORIES BEYOND THE FRAME.",
   tagline: "I DON'T JUST CAPTURE FRAMES. I CREATE WORLDS.",
   biography: "Zeehad Haque is an independent Bangladeshi filmmaker, director, screenwriter, cinematographer and editor. Born in Gazipur, Dhaka, he creates immersive psychological tension through visual silence, deliberate camera movement, evocative natural light, and structural precision.",
+  cleanPortraitImage: "/assets/images/profile/zeehad-clean-portrait.png",
+  filmmakerLocationImage: "/assets/images/profile/zeehad-filmmaker-identity.jpg",
   
   palettes: {
     void: "#020305",
