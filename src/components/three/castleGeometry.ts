@@ -13,184 +13,107 @@ export interface CastleProceduralAssets {
   zeeCoreGroup: THREE.Group;
   astrolabeGroup: THREE.Group;
   chandelierGroup: THREE.Group;
+  clickableObjects: THREE.Object3D[];
+  stage01Group: THREE.Group;
+  stage03RingGroup: THREE.Group;
+  stage04Monolith: THREE.Group;
+  stage05Monolith: THREE.Group;
+  stage06DaisGroup: THREE.Group;
   updateBeams: (intensity: number, elapsed: number) => void;
   updateOpening: (shot: OpeningShotState | null, elapsed: number) => void;
-  updateScrollScene: (scrollProgress: number, elapsed: number) => void;
+  updateScrollScene: (
+    scrollProgress: number,
+    elapsed: number,
+    pointerX?: number,
+    pointerY?: number,
+  ) => void;
 }
 
-function createVaultedRibGeometry(spanX: number, apexY: number): THREE.ExtrudeGeometry {
-  const outerW = spanX * 0.54;
-  const innerW = spanX * 0.45;
-  const springY = apexY * 0.54;
-  const innerApexY = apexY * 0.88;
-
-  const shape = new THREE.Shape();
-  shape.moveTo(-outerW, 0);
-  shape.lineTo(-outerW, springY);
-  shape.quadraticCurveTo(-outerW * 0.72, apexY * 0.9, 0, apexY);
-  shape.quadraticCurveTo(outerW * 0.72, apexY * 0.9, outerW, springY);
-  shape.lineTo(outerW, 0);
-  shape.lineTo(innerW, 0);
-  shape.lineTo(innerW, springY);
-  shape.quadraticCurveTo(innerW * 0.68, innerApexY * 0.88, 0, innerApexY);
-  shape.quadraticCurveTo(-innerW * 0.68, innerApexY * 0.88, -innerW, springY);
-  shape.lineTo(-innerW, 0);
-  shape.closePath();
-
-  const geo = new THREE.ExtrudeGeometry(shape, {
-    depth: 0.82,
-    bevelEnabled: true,
-    bevelSegments: 2,
-    steps: 1,
-    bevelSize: 0.08,
-    bevelThickness: 0.08,
-  });
-  geo.center();
-  return geo;
+interface FloatingBlock {
+  mesh: THREE.Mesh;
+  restingPos: THREE.Vector3;
+  restingRot: THREE.Euler;
+  offsetPos: THREE.Vector3;
+  offsetRot: THREE.Euler;
 }
 
-function buildCinemaRelicGroup(options: {
-  obsidianMat: THREE.Material;
-  metalMat: THREE.Material;
-  goldMat: THREE.Material;
-  glassMat: THREE.Material;
-  glowMat: THREE.Material;
-  scale?: number;
-}): THREE.Group {
-  const group = new THREE.Group();
-  group.scale.setScalar(options.scale ?? 1);
+function createTextSprite(
+  lines: string[],
+  options: {
+    fontSize?: number;
+    color?: string;
+    underlineLastLine?: boolean;
+    align?: "left" | "center" | "right";
+    border?: boolean;
+    scale?: number;
+  } = {},
+): { sprite: THREE.Sprite; dispose: () => void } {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
 
-  const barrel = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.95, 1.05, 0.85, 16),
-    options.obsidianMat,
-  );
-  barrel.rotation.x = Math.PI / 2;
-  group.add(barrel);
+  if (ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const fontSize = options.fontSize ?? 26;
+    ctx.font = `bold ${fontSize}px "Space Mono", monospace`;
+    ctx.fillStyle = options.color ?? "#dcebff";
+    ctx.textAlign = options.align ?? "left";
+    ctx.textBaseline = "top";
 
-  const gearRing = new THREE.Mesh(
-    new THREE.TorusGeometry(1.06, 0.075, 10, 32),
-    options.goldMat,
-  );
-  gearRing.position.z = 0.22;
-  group.add(gearRing);
+    if (options.border) {
+      ctx.strokeStyle = "rgba(125, 187, 255, 0.4)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(16, 16, canvas.width - 32, canvas.height - 32);
+    }
 
-  const rearRing = new THREE.Mesh(
-    new THREE.TorusGeometry(0.98, 0.055, 10, 32),
-    options.metalMat,
-  );
-  rearRing.position.z = -0.35;
-  group.add(rearRing);
-
-  const lensGlass = new THREE.Mesh(
-    new THREE.SphereGeometry(0.72, 20, 14, 0, Math.PI * 2, 0, Math.PI * 0.45),
-    options.glassMat,
-  );
-  lensGlass.rotation.x = Math.PI / 2;
-  lensGlass.position.z = 0.18;
-  group.add(lensGlass);
-
-  const innerCore = new THREE.Mesh(
-    new THREE.OctahedronGeometry(0.32, 0),
-    options.glowMat,
-  );
-  group.add(innerCore);
-
-  const outerHalo = new THREE.Mesh(
-    new THREE.TorusGeometry(1.48, 0.025, 8, 44),
-    options.glowMat,
-  );
-  outerHalo.rotation.x = Math.PI * 0.22;
-  outerHalo.rotation.y = Math.PI * 0.18;
-  group.add(outerHalo);
-
-  return group;
-}
-
-function buildSculpturalChandelier(options: {
-  goldMat: THREE.Material;
-  silverMat: THREE.Material;
-  glassMat: THREE.Material;
-}): THREE.Group {
-  const group = new THREE.Group();
-
-  const stem = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.14, 0.09, 5.2, 10),
-    options.goldMat,
-  );
-  stem.position.y = 2.6;
-  group.add(stem);
-
-  const rings = [
-    { radius: 5.2, y: 0.4, tube: 0.085, mat: options.goldMat },
-    { radius: 3.6, y: -0.65, tube: 0.07, mat: options.silverMat },
-    { radius: 2.1, y: -1.55, tube: 0.06, mat: options.goldMat },
-  ];
-  rings.forEach((ring) => {
-    const mesh = new THREE.Mesh(
-      new THREE.TorusGeometry(ring.radius, ring.tube, 10, 48),
-      ring.mat,
-    );
-    mesh.rotation.x = Math.PI / 2;
-    mesh.position.y = ring.y;
-    group.add(mesh);
-  });
-
-  // Ring of crystalline prism drops on outer tier
-  const dropGeo = new THREE.OctahedronGeometry(0.24, 0);
-  for (let i = 0; i < 16; i += 1) {
-    const angle = (i / 16) * Math.PI * 2;
-    const drop = new THREE.Mesh(dropGeo, options.glassMat);
-    drop.position.set(Math.cos(angle) * 5.2, -0.05, Math.sin(angle) * 5.2);
-    drop.scale.set(0.8, 1.8, 0.8);
-    group.add(drop);
+    const startX =
+      options.align === "center"
+        ? 256
+        : options.align === "right"
+          ? 480
+          : 32;
+    let currentY = 32;
+    lines.forEach((line, idx) => {
+      ctx.fillText(line, startX, currentY);
+      if (options.underlineLastLine && idx === lines.length - 1) {
+        const metrics = ctx.measureText(line);
+        ctx.strokeStyle = options.color ?? "#dcebff";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        const lx =
+          options.align === "center"
+            ? startX - metrics.width / 2
+            : options.align === "right"
+              ? startX - metrics.width
+              : startX;
+        ctx.moveTo(lx, currentY + fontSize + 6);
+        ctx.lineTo(lx + metrics.width, currentY + fontSize + 6);
+        ctx.stroke();
+      }
+      currentY += fontSize * 1.4;
+    });
   }
 
-  return group;
-}
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  const sprite = new THREE.Sprite(mat);
+  const s = options.scale ?? 4.2;
+  sprite.scale.set(s, s * 0.5, 1);
 
-function buildGrandAstrolabe(options: {
-  obsidianMat: THREE.Material;
-  goldMat: THREE.Material;
-  glowMat: THREE.Material;
-}): THREE.Group {
-  const group = new THREE.Group();
-
-  const spireTop = new THREE.Mesh(
-    new THREE.ConeGeometry(0.32, 1.6, 8),
-    options.obsidianMat,
-  );
-  spireTop.position.y = 2.2;
-  group.add(spireTop);
-
-  const spireBottom = new THREE.Mesh(
-    new THREE.ConeGeometry(0.28, 1.4, 8),
-    options.obsidianMat,
-  );
-  spireBottom.rotation.x = Math.PI;
-  spireBottom.position.y = -2.2;
-  group.add(spireBottom);
-
-  const ringA = new THREE.Mesh(
-    new THREE.TorusGeometry(2.6, 0.045, 10, 52),
-    options.goldMat,
-  );
-  ringA.rotation.x = Math.PI / 3;
-  group.add(ringA);
-
-  const ringB = new THREE.Mesh(
-    new THREE.TorusGeometry(1.9, 0.038, 10, 44),
-    options.glowMat,
-  );
-  ringB.rotation.y = Math.PI / 4;
-  group.add(ringB);
-
-  const prism = new THREE.Mesh(
-    new THREE.OctahedronGeometry(0.5, 0),
-    options.glowMat,
-  );
-  group.add(prism);
-
-  return group;
+  return {
+    sprite,
+    dispose: () => {
+      texture.dispose();
+      mat.dispose();
+    },
+  };
 }
 
 export function buildCastleScene(
@@ -198,602 +121,533 @@ export function buildCastleScene(
   renderer: THREE.WebGLRenderer,
   isSoftwareGl: boolean,
 ): CastleProceduralAssets {
-  const maxAniso = renderer.capabilities.getMaxAnisotropy();
-  const mats = createPalaceMaterials(maxAniso, isSoftwareGl);
-  const disposables: Array<{ dispose: () => void }> = [...mats.disposables];
-  const dummy = new THREE.Object3D();
+  const disposables: Array<{ dispose: () => void }> = [];
+  const clickableObjects: THREE.Object3D[] = [];
+  const mats = createPalaceMaterials(
+    renderer.capabilities.getMaxAnisotropy(),
+    isSoftwareGl,
+  );
+  disposables.push(...mats.disposables);
 
   // =========================================================================
-  // 01. CONTINUOUS REFLECTIVE MARBLE FLOOR PLANE & BURGUNDY RUNNER
+  // 01. PALACE ARCHITECTURAL ENVELOPE & MARBLE RUNWAYS
   // =========================================================================
-  const floorGeo = new THREE.PlaneGeometry(72, 270, 1, 1);
+  const floorGeo = new THREE.PlaneGeometry(36, 320);
   const floorMesh = new THREE.Mesh(floorGeo, mats.floorMarble);
   floorMesh.rotation.x = -Math.PI / 2;
-  floorMesh.position.set(0, 0, -25);
+  floorMesh.position.set(0, 0, -48);
   floorMesh.receiveShadow = !isSoftwareGl;
   scene.add(floorMesh);
+  disposables.push(floorGeo);
 
-  const runnerGeo = new THREE.BoxGeometry(5.2, 0.045, 224);
-  const runnerMesh = new THREE.Mesh(runnerGeo, mats.carpetRunner);
-  runnerMesh.position.set(0, 0.024, -36);
-  scene.add(runnerMesh);
+  const carpetGeo = new THREE.PlaneGeometry(8.4, 318);
+  const carpetMesh = new THREE.Mesh(carpetGeo, mats.carpetRunner);
+  carpetMesh.rotation.x = -Math.PI / 2;
+  carpetMesh.position.set(0, 0.015, -48);
+  scene.add(carpetMesh);
+  disposables.push(carpetGeo);
 
-  const trimRailGeo = new THREE.BoxGeometry(0.08, 0.06, 224);
-  const leftTrim = new THREE.Mesh(trimRailGeo, mats.goldTrim);
-  leftTrim.position.set(-2.65, 0.032, -36);
-  const rightTrim = new THREE.Mesh(trimRailGeo, mats.goldTrim);
-  rightTrim.position.set(2.65, 0.032, -36);
-  scene.add(leftTrim, rightTrim);
-  disposables.push(floorGeo, runnerGeo, trimRailGeo);
+  // Ceiling Vaults
+  const ceilingGeo = new THREE.PlaneGeometry(36, 320);
+  const ceilingMesh = new THREE.Mesh(ceilingGeo, mats.midnightMarble);
+  ceilingMesh.rotation.x = Math.PI / 2;
+  ceilingMesh.position.set(0, 16.8, -48);
+  scene.add(ceilingMesh);
+  disposables.push(ceilingGeo);
 
-  // =========================================================================
-  // 02. ZONE A — MONUMENTAL PALACE EXTERIOR FACADE, STEPS & HINGED DOORS
-  // =========================================================================
-  const stepGeo = new THREE.BoxGeometry(36, 0.34, 1.8);
-  const stepCount = 6;
-  const stepInst = new THREE.InstancedMesh(stepGeo, mats.obsidianStone, stepCount);
-  for (let i = 0; i < stepCount; i += 1) {
-    dummy.position.set(0, 0.17 + i * 0.28, 70 - i * 1.9);
-    dummy.rotation.set(0, 0, 0);
-    dummy.scale.set(1 - i * 0.03, 1, 1);
-    dummy.updateMatrix();
-    stepInst.setMatrixAt(i, dummy.matrix);
-  }
-  stepInst.instanceMatrix.needsUpdate = true;
-  stepInst.computeBoundingSphere();
-  scene.add(stepInst);
-  disposables.push(stepGeo);
-
-  // Exterior Portico Colonnade (10 towering fluted columns framing the facade at z = 56.5)
-  const porticoColGeo = new THREE.CylinderGeometry(0.68, 0.85, 16.5, 14);
-  const porticoCapGeo = new THREE.BoxGeometry(2.1, 0.65, 2.1);
-  const porticoX = [-19.5, -14.5, -9.5, -4.8, 4.8, 9.5, 14.5, 19.5];
-  const porticoCols = new THREE.InstancedMesh(
-    porticoColGeo,
-    mats.midnightMarble,
-    porticoX.length,
-  );
-  const porticoCaps = new THREE.InstancedMesh(
-    porticoCapGeo,
-    mats.goldTrim,
-    porticoX.length,
-  );
-  porticoX.forEach((x, i) => {
-    dummy.position.set(x, 9.8, 56.8);
-    dummy.scale.set(1, 1, 1);
-    dummy.updateMatrix();
-    porticoCols.setMatrixAt(i, dummy.matrix);
-    dummy.position.set(x, 18.2, 56.8);
-    dummy.updateMatrix();
-    porticoCaps.setMatrixAt(i, dummy.matrix);
-  });
-  porticoCols.instanceMatrix.needsUpdate = true;
-  porticoCaps.instanceMatrix.needsUpdate = true;
-  porticoCols.computeBoundingSphere();
-  porticoCaps.computeBoundingSphere();
-  scene.add(porticoCols, porticoCaps);
-  disposables.push(porticoColGeo, porticoCapGeo);
-
-  // Monumental Pediment Entablature & Solid Facade Jambs flanking gateway
-  const friezeGeo = new THREE.BoxGeometry(46, 3.8, 3.2);
-  const friezeMesh = new THREE.Mesh(friezeGeo, mats.obsidianStone);
-  friezeMesh.position.set(0, 20.4, 55.2);
-  const friezeGoldGeo = new THREE.BoxGeometry(46.2, 0.25, 3.3);
-  const friezeGold = new THREE.Mesh(friezeGoldGeo, mats.goldTrim);
-  friezeGold.position.set(0, 18.55, 55.2);
-
-  const wallJambGeo = new THREE.BoxGeometry(16, 17, 2.4);
-  const leftFacadeWall = new THREE.Mesh(wallJambGeo, mats.obsidianStone);
-  leftFacadeWall.position.set(-12.2, 10.0, 53.2);
-  const rightFacadeWall = new THREE.Mesh(wallJambGeo, mats.obsidianStone);
-  rightFacadeWall.position.set(12.2, 10.0, 53.2);
-
-  const lintelGeo = new THREE.BoxGeometry(9.6, 5.2, 2.5);
-  const portalLintel = new THREE.Mesh(lintelGeo, mats.obsidianStone);
-  portalLintel.position.set(0, 15.8, 53.2);
-  scene.add(friezeMesh, friezeGold, leftFacadeWall, rightFacadeWall, portalLintel);
-  disposables.push(friezeGeo, friezeGoldGeo, wallJambGeo, lintelGeo);
-
-  // Oversized Pivoting Double Exterior Cinema Palace Doors
-  const doorGeo = new THREE.BoxGeometry(4.1, 12.2, 0.42);
-  const doorTrimGeo = new THREE.BoxGeometry(3.6, 11.4, 0.5);
-  const leftDoorPivot = new THREE.Group();
-  leftDoorPivot.position.set(-4.15, 7.6, 53.2);
-  const leftDoorPanel = new THREE.Mesh(doorGeo, mats.obsidianStone);
-  leftDoorPanel.position.set(2.05, 0, 0);
-  const leftDoorBrass = new THREE.Mesh(doorTrimGeo, mats.goldTrim);
-  leftDoorBrass.position.set(2.05, 0, 0);
-  leftDoorBrass.scale.set(0.14, 0.96, 1.05);
-  leftDoorPivot.add(leftDoorPanel, leftDoorBrass);
-
-  const rightDoorPivot = new THREE.Group();
-  rightDoorPivot.position.set(4.15, 7.6, 53.2);
-  const rightDoorPanel = new THREE.Mesh(doorGeo, mats.obsidianStone);
-  rightDoorPanel.position.set(-2.05, 0, 0);
-  const rightDoorBrass = new THREE.Mesh(doorTrimGeo, mats.goldTrim);
-  rightDoorBrass.position.set(-2.05, 0, 0);
-  rightDoorBrass.scale.set(0.14, 0.96, 1.05);
-  rightDoorPivot.add(rightDoorPanel, rightDoorBrass);
-  scene.add(leftDoorPivot, rightDoorPivot);
-  disposables.push(doorGeo, doorTrimGeo);
-
-  // Twin Moving Exterior Searchlights
-  const searchlightGeo = new THREE.ConeGeometry(4.2, 34, 16, 1, true);
-  const searchlightMat = new THREE.MeshBasicMaterial({
-    color: 0xa9d4ff,
-    transparent: true,
-    opacity: 0.08,
-    blending: THREE.AdditiveBlending,
-    side: THREE.DoubleSide,
-    depthWrite: false,
-  });
-  const searchlightL = new THREE.Mesh(searchlightGeo, searchlightMat);
-  searchlightL.position.set(-14, 15, 62);
-  searchlightL.rotation.z = 0.28;
-  const searchlightR = new THREE.Mesh(searchlightGeo, searchlightMat);
-  searchlightR.position.set(14, 15, 62);
-  searchlightR.rotation.z = -0.28;
-  scene.add(searchlightL, searchlightR);
-  disposables.push(searchlightGeo, searchlightMat);
+  // Lateral Walls
+  const wallGeo = new THREE.PlaneGeometry(320, 17.5);
+  const leftWall = new THREE.Mesh(wallGeo, mats.obsidianStone);
+  leftWall.rotation.y = Math.PI / 2;
+  leftWall.position.set(-18, 8.75, -48);
+  const rightWall = new THREE.Mesh(wallGeo, mats.obsidianStone);
+  rightWall.rotation.y = -Math.PI / 2;
+  rightWall.position.set(18, 8.75, -48);
+  scene.add(leftWall, rightWall);
+  disposables.push(wallGeo);
 
   // =========================================================================
-  // 03. ZONE B — TRIPLE-HEIGHT GRAND FOYER (z: +52 .. +10)
+  // 02. STAGE 01: AWAKENING & DISASSEMBLED ARCHITECTURAL BLOCKS (z = 0)
   // =========================================================================
-  const stairGeo = new THREE.BoxGeometry(5.5, 0.42, 1.6);
-  const stairFlights = 18;
-  const stairInst = new THREE.InstancedMesh(
-    stairGeo,
-    mats.midnightMarble,
-    stairFlights * 2,
-  );
-  for (let i = 0; i < stairFlights; i += 1) {
-    const progress = i / stairFlights;
-    const stepY = 0.4 + progress * 8.2;
-    const stepZ = 44 - progress * 22;
-    const stepX = 9.5 + Math.sin(progress * Math.PI * 0.6) * 4.5;
+  const stage01Group = new THREE.Group();
+  stage01Group.position.set(0, 0, 0);
+  scene.add(stage01Group);
 
-    dummy.position.set(-stepX, stepY, stepZ);
-    dummy.rotation.set(0, -0.18, 0);
-    dummy.scale.set(1, 1, 1);
-    dummy.updateMatrix();
-    stairInst.setMatrixAt(i * 2, dummy.matrix);
+  const floatingBlocks: FloatingBlock[] = [];
+  const blockGeo = new THREE.BoxGeometry(2.4, 1.4, 2.0);
+  disposables.push(blockGeo);
 
-    dummy.position.set(stepX, stepY, stepZ);
-    dummy.rotation.set(0, 0.18, 0);
-    dummy.updateMatrix();
-    stairInst.setMatrixAt(i * 2 + 1, dummy.matrix);
-  }
-  stairInst.instanceMatrix.needsUpdate = true;
-  stairInst.computeBoundingSphere();
-  scene.add(stairInst);
-  disposables.push(stairGeo);
-
-  // Foyer Upper Mezzanine Balconies
-  const balconyDeckGeo = new THREE.BoxGeometry(4.6, 0.6, 36);
-  const balconyRailGeo = new THREE.BoxGeometry(0.14, 1.1, 36);
-  [-1, 1].forEach((side) => {
-    const deck = new THREE.Mesh(balconyDeckGeo, mats.obsidianStone);
-    deck.position.set(side * 12.6, 8.6, 32);
-    const rail = new THREE.Mesh(balconyRailGeo, mats.goldTrim);
-    rail.position.set(side * 10.4, 9.45, 32);
-    scene.add(deck, rail);
-  });
-  disposables.push(balconyDeckGeo, balconyRailGeo);
-
-  // Sculptural Chandelier in Foyer Center
-  const chandelierGroup = buildSculpturalChandelier({
-    goldMat: mats.goldTrim,
-    silverMat: mats.silverMetal,
-    glassMat: mats.crystalGlass,
-  });
-  chandelierGroup.position.set(0, 14.6, 32);
-  scene.add(chandelierGroup);
-
-  // =========================================================================
-  // 04. ZONE C — GIGANTIC IMAX AUDITORIUM (z: +10 .. -64)
-  // =========================================================================
-  // 192 Tiered Burgundy Velvet Cinema Seats in ONE InstancedMesh
-  const seatRows = 12;
-  const seatColsPerSide = 8;
-  const totalSeats = seatRows * seatColsPerSide * 2;
-  const seatGeo = new THREE.BoxGeometry(1.18, 1.05, 0.95);
-  const seatInst = new THREE.InstancedMesh(seatGeo, mats.velvetBurgundy, totalSeats);
-  let seatIdx = 0;
-  for (let r = 0; r < seatRows; r += 1) {
-    const rowZ = -2 - r * 3.4;
-    const rowY = 3.2 - r * 0.24; // Tiered stadium rise toward rear
-    for (const side of [-1, 1]) {
-      for (let c = 0; c < seatColsPerSide; c += 1) {
-        const seatX = side * (3.6 + c * 1.48);
-        dummy.position.set(seatX, rowY, rowZ);
-        dummy.rotation.set(0, 0, 0);
-        dummy.scale.set(1, 1, 1);
-        dummy.updateMatrix();
-        seatInst.setMatrixAt(seatIdx, dummy.matrix);
-        seatIdx += 1;
-      }
-    }
-  }
-  seatInst.instanceMatrix.needsUpdate = true;
-  seatInst.computeBoundingSphere();
-  scene.add(seatInst);
-  disposables.push(seatGeo);
-
-  // Curved / Stepped Auditorium Side Balcony Tiers
-  const audBalconyGeo = new THREE.BoxGeometry(3.2, 0.65, 52);
-  const audRailGeo = new THREE.BoxGeometry(0.14, 0.95, 52);
-  [-1, 1].forEach((side) => {
-    [7.4, 12.6].forEach((tierY) => {
-      const bMesh = new THREE.Mesh(audBalconyGeo, mats.midnightMarble);
-      bMesh.position.set(side * 16.2, tierY, -24);
-      const rMesh = new THREE.Mesh(audRailGeo, mats.goldTrim);
-      rMesh.position.set(side * 14.65, tierY + 0.8, -24);
-      scene.add(bMesh, rMesh);
-    });
-  });
-  disposables.push(audBalconyGeo, audRailGeo);
-
-  // Coffered Auditorium Vaulted Ceiling Ribs
-  const audRibGeo = createVaultedRibGeometry(34, 21);
-  const audRibCount = 9;
-  const audRibs = new THREE.InstancedMesh(
-    audRibGeo,
-    mats.obsidianStone,
-    audRibCount,
-  );
-  for (let i = 0; i < audRibCount; i += 1) {
-    dummy.position.set(0, 0, 6 - i * 7.2);
-    dummy.rotation.set(0, 0, 0);
-    dummy.scale.set(1, 1, 1);
-    dummy.updateMatrix();
-    audRibs.setMatrixAt(i, dummy.matrix);
-  }
-  audRibs.instanceMatrix.needsUpdate = true;
-  audRibs.computeBoundingSphere();
-  scene.add(audRibs);
-  disposables.push(audRibGeo);
-
-  // Monumental 2.39:1 IMAX Silver Screen at z = -58 + Gold Proscenium Frame
-  const screenGeo = new THREE.PlaneGeometry(31, 13.0);
-  const screenMesh = new THREE.Mesh(screenGeo, mats.screenSurface);
-  screenMesh.position.set(0, 8.8, -58);
-
-  const prosceniumFrameGeo = new THREE.BoxGeometry(33.2, 0.65, 1.2);
-  const frameTop = new THREE.Mesh(prosceniumFrameGeo, mats.goldTrim);
-  frameTop.position.set(0, 15.65, -57.7);
-  const frameBottom = new THREE.Mesh(prosceniumFrameGeo, mats.goldTrim);
-  frameBottom.position.set(0, 2.0, -57.7);
-  scene.add(screenMesh, frameTop, frameBottom);
-  disposables.push(screenGeo, prosceniumFrameGeo);
-
-  // Animated Parting Deep Velvet Burgundy Curtains flanking the IMAX Screen
-  const curtainGeo = new THREE.BoxGeometry(16, 14.2, 0.7);
-  const leftCurtain = new THREE.Mesh(curtainGeo, mats.velvetBurgundy);
-  leftCurtain.position.set(-15.5, 8.8, -57.1);
-  const rightCurtain = new THREE.Mesh(curtainGeo, mats.velvetBurgundy);
-  rightCurtain.position.set(15.5, 8.8, -57.1);
-  scene.add(leftCurtain, rightCurtain);
-  disposables.push(curtainGeo);
-
-  // Projector Light Cone from Rear Projection Booth (z = 6, y = 14) toward the IMAX Screen
-  const projConeGeo = new THREE.CylinderGeometry(0.45, 9.5, 62, 18, 1, true);
-  const projConeMat = new THREE.MeshBasicMaterial({
-    color: 0xa9d4ff,
-    transparent: true,
-    opacity: 0.065,
-    blending: THREE.AdditiveBlending,
-    side: THREE.DoubleSide,
-    depthWrite: false,
-  });
-  const projCone = new THREE.Mesh(projConeGeo, projConeMat);
-  projCone.position.set(0, 11.4, -25);
-  projCone.rotation.x = Math.PI / 2 - 0.085;
-  scene.add(projCone);
-  disposables.push(projConeGeo, projConeMat);
-
-  // =========================================================================
-  // 05. ZONE D — INNER PALACE CHAMBERS WING & GRAND EXIT PORTAL (z: -64 .. -146)
-  // =========================================================================
-  const innerArchGeo = createVaultedRibGeometry(16, 13.2);
-  const innerArchCount = 10;
-  const innerArches = new THREE.InstancedMesh(
-    innerArchGeo,
-    mats.obsidianStone,
-    innerArchCount,
-  );
-  for (let i = 0; i < innerArchCount; i += 1) {
-    dummy.position.set(0, 0, -68 - i * 8.4);
-    dummy.rotation.set(0, 0, 0);
-    dummy.scale.set(1, 1, 1);
-    dummy.updateMatrix();
-    innerArches.setMatrixAt(i, dummy.matrix);
-  }
-  innerArches.instanceMatrix.needsUpdate = true;
-  innerArches.computeBoundingSphere();
-  scene.add(innerArches);
-  disposables.push(innerArchGeo);
-
-  // Monumental Grand Exit Portal at z = -146
-  const exitPillarGeo = new THREE.BoxGeometry(2.4, 13.5, 2.4);
-  const exitLeft = new THREE.Mesh(exitPillarGeo, mats.midnightMarble);
-  exitLeft.position.set(-4.8, 6.75, -146);
-  const exitRight = new THREE.Mesh(exitPillarGeo, mats.midnightMarble);
-  exitRight.position.set(4.8, 6.75, -146);
-  const exitArchHeader = new THREE.Mesh(
-    new THREE.BoxGeometry(12, 2.2, 2.4),
-    mats.goldTrim,
-  );
-  exitArchHeader.position.set(0, 14.2, -146);
-  scene.add(exitLeft, exitRight, exitArchHeader);
-  disposables.push(exitPillarGeo, exitArchHeader.geometry);
-
-  // Volumetric Moonlight Shafts across Palace Rooms
-  const beamGeo = new THREE.ConeGeometry(2.8, 18, 16, 1, true);
-  const beamMeshes: THREE.Mesh[] = [];
-  const beamZOffsets = [38, 22, -18, -42, -74, -100, -124];
-  beamZOffsets.forEach((z, idx) => {
-    const beamMat = new THREE.MeshBasicMaterial({
-      color: idx % 2 === 0 ? 0x7dbbff : 0xc6a875,
-      transparent: true,
-      opacity: 0.055,
-      blending: THREE.AdditiveBlending,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    });
-    const beam = new THREE.Mesh(beamGeo, beamMat);
-    beam.position.set(idx % 2 === 0 ? -3.0 : 3.0, 8.2, z);
-    beam.rotation.z = idx % 2 === 0 ? -0.35 : 0.35;
-    beam.rotation.x = 0.12;
-    scene.add(beam);
-    beamMeshes.push(beam);
-    disposables.push(beamMat);
-  });
-  disposables.push(beamGeo);
-
-  // Conservatory Astrolabe Dome & Floating Optical Cinema Relics
-  const astrolabeGroup = buildGrandAstrolabe({
-    obsidianMat: mats.obsidianStone,
-    goldMat: mats.goldTrim,
-    glowMat: mats.moonlightInlay,
-  });
-  astrolabeGroup.position.set(0, 7.2, -96);
-  scene.add(astrolabeGroup);
-
-  const heroMonoliths: THREE.Group[] = [];
-  const relicCoords = [
-    { x: -5.4, y: 3.6, z: -26, scale: 1.0 },
-    { x: 5.0, y: 3.4, z: -64, scale: 0.98 },
-    { x: -4.2, y: 3.5, z: -88, scale: 1.05 },
-    { x: 3.8, y: 3.4, z: -112, scale: 1.02 },
-    { x: 0, y: 4.1, z: -132, scale: 1.15 },
+  // Define 24 discrete masonry blocks forming the grand portico arch
+  const blockSpecs = [
+    // Left column (4 tiers)
+    { rx: -5.4, ry: 0.8, rz: 0, ox: -14.2, oy: -2.4, oz: 16.5, orx: 0.45, ory: -0.65, orz: 0.3 },
+    { rx: -5.4, ry: 2.4, rz: 0, ox: -12.8, oy: 1.2, oz: 14.0, orx: -0.35, ory: 0.55, orz: -0.25 },
+    { rx: -5.4, ry: 4.0, rz: 0, ox: -15.5, oy: 5.6, oz: 18.2, orx: 0.55, ory: -0.4, orz: 0.5 },
+    { rx: -5.4, ry: 5.6, rz: 0, ox: -11.6, oy: 9.2, oz: 12.8, orx: -0.4, ory: 0.6, orz: -0.4 },
+    { rx: -5.4, ry: 7.2, rz: 0, ox: -16.0, oy: 12.0, oz: 15.0, orx: 0.6, ory: -0.5, orz: 0.35 },
+    { rx: -5.4, ry: 8.8, rz: 0, ox: -13.4, oy: 14.5, oz: 11.2, orx: -0.5, ory: 0.35, orz: -0.6 },
+    // Right column (4 tiers)
+    { rx: 5.4, ry: 0.8, rz: 0, ox: 14.2, oy: -2.0, oz: 15.8, orx: -0.45, ory: 0.65, orz: -0.3 },
+    { rx: 5.4, ry: 2.4, rz: 0, ox: 12.5, oy: 1.8, oz: 13.5, orx: 0.4, ory: -0.5, orz: 0.3 },
+    { rx: 5.4, ry: 4.0, rz: 0, ox: 16.2, oy: 5.0, oz: 17.5, orx: -0.6, ory: 0.45, orz: -0.45 },
+    { rx: 5.4, ry: 5.6, rz: 0, ox: 11.8, oy: 8.8, oz: 12.2, orx: 0.35, ory: -0.6, orz: 0.4 },
+    { rx: 5.4, ry: 7.2, rz: 0, ox: 15.6, oy: 11.5, oz: 14.6, orx: -0.55, ory: 0.5, orz: -0.3 },
+    { rx: 5.4, ry: 8.8, rz: 0, ox: 13.0, oy: 15.0, oz: 10.8, orx: 0.5, ory: -0.4, orz: 0.55 },
+    // Archway Curvature (8 blocks)
+    { rx: -4.5, ry: 10.4, rz: 0, ox: -11.2, oy: 16.8, oz: 13.0, orx: 0.4, ory: -0.5, orz: 0.6 },
+    { rx: -3.2, ry: 11.8, rz: 0, ox: -8.5, oy: 18.2, oz: 16.4, orx: 0.3, ory: -0.7, orz: 0.45 },
+    { rx: -1.6, ry: 12.8, rz: 0, ox: -4.2, oy: 19.5, oz: 18.0, orx: 0.2, ory: -0.6, orz: 0.3 },
+    { rx: 0.0, ry: 13.2, rz: 0, ox: 0.0, oy: 21.0, oz: 19.5, orx: 0.7, ory: 0.0, orz: 0.0 }, // Keystone
+    { rx: 1.6, ry: 12.8, rz: 0, ox: 4.2, oy: 19.5, oz: 18.0, orx: -0.2, ory: 0.6, orz: -0.3 },
+    { rx: 3.2, ry: 11.8, rz: 0, ox: 8.5, oy: 18.2, oz: 16.4, orx: -0.3, ory: 0.7, orz: -0.45 },
+    { rx: 4.5, ry: 10.4, rz: 0, ox: 11.2, oy: 16.8, oz: 13.0, orx: -0.4, ory: 0.5, orz: -0.6 },
+    // Outer Entablature & Lintel (5 blocks)
+    { rx: -6.8, ry: 12.2, rz: 0, ox: -16.5, oy: 18.0, oz: 12.5, orx: 0.5, ory: -0.3, orz: 0.4 },
+    { rx: -3.8, ry: 14.0, rz: 0, ox: -9.8, oy: 22.0, oz: 15.0, orx: 0.6, ory: -0.5, orz: 0.3 },
+    { rx: 0.0, ry: 14.8, rz: 0, ox: 0.0, oy: 23.5, oz: 16.8, orx: 0.8, ory: 0.0, orz: 0.0 },
+    { rx: 3.8, ry: 14.0, rz: 0, ox: 9.8, oy: 22.0, oz: 15.0, orx: -0.6, ory: 0.5, orz: -0.3 },
+    { rx: 6.8, ry: 12.2, rz: 0, ox: 16.5, oy: 18.0, oz: 12.5, orx: -0.5, ory: 0.3, orz: -0.4 },
   ];
-  const shadowDiscGeo = new THREE.CircleGeometry(1.25, 20);
-  disposables.push(shadowDiscGeo);
 
-  relicCoords.forEach((coord) => {
-    const relic = buildCinemaRelicGroup({
-      obsidianMat: mats.obsidianStone,
-      metalMat: mats.silverMetal,
-      goldMat: mats.goldTrim,
-      glassMat: mats.crystalGlass,
-      glowMat: mats.moonlightInlay,
-      scale: coord.scale,
+  blockSpecs.forEach((spec) => {
+    const mesh = new THREE.Mesh(blockGeo, mats.obsidianStone);
+    mesh.castShadow = !isSoftwareGl;
+    mesh.receiveShadow = !isSoftwareGl;
+    stage01Group.add(mesh);
+    floatingBlocks.push({
+      mesh,
+      restingPos: new THREE.Vector3(spec.rx, spec.ry, spec.rz),
+      restingRot: new THREE.Euler(0, 0, 0),
+      offsetPos: new THREE.Vector3(spec.ox, spec.oy, spec.oz),
+      offsetRot: new THREE.Euler(spec.orx, spec.ory, spec.orz),
     });
-    relic.position.set(coord.x, coord.y, coord.z);
-    scene.add(relic);
-    heroMonoliths.push(relic);
-
-    const disc = new THREE.Mesh(shadowDiscGeo, mats.shadowDisc);
-    disc.rotation.x = -Math.PI / 2;
-    disc.position.set(coord.x, 0.03, coord.z);
-    scene.add(disc);
   });
 
-  // =========================================================================
-  // 06. ATMOSPHERIC FLOATING DUST MOTES THROUGHOUT PALACE
-  // =========================================================================
-  const dustCount = 420;
-  const dustPositions = new Float32Array(dustCount * 3);
-  for (let i = 0; i < dustCount; i += 1) {
-    dustPositions[i * 3] = (Math.random() - 0.5) * 26;
-    dustPositions[i * 3 + 1] = 0.6 + Math.random() * 14.5;
-    dustPositions[i * 3 + 2] = 96 - Math.random() * 240;
-  }
-  const dustGeo = new THREE.BufferGeometry();
-  dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
-  const dustMat = new THREE.PointsMaterial({
-    size: 0.26,
-    map: mats.dustTexture,
+  // Stage 01 Luminous Seams Backlight
+  const stage01Backlight = new THREE.PointLight(0xdcebff, 4.5, 45, 1.2);
+  stage01Backlight.position.set(0, 8.5, -2);
+  stage01Group.add(stage01Backlight);
+
+  // Stage 01 The 5 Verified Coordinate Node Crosshairs & Lines (38, 21, 36, 32, 30)
+  const nodeCoords = [
+    { id: "38", x: -6.5, y: 9.2, z: 2.5 },
+    { id: "21", x: -4.2, y: 4.4, z: 2.5 },
+    { id: "36", x: 2.2, y: 9.8, z: 2.5 },
+    { id: "32", x: 4.6, y: 14.0, z: 2.5 },
+    { id: "30", x: 5.8, y: 4.6, z: 2.5 },
+  ];
+
+  const nodeGroup = new THREE.Group();
+  stage01Group.add(nodeGroup);
+
+  // Node line connections: 38-21, 38-36, 36-32, 21-30, 36-30
+  const linePoints = [
+    new THREE.Vector3(-6.5, 9.2, 2.5), new THREE.Vector3(-4.2, 4.4, 2.5),
+    new THREE.Vector3(-6.5, 9.2, 2.5), new THREE.Vector3(2.2, 9.8, 2.5),
+    new THREE.Vector3(2.2, 9.8, 2.5), new THREE.Vector3(4.6, 14.0, 2.5),
+    new THREE.Vector3(-4.2, 4.4, 2.5), new THREE.Vector3(5.8, 4.6, 2.5),
+    new THREE.Vector3(2.2, 9.8, 2.5), new THREE.Vector3(5.8, 4.6, 2.5),
+  ];
+  const nodeLineGeo = new THREE.BufferGeometry().setFromPoints(linePoints);
+  const nodeLineMat = new THREE.LineBasicMaterial({
+    color: 0xffffff,
     transparent: true,
-    opacity: 0.72,
+    opacity: 0.9,
     blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    color: 0xa9d4ff,
   });
-  const dustPoints = new THREE.Points(dustGeo, dustMat);
-  scene.add(dustPoints);
-  disposables.push(dustGeo, dustMat);
+  const nodeLines = new THREE.LineSegments(nodeLineGeo, nodeLineMat);
+  nodeGroup.add(nodeLines);
+  disposables.push(nodeLineGeo, nodeLineMat);
+
+  // Add 3D text sprites for the 5 nodes
+  const nodeSprites: THREE.Sprite[] = [];
+  nodeCoords.forEach((node) => {
+    const label = createTextSprite([node.id], {
+      fontSize: 34,
+      color: "#ffffff",
+      align: "center",
+      scale: 1.8,
+    });
+    label.sprite.position.set(node.x, node.y + 0.45, node.z);
+    nodeGroup.add(label.sprite);
+    nodeSprites.push(label.sprite);
+    disposables.push({ dispose: label.dispose });
+
+    // Tiny Crosshair indicator
+    const crossGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-0.15, 0, 0), new THREE.Vector3(0.15, 0, 0),
+      new THREE.Vector3(0, -0.15, 0), new THREE.Vector3(0, 0.15, 0),
+    ]);
+    const crossMat = new THREE.LineBasicMaterial({ color: 0xffffff });
+    const cross = new THREE.LineSegments(crossGeo, crossMat);
+    cross.position.set(node.x, node.y, node.z);
+    nodeGroup.add(cross);
+    disposables.push(crossGeo, crossMat);
+  });
 
   // =========================================================================
-  // 07. IGLOO-INSPIRED SCENE 01: WIREFRAME AWAKENING & COORDINATE ASSEMBLY
+  // 03. STAGE 02: INNER GLOWING WIREFRAME SPHERE CORE (z = 0)
   // =========================================================================
-  const wireframeGroup = new THREE.Group();
-  wireframeGroup.position.set(0, 0, 56);
-
-  // Facade cage wireframe outline
-  const cageGeo = new THREE.WireframeGeometry(new THREE.BoxGeometry(42, 22, 14));
-  const cageMesh = new THREE.LineSegments(cageGeo, mats.wireframeCyan);
-  cageMesh.position.set(0, 11, 0);
-  wireframeGroup.add(cageMesh);
-  disposables.push(cageGeo);
-
-  // Portico column wireframe rings
-  for (let c = 0; c < 8; c++) {
-    const colX = -18 + c * 5.14;
-    const colWireGeo = new THREE.WireframeGeometry(new THREE.CylinderGeometry(0.72, 0.9, 17, 8));
-    const colWire = new THREE.LineSegments(colWireGeo, mats.wireframeCyan);
-    colWire.position.set(colX, 9.8, 0.8);
-    wireframeGroup.add(colWire);
-    disposables.push(colWireGeo);
-  }
-
-  // Constellation coordinate points in space
-  const nodeCount = 160;
-  const nodePositions = new Float32Array(nodeCount * 3);
-  for (let n = 0; n < nodeCount; n++) {
-    nodePositions[n * 3] = (Math.random() - 0.5) * 36;
-    nodePositions[n * 3 + 1] = 1 + Math.random() * 20;
-    nodePositions[n * 3 + 2] = 20 - Math.random() * 40;
-  }
-  const nodeGeo = new THREE.BufferGeometry();
-  nodeGeo.setAttribute("position", new THREE.BufferAttribute(nodePositions, 3));
-  const nodeMat = new THREE.PointsMaterial({
-    size: 0.35,
-    color: 0xa9d4ff,
+  const innerCoreSphereGeo = new THREE.IcosahedronGeometry(3.6, 2);
+  const innerCoreSphereWire = new THREE.WireframeGeometry(innerCoreSphereGeo);
+  const innerCoreSphereMat = new THREE.LineBasicMaterial({
+    color: 0xdcebff,
     transparent: true,
     opacity: 0.85,
     blending: THREE.AdditiveBlending,
+  });
+  const innerCoreSphere = new THREE.LineSegments(innerCoreSphereWire, innerCoreSphereMat);
+  innerCoreSphere.position.set(0, 7.8, 0);
+  stage01Group.add(innerCoreSphere);
+  disposables.push(innerCoreSphereGeo, innerCoreSphereWire, innerCoreSphereMat);
+
+  // =========================================================================
+  // 04. STAGE 03: THE SEGMENTED RING GATE (shattered_ring) (z = -20)
+  // =========================================================================
+  const stage03RingGroup = new THREE.Group();
+  stage03RingGroup.position.set(0, 8.4, -20);
+  scene.add(stage03RingGroup);
+
+  // Outer Segmented Stone Ring (8 arched segments)
+  const outerRingSegments: THREE.Mesh[] = [];
+  const outerArcGeo = new THREE.TorusGeometry(6.8, 0.38, 12, 16, Math.PI / 4.4);
+  disposables.push(outerArcGeo);
+
+  for (let s = 0; s < 8; s++) {
+    const arcMesh = new THREE.Mesh(outerArcGeo, mats.obsidianStone);
+    arcMesh.rotation.z = (s * Math.PI) / 4 + 0.05;
+    stage03RingGroup.add(arcMesh);
+    outerRingSegments.push(arcMesh);
+  }
+
+  // Inner Concentric Rotating Ring Segments
+  const innerRingGroup1 = new THREE.Group();
+  const innerRingGroup2 = new THREE.Group();
+  stage03RingGroup.add(innerRingGroup1, innerRingGroup2);
+
+  const innerArc1Geo = new THREE.TorusGeometry(5.2, 0.28, 10, 16, Math.PI / 3.4);
+  const innerArc2Geo = new THREE.TorusGeometry(3.8, 0.22, 10, 16, Math.PI / 2.6);
+  disposables.push(innerArc1Geo, innerArc2Geo);
+
+  for (let s = 0; s < 6; s++) {
+    const mesh = new THREE.Mesh(innerArc1Geo, mats.goldTrim);
+    mesh.rotation.z = (s * Math.PI) / 3 + 0.08;
+    innerRingGroup1.add(mesh);
+  }
+  for (let s = 0; s < 4; s++) {
+    const mesh = new THREE.Mesh(innerArc2Geo, mats.silverMetal);
+    mesh.rotation.z = (s * Math.PI) / 2 + 0.12;
+    innerRingGroup2.add(mesh);
+  }
+
+  // Neon Caustic Aperture Web (ignites when aligned)
+  const causticWebGeo = new THREE.IcosahedronGeometry(4.8, 1);
+  const causticWebWire = new THREE.WireframeGeometry(causticWebGeo);
+  const causticWebMat = new THREE.LineBasicMaterial({
+    color: 0x7dbbff,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+  });
+  const causticWebMesh = new THREE.LineSegments(causticWebWire, causticWebMat);
+  stage03RingGroup.add(causticWebMesh);
+  disposables.push(causticWebGeo, causticWebWire, causticWebMat);
+
+  // Intense Perimeter Caustic Ring Light
+  const causticRingGeo = new THREE.TorusGeometry(6.4, 0.08, 8, 48);
+  const causticRingMat = new THREE.MeshBasicMaterial({
+    color: 0xdcebff,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+  });
+  const causticRingMesh = new THREE.Mesh(causticRingGeo, causticRingMat);
+  stage03RingGroup.add(causticRingMesh);
+  disposables.push(causticRingGeo, causticRingMat);
+
+  // =========================================================================
+  // 05. STAGE 04: PORTFOLIO MONOLITH CO_01 — SHADOW / III (z = -48)
+  // =========================================================================
+  const stage04Monolith = new THREE.Group();
+  stage04Monolith.position.set(0, 6.2, -48);
+  scene.add(stage04Monolith);
+
+  // Faceted Crystalline Cube
+  const mono1Geo = new THREE.DodecahedronGeometry(4.4, 0);
+  const mono1Mesh = new THREE.Mesh(mono1Geo, mats.crystalGlass);
+  mono1Mesh.userData = { action: "screen-shadow" };
+  stage04Monolith.add(mono1Mesh);
+  clickableObjects.push(mono1Mesh);
+  disposables.push(mono1Geo);
+
+  // Wireframe bounding accents
+  const mono1WireGeo = new THREE.WireframeGeometry(new THREE.BoxGeometry(6.2, 7.8, 4.6));
+  const mono1WireMat = new THREE.LineBasicMaterial({
+    color: 0xdcebff,
+    transparent: true,
+    opacity: 0.45,
+  });
+  const mono1Wire = new THREE.LineSegments(mono1WireGeo, mono1WireMat);
+  stage04Monolith.add(mono1Wire);
+  disposables.push(mono1WireGeo, mono1WireMat);
+
+  // Embedded SHADOW / III Film Plate
+  const film1PlateGeo = new THREE.PlaneGeometry(4.8, 3.0);
+  const film1PlateMat = new THREE.MeshStandardMaterial({
+    color: 0x050810,
+    emissive: 0x243b55,
+    emissiveIntensity: 0.85,
+    roughness: 0.2,
+    metalness: 0.8,
+  });
+  const film1Plate = new THREE.Mesh(film1PlateGeo, film1PlateMat);
+  film1Plate.userData = { action: "screen-shadow" };
+  stage04Monolith.add(film1Plate);
+  clickableObjects.push(film1Plate);
+  disposables.push(film1PlateGeo, film1PlateMat);
+
+  // Stage 04 Verified 3D Telemetry Sprites:
+  // Top-left: PORTFOLIO | CO_01 // SHADOW / III
+  const mono1TelemetryTL = createTextSprite(["PORTFOLIO | CO_01", "SHADOW / III"], {
+    fontSize: 28,
+    color: "#dcebff",
+    scale: 4.8,
+  });
+  mono1TelemetryTL.sprite.position.set(-4.2, 4.4, 0.5);
+  stage04Monolith.add(mono1TelemetryTL.sprite);
+  disposables.push({ dispose: mono1TelemetryTL.dispose });
+
+  // Right: TEMP 28.40 // -13.22
+  const mono1TelemetryR = createTextSprite(["TEMP   28.40", "      -13.22"], {
+    fontSize: 26,
+    color: "#a9d4ff",
+    scale: 4.2,
+  });
+  mono1TelemetryR.sprite.position.set(4.5, 1.2, 0.5);
+  stage04Monolith.add(mono1TelemetryR.sprite);
+  disposables.push({ dispose: mono1TelemetryR.dispose });
+
+  // Bottom-right: PSYCHOLOGICAL SUSPENSE // CLICK TO SCREEN
+  const mono1TelemetryBR = createTextSprite(
+    ["PSYCHOLOGICAL SUSPENSE · SHORT FILM", "CLICK TO SCREEN"],
+    {
+      fontSize: 24,
+      color: "#c6a875",
+      underlineLastLine: true,
+      scale: 5.4,
+    },
+  );
+  mono1TelemetryBR.sprite.position.set(2.4, -4.2, 0.5);
+  stage04Monolith.add(mono1TelemetryBR.sprite);
+  disposables.push({ dispose: mono1TelemetryBR.dispose });
+
+  // Leader hairline line connecting top-left text to crystal vertex
+  const leader1Geo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-2.8, 3.8, 0.5),
+    new THREE.Vector3(-1.8, 3.2, 0.2),
+  ]);
+  const leader1Mat = new THREE.LineBasicMaterial({ color: 0xdcebff, transparent: true, opacity: 0.65 });
+  const leader1Line = new THREE.Line(leader1Geo, leader1Mat);
+  stage04Monolith.add(leader1Line);
+  disposables.push(leader1Geo, leader1Mat);
+
+  // =========================================================================
+  // 06. STAGE 05: PORTFOLIO MONOLITH CO_02 — CHAKRA (z = -74)
+  // =========================================================================
+  const stage05Monolith = new THREE.Group();
+  stage05Monolith.position.set(0, 6.2, -74);
+  scene.add(stage05Monolith);
+
+  // Second Rough-Hewn Crystalline Monolith
+  const mono2Geo = new THREE.CylinderGeometry(3.6, 4.0, 7.8, 8);
+  const mono2Mesh = new THREE.Mesh(mono2Geo, mats.obsidianStone);
+  mono2Mesh.userData = { action: "screen-chakra" };
+  stage05Monolith.add(mono2Mesh);
+  clickableObjects.push(mono2Mesh);
+  disposables.push(mono2Geo);
+
+  const mono2WireGeo = new THREE.WireframeGeometry(mono2Geo);
+  const mono2Wire = new THREE.LineSegments(mono2WireGeo, mono1WireMat);
+  stage05Monolith.add(mono2Wire);
+  disposables.push(mono2WireGeo);
+
+  // Embedded CHAKRA Film Plate
+  const film2PlateGeo = new THREE.PlaneGeometry(4.8, 2.7);
+  const film2PlateMat = new THREE.MeshStandardMaterial({
+    color: 0x080a12,
+    emissive: 0x4a3b1a,
+    emissiveIntensity: 0.85,
+    roughness: 0.25,
+    metalness: 0.8,
+  });
+  const film2Plate = new THREE.Mesh(film2PlateGeo, film2PlateMat);
+  film2Plate.userData = { action: "screen-chakra" };
+  stage05Monolith.add(film2Plate);
+  clickableObjects.push(film2Plate);
+  disposables.push(film2PlateGeo, film2PlateMat);
+
+  // Stage 05 Verified 3D Telemetry Sprites:
+  // Top-left: PORTFOLIO_CO_02 // CHAKRA
+  const mono2TelemetryTL = createTextSprite(["PORTFOLIO_CO_02", "CHAKRA"], {
+    fontSize: 28,
+    color: "#dcebff",
+    scale: 4.8,
+  });
+  mono2TelemetryTL.sprite.position.set(-4.2, 4.4, 0.5);
+  stage05Monolith.add(mono2TelemetryTL.sprite);
+  disposables.push({ dispose: mono2TelemetryTL.dispose });
+
+  // Right: TEMP 30.08 // -01.07
+  const mono2TelemetryR = createTextSprite(["TEMP   30.08", "      -01.07"], {
+    fontSize: 26,
+    color: "#a9d4ff",
+    scale: 4.2,
+  });
+  mono2TelemetryR.sprite.position.set(4.5, 1.2, 0.5);
+  stage05Monolith.add(mono2TelemetryR.sprite);
+  disposables.push({ dispose: mono2TelemetryR.dispose });
+
+  // Bottom-right: SILENT THRILLER // CLICK TO SCREEN
+  const mono2TelemetryBR = createTextSprite(
+    ["SILENT THRILLER · SHORT FILM", "CLICK TO SCREEN"],
+    {
+      fontSize: 24,
+      color: "#c6a875",
+      underlineLastLine: true,
+      scale: 5.4,
+    },
+  );
+  mono2TelemetryBR.sprite.position.set(2.4, -4.2, 0.5);
+  stage05Monolith.add(mono2TelemetryBR.sprite);
+  disposables.push({ dispose: mono2TelemetryBR.dispose });
+
+  // =========================================================================
+  // 07. STAGE 06: SUBTERRANEAN CIRCULAR STEPPED DAIS & TERMINAL LINKS (z = -108)
+  // =========================================================================
+  const stage06DaisGroup = new THREE.Group();
+  stage06DaisGroup.position.set(0, 0, -108);
+  scene.add(stage06DaisGroup);
+
+  // 3 Concentric Stepped Circular Tiers
+  const tierRadii = [8.8, 6.4, 4.2];
+  tierRadii.forEach((radius, idx) => {
+    const tierGeo = new THREE.CylinderGeometry(radius, radius + 0.2, 0.35, 48);
+    const tierMesh = new THREE.Mesh(tierGeo, idx === 1 ? mats.silverMetal : mats.obsidianStone);
+    tierMesh.position.y = 0.18 + idx * 0.35;
+    stage06DaisGroup.add(tierMesh);
+    disposables.push(tierGeo);
+
+    // Glowing Floor Ring in the step groove
+    const ringLightGeo = new THREE.TorusGeometry(radius - 0.05, 0.045, 8, 48);
+    const ringLightMat = new THREE.MeshBasicMaterial({
+      color: 0x7dbbff,
+      transparent: true,
+      opacity: 0.85,
+    });
+    const ringLight = new THREE.Mesh(ringLightGeo, ringLightMat);
+    ringLight.rotation.x = Math.PI / 2;
+    ringLight.position.y = 0.38 + idx * 0.35;
+    stage06DaisGroup.add(ringLight);
+    disposables.push(ringLightGeo, ringLightMat);
+  });
+
+  // Overhead Circular Luminaire Halo
+  const haloGeo = new THREE.TorusGeometry(5.2, 0.16, 10, 48);
+  const haloMesh = new THREE.Mesh(haloGeo, mats.goldTrim);
+  haloMesh.rotation.x = Math.PI / 2;
+  haloMesh.position.y = 13.5;
+  stage06DaisGroup.add(haloMesh);
+  disposables.push(haloGeo);
+
+  // Downward Conical Light Beam
+  const daisBeamGeo = new THREE.CylinderGeometry(5.1, 8.6, 13.2, 32, 1, true);
+  const daisBeamMat = new THREE.MeshBasicMaterial({
+    color: 0xdcebff,
+    transparent: true,
+    opacity: 0.065,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
-  const nodePoints = new THREE.Points(nodeGeo, nodeMat);
-  wireframeGroup.add(nodePoints);
-  disposables.push(nodeGeo, nodeMat);
-  scene.add(wireframeGroup);
+  const daisBeam = new THREE.Mesh(daisBeamGeo, daisBeamMat);
+  daisBeam.position.y = 6.8;
+  stage06DaisGroup.add(daisBeam);
+  disposables.push(daisBeamGeo, daisBeamMat);
 
-  // =========================================================================
-  // 08. IGLOO-INSPIRED SCENE 03: SHATTERED ANAMORPHIC RING PORTAL NEXUS (z = -20)
-  // =========================================================================
-  const portalRingGroup = new THREE.Group();
-  portalRingGroup.position.set(0, 8.4, -20);
-
-  // Outer Segmented Gear Ring
-  const outerRingGeo = new THREE.TorusGeometry(6.4, 0.22, 12, 60);
-  const outerRing = new THREE.Mesh(outerRingGeo, mats.goldTrim);
-  portalRingGroup.add(outerRing);
-  disposables.push(outerRingGeo);
-
-  // Middle Counter-Rotating Luminescent Ring
-  const midRingGeo = new THREE.TorusGeometry(5.1, 0.16, 12, 48);
-  const midRing = new THREE.Mesh(midRingGeo, mats.moonlightInlay);
-  portalRingGroup.add(midRing);
-  disposables.push(midRingGeo);
-
-  // Inner Anamorphic Aperture Iris (8 interlocking mechanical blades)
-  const irisGroup = new THREE.Group();
-  for (let b = 0; b < 8; b++) {
-    const bladeGeo = new THREE.BoxGeometry(2.4, 0.45, 0.08);
-    const bladeMesh = new THREE.Mesh(bladeGeo, mats.silverMetal);
-    const angle = (b / 8) * Math.PI * 2;
-    bladeMesh.position.set(Math.cos(angle) * 3.6, Math.sin(angle) * 3.6, 0);
-    bladeMesh.rotation.z = angle + 0.35;
-    irisGroup.add(bladeMesh);
-    disposables.push(bladeGeo);
+  // Center Stippled 3D Particle Hologram (Cinema Emblem)
+  const holoPointCount = 220;
+  const holoPositions = new Float32Array(holoPointCount * 3);
+  for (let i = 0; i < holoPointCount; i++) {
+    const angle = (i / holoPointCount) * Math.PI * 4;
+    const r = 1.2 + Math.sin(i * 0.5) * 0.4;
+    holoPositions[i * 3] = Math.cos(angle) * r;
+    holoPositions[i * 3 + 1] = 2.8 + (i / holoPointCount) * 2.2;
+    holoPositions[i * 3 + 2] = Math.sin(angle) * r;
   }
-  portalRingGroup.add(irisGroup);
-
-  // Colossal Caustic Light Flare Cone shooting forward through aperture center
-  const flareConeGeo = new THREE.CylinderGeometry(0.15, 8.8, 44, 20, 1, true);
-  const flareCone = new THREE.Mesh(flareConeGeo, mats.portalFlareMat);
-  flareCone.rotation.x = Math.PI / 2;
-  flareCone.position.z = -22;
-  portalRingGroup.add(flareCone);
-  scene.add(portalRingGroup);
-  disposables.push(flareConeGeo);
-
-  // =========================================================================
-  // 09. IGLOO-INSPIRED SCENE 04: MONOLITHIC 3D FILM PRISMS (Screening Hall)
-  // =========================================================================
-  const filmMonoliths: THREE.Group[] = [];
-  const filmMonolithSpecs = [
-    { x: -9.2, y: 5.6, z: -16, rotY: 0.32 },
-    { x: 9.2, y: 5.8, z: -28, rotY: -0.32 },
-    { x: -9.5, y: 5.4, z: -40, rotY: 0.28 },
-    { x: 9.5, y: 5.9, z: -52, rotY: -0.28 },
-  ];
-
-  filmMonolithSpecs.forEach((spec) => {
-    const monoGroup = new THREE.Group();
-    monoGroup.position.set(spec.x, spec.y, spec.z);
-    monoGroup.rotation.y = spec.rotY;
-
-    // Refractive Glass Slab
-    const slabGeo = new THREE.BoxGeometry(5.2, 7.6, 0.55);
-    const slabMesh = new THREE.Mesh(slabGeo, mats.crystalGlass);
-    monoGroup.add(slabMesh);
-
-    // Glowing Wireframe Frame
-    const wireGeo = new THREE.WireframeGeometry(new THREE.BoxGeometry(5.24, 7.64, 0.58));
-    const wireMesh = new THREE.LineSegments(wireGeo, mats.monolithGlowMat);
-    monoGroup.add(wireMesh);
-
-    // 16:9 Inner Glowing Cinema Plate
-    const plateGeo = new THREE.PlaneGeometry(4.4, 2.48);
-    const plateMesh = new THREE.Mesh(plateGeo, mats.screenSurface);
-    plateMesh.position.z = 0.29;
-    monoGroup.add(plateMesh);
-
-    // Gold Top & Base Finials
-    const finialGeo = new THREE.BoxGeometry(5.3, 0.28, 0.65);
-    const topFinial = new THREE.Mesh(finialGeo, mats.goldTrim);
-    topFinial.position.y = 3.9;
-    const btmFinial = new THREE.Mesh(finialGeo, mats.goldTrim);
-    btmFinial.position.y = -3.9;
-    monoGroup.add(topFinial, btmFinial);
-
-    scene.add(monoGroup);
-    filmMonoliths.push(monoGroup);
-    disposables.push(slabGeo, wireGeo, plateGeo, finialGeo);
+  const holoGeo = new THREE.BufferGeometry();
+  holoGeo.setAttribute("position", new THREE.BufferAttribute(holoPositions, 3));
+  const holoMat = new THREE.PointsMaterial({
+    size: 0.18,
+    color: 0x7dbbff,
+    transparent: true,
+    opacity: 0.88,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
   });
+  const holoPoints = new THREE.Points(holoGeo, holoMat);
+  stage06DaisGroup.add(holoPoints);
+  disposables.push(holoGeo, holoMat);
+
+  // Stage 06 Terminal Links on Front Step
+  // Left: [ Filmmaking Institute ]
+  const linkInstitute = createTextSprite(["[ Filmmaking Institute ]"], {
+    fontSize: 26,
+    color: "#a9d4ff",
+    scale: 3.8,
+    align: "center",
+  });
+  linkInstitute.sprite.position.set(-4.6, 1.8, 7.2);
+  linkInstitute.sprite.userData = { action: "goto-institute" };
+  stage06DaisGroup.add(linkInstitute.sprite);
+  clickableObjects.push(linkInstitute.sprite);
+  disposables.push({ dispose: linkInstitute.dispose });
+
+  // Center: [ ZEE AI Core ] (active bracket frame)
+  const linkZee = createTextSprite(["[ ZEE AI Core ]"], {
+    fontSize: 30,
+    color: "#ffffff",
+    border: true,
+    scale: 4.4,
+    align: "center",
+  });
+  linkZee.sprite.position.set(0, 1.9, 7.6);
+  linkZee.sprite.userData = { action: "summon-zee" };
+  stage06DaisGroup.add(linkZee.sprite);
+  clickableObjects.push(linkZee.sprite);
+  disposables.push({ dispose: linkZee.dispose });
+
+  // Right: [ Contact Sanctuary ]
+  const linkContact = createTextSprite(["[ Contact Sanctuary ]"], {
+    fontSize: 26,
+    color: "#a9d4ff",
+    scale: 3.8,
+    align: "center",
+  });
+  linkContact.sprite.position.set(4.6, 1.8, 7.2);
+  linkContact.sprite.userData = { action: "goto-contact" };
+  stage06DaisGroup.add(linkContact.sprite);
+  clickableObjects.push(linkContact.sprite);
+  disposables.push({ dispose: linkContact.dispose });
 
   // =========================================================================
-  // 10. IGLOO-INSPIRED SCENE 05: PROJECTION ROOM OPTICS & WIDESCREEN GUIDES
+  // 08. STAGE 07: CELESTIAL STARS & SUMMIT EXIT
   // =========================================================================
-  const opticalGroup = new THREE.Group();
-  opticalGroup.position.set(0, 7.8, -74);
-
-  // 2.39:1 Cinema Aspect Wireframe Guide
-  const aspectGuideGeo = new THREE.WireframeGeometry(new THREE.PlaneGeometry(16, 6.7));
-  const aspectGuideMesh = new THREE.LineSegments(aspectGuideGeo, mats.wireframeCyan);
-  opticalGroup.add(aspectGuideMesh);
-
-  // Anamorphic Lens Flare Line
-  const flareLineGeo = new THREE.CylinderGeometry(0.04, 0.04, 24, 8);
-  const flareLineMesh = new THREE.Mesh(flareLineGeo, mats.moonlightInlay);
-  flareLineMesh.rotation.z = Math.PI / 2;
-  flareLineMesh.position.z = 0.4;
-  opticalGroup.add(flareLineMesh);
-  scene.add(opticalGroup);
-  disposables.push(aspectGuideGeo, flareLineGeo);
-
-  // =========================================================================
-  // 11. IGLOO-INSPIRED SCENE 06: ZEE AI CINEMATIC INTELLIGENCE FLOATING CORE
-  // =========================================================================
-  const zeeCoreGroup = new THREE.Group();
-  zeeCoreGroup.position.set(0, 6.2, -102);
-
-  // Glowing Octahedron Core
-  const coreOctGeo = new THREE.OctahedronGeometry(1.2, 0);
-  const coreOctMesh = new THREE.Mesh(coreOctGeo, mats.moonlightInlay);
-  zeeCoreGroup.add(coreOctMesh);
-
-  // Dual Counter-Rotating Gimbal Rings
-  const gimbalAGeo = new THREE.TorusGeometry(2.4, 0.075, 10, 48);
-  const gimbalA = new THREE.Mesh(gimbalAGeo, mats.goldTrim);
-  const gimbalBGeo = new THREE.TorusGeometry(3.1, 0.065, 10, 48);
-  const gimbalB = new THREE.Mesh(gimbalBGeo, mats.silverMetal);
-  zeeCoreGroup.add(gimbalA, gimbalB);
-  scene.add(zeeCoreGroup);
-  disposables.push(coreOctGeo, gimbalAGeo, gimbalBGeo);
-
-  // =========================================================================
-  // 12. IGLOO-INSPIRED SCENE 07: DEEP SPACE PORTAL (Infinite Topology Loop)
-  // =========================================================================
-  const starCount = 300;
+  const starCount = 350;
   const starPositions = new Float32Array(starCount * 3);
   for (let s = 0; s < starCount; s++) {
-    starPositions[s * 3] = (Math.random() - 0.5) * 48;
-    starPositions[s * 3 + 1] = 0.5 + Math.random() * 26;
-    starPositions[s * 3 + 2] = -152 - Math.random() * 60;
+    starPositions[s * 3] = (Math.random() - 0.5) * 54;
+    starPositions[s * 3 + 1] = 0.5 + Math.random() * 32;
+    starPositions[s * 3 + 2] = -140 - Math.random() * 80;
   }
   const starGeo = new THREE.BufferGeometry();
   starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
@@ -809,85 +663,193 @@ export function buildCastleScene(
   scene.add(starPoints);
   disposables.push(starGeo, starMat);
 
+  // Atmospheric Dust
+  const dustCount = 320;
+  const dustPositions = new Float32Array(dustCount * 3);
+  for (let i = 0; i < dustCount; i++) {
+    dustPositions[i * 3] = (Math.random() - 0.5) * 32;
+    dustPositions[i * 3 + 1] = 0.5 + Math.random() * 16;
+    dustPositions[i * 3 + 2] = 50 - Math.random() * 220;
+  }
+  const dustGeo = new THREE.BufferGeometry();
+  dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
+  const dustMat = new THREE.PointsMaterial({
+    size: 0.22,
+    map: mats.dustTexture,
+    transparent: true,
+    opacity: 0.75,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    color: 0xa9d4ff,
+  });
+  const dustPoints = new THREE.Points(dustGeo, dustMat);
+  scene.add(dustPoints);
+  disposables.push(dustGeo, dustMat);
+
+  // Volumetric Moonlight Shafts
+  const beamGeo = new THREE.ConeGeometry(2.8, 20, 16, 1, true);
+  const beamMeshes: THREE.Mesh[] = [];
+  const beamZOffsets = [36, 18, -16, -42, -72, -98, -126];
+  beamZOffsets.forEach((z, idx) => {
+    const beamMat = new THREE.MeshBasicMaterial({
+      color: idx % 2 === 0 ? 0x7dbbff : 0xc6a875,
+      transparent: true,
+      opacity: 0.055,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const beam = new THREE.Mesh(beamGeo, beamMat);
+    beam.position.set(idx % 2 === 0 ? -3.2 : 3.2, 8.5, z);
+    beam.rotation.z = idx % 2 === 0 ? -0.35 : 0.35;
+    scene.add(beam);
+    beamMeshes.push(beam);
+    disposables.push(beamMat);
+  });
+  disposables.push(beamGeo);
+
+  // Legacy compatibility groups
+  const heroMonoliths: THREE.Group[] = [];
+  const filmMonoliths: THREE.Group[] = [stage04Monolith, stage05Monolith];
+  const wireframeGroup = nodeGroup;
+  const portalRingGroup = stage03RingGroup;
+  const zeeCoreGroup = stage06DaisGroup;
+  const astrolabeGroup = new THREE.Group();
+  const chandelierGroup = new THREE.Group();
+
   const updateBeams = (intensity: number, elapsed: number) => {
     beamMeshes.forEach((beam, idx) => {
       const mat = beam.material as THREE.MeshBasicMaterial;
       const sway = Math.sin(elapsed * 0.42 + idx * 1.1) * 0.015;
-      mat.opacity = Math.max(0.025, Math.min(0.11, (0.052 + sway) * intensity));
+      mat.opacity = Math.max(0.025, Math.min(0.12, (0.052 + sway) * intensity));
     });
-    // Sweeping exterior searchlights across sky
-    searchlightL.rotation.z = 0.24 + Math.sin(elapsed * 0.35) * 0.16;
-    searchlightR.rotation.z = -0.24 - Math.cos(elapsed * 0.31) * 0.16;
   };
 
   const updateOpening = (shot: OpeningShotState | null, elapsed: number) => {
-    const doorOpen = shot ? shot.doorOpenRatio : 1;
-    const curtainOpen = shot ? shot.curtainOpenRatio : 1;
-    const glow = shot ? shot.screenGlow : 0.72 + Math.sin(elapsed * 0.8) * 0.06;
-
-    // Exterior doors swing open inward
-    leftDoorPivot.rotation.y = doorOpen * 1.38;
-    rightDoorPivot.rotation.y = -doorOpen * 1.38;
-
-    // Velvet auditorium curtains part from 0 (partially closed) to 1 (wide open framing 2.39:1 screen)
-    const offset = THREE.MathUtils.lerp(8.2, 16.4, curtainOpen);
-    leftCurtain.position.x = -offset;
-    rightCurtain.position.x = offset;
-
-    mats.screenSurface.emissiveIntensity = 0.25 + glow * 0.78;
-    projConeMat.opacity = 0.03 + glow * 0.055;
+    // Stage 01 lighting pulsation
+    stage01Backlight.intensity = 3.8 + Math.sin(elapsed * 1.8) * 0.6;
   };
 
-  const updateScrollScene = (scrollProgress: number, elapsed: number) => {
+  const updateScrollScene = (
+    scrollProgress: number,
+    elapsed: number,
+    pointerX = 0,
+    pointerY = 0,
+  ) => {
     const p = THREE.MathUtils.clamp(scrollProgress, 0, 1);
 
-    // 1. Wireframe Awakening assembly (Igloo Stage 0 -> 1)
-    if (p < 0.14) {
-      const fade = 1 - p / 0.14;
-      mats.wireframeCyan.opacity = 0.85 * fade;
-      wireframeGroup.visible = true;
+    // =======================================================================
+    // STAGE 01 (0.00 – 0.15): MECHANICAL ASSEMBLY OF PORTICO BLOCKS
+    // =======================================================================
+    if (p <= 0.15) {
+      const assembleRatio = p / 0.15;
+      const smoothT = assembleRatio * assembleRatio * (3 - 2 * assembleRatio);
+
+      floatingBlocks.forEach((fb) => {
+        fb.mesh.position.lerpVectors(fb.offsetPos, fb.restingPos, smoothT);
+        fb.mesh.rotation.x = fb.offsetRot.x * (1 - smoothT);
+        fb.mesh.rotation.y = fb.offsetRot.y * (1 - smoothT);
+        fb.mesh.rotation.z = fb.offsetRot.z * (1 - smoothT);
+      });
+
+      // Node lines & numbers fade out as blocks assemble
+      const nodeFade = 1 - smoothT;
+      nodeLineMat.opacity = 0.9 * nodeFade;
+      nodeSprites.forEach((sp) => {
+        (sp.material as THREE.SpriteMaterial).opacity = nodeFade;
+      });
+      innerCoreSphereMat.opacity = 0;
+    } else if (p <= 0.28) {
+      // =======================================================================
+      // STAGE 02 (0.15 – 0.28): RADIAL DISPERSAL REVEALING INNER SPHERE CORE
+      // =======================================================================
+      const disperseRatio = (p - 0.15) / (0.28 - 0.15);
+      const smoothD = disperseRatio * disperseRatio * (3 - 2 * disperseRatio);
+
+      floatingBlocks.forEach((fb) => {
+        const dirX = Math.sign(fb.restingPos.x) || 1;
+        fb.mesh.position.x = fb.restingPos.x + dirX * smoothD * 12.0;
+        fb.mesh.position.y = fb.restingPos.y + smoothD * 6.5;
+        fb.mesh.position.z = fb.restingPos.z - smoothD * 8.0;
+        fb.mesh.rotation.z = smoothD * dirX * 0.45;
+      });
+
+      nodeLineMat.opacity = 0;
+      nodeSprites.forEach((sp) => {
+        (sp.material as THREE.SpriteMaterial).opacity = 0;
+      });
+
+      // Reveal inner wireframe sphere core (matching step_30.png)
+      innerCoreSphereMat.opacity = smoothD * 0.85;
+      innerCoreSphere.rotation.y += 0.015;
+      innerCoreSphere.rotation.x = Math.sin(elapsed * 0.8) * 0.12;
     } else {
-      mats.wireframeCyan.opacity = 0;
-      wireframeGroup.visible = false;
+      // Hidden once past portal
+      nodeLineMat.opacity = 0;
+      innerCoreSphereMat.opacity = 0;
     }
 
-    // 2. Interlocking Ring Portal (Igloo Stage 3)
-    // Rings align mechanically from scroll 0.14 to 0.28
-    const portalLockProgress = THREE.MathUtils.clamp((p - 0.14) / (0.26 - 0.14), 0, 1);
-    const unalignedAngle = (1 - portalLockProgress) * Math.PI * 0.75;
+    // =======================================================================
+    // STAGE 03 (0.28 – 0.42): SEGMENTED RING ROTATIONAL ALIGNMENT & CAUSTICS
+    // =======================================================================
+    const alignP = THREE.MathUtils.clamp((p - 0.28) / (0.38 - 0.28), 0, 1);
+    const smoothAlign = alignP * alignP * (3 - 2 * alignP);
+    const unalignedAngle1 = (1 - smoothAlign) * 1.35;
+    const unalignedAngle2 = (1 - smoothAlign) * -1.6;
 
-    outerRing.rotation.x = unalignedAngle;
-    outerRing.rotation.y = unalignedAngle * 0.6;
-    midRing.rotation.x = -unalignedAngle * 0.8;
-    midRing.rotation.y = -unalignedAngle * 1.2;
-    irisGroup.rotation.z = (1 - portalLockProgress) * Math.PI * 1.8 + elapsed * 0.1;
+    innerRingGroup1.rotation.x = unalignedAngle1;
+    innerRingGroup1.rotation.y = -unalignedAngle1 * 0.65;
+    innerRingGroup2.rotation.x = unalignedAngle2;
+    innerRingGroup2.rotation.y = -unalignedAngle2 * 0.72;
 
-    // Caustic light flare burst when rings lock
-    const flareDistance = Math.abs(p - 0.25);
-    if (flareDistance < 0.038) {
-      const flareBurst = 1 - flareDistance / 0.038;
-      mats.portalFlareMat.opacity = flareBurst * 0.52;
-    } else {
-      mats.portalFlareMat.opacity = 0;
-    }
-
-    // 3. Monoliths zero-G float & breathing tilt
-    filmMonoliths.forEach((mono, idx) => {
-      mono.position.y =
-        filmMonolithSpecs[idx].y + Math.sin(elapsed * 1.1 + idx * 1.6) * 0.18;
-      mono.rotation.z = Math.sin(elapsed * 0.7 + idx) * 0.025;
+    // Outer ring idle breath
+    outerRingSegments.forEach((seg, idx) => {
+      seg.position.z = Math.sin(elapsed * 0.8 + idx) * 0.08;
     });
 
-    // 4. Optical group & widescreen diagram
-    opticalGroup.rotation.y = Math.sin(elapsed * 0.3) * 0.08;
+    // Caustic web & perimeter flare burst on alignment
+    if (smoothAlign > 0.75) {
+      const flareBurst = (smoothAlign - 0.75) / 0.25;
+      causticWebMat.opacity = flareBurst * 0.75;
+      causticRingMat.opacity = flareBurst * 0.88;
+      causticWebMesh.rotation.z = elapsed * 0.15;
+    } else {
+      causticWebMat.opacity = 0;
+      causticRingMat.opacity = 0;
+    }
 
-    // 5. ZEE AI Core floating spin & gimbal rotation
-    coreOctMesh.rotation.y += 0.02;
-    coreOctMesh.rotation.x = Math.sin(elapsed * 0.8) * 0.15;
-    gimbalA.rotation.x += 0.015;
-    gimbalA.rotation.y += 0.01;
-    gimbalB.rotation.z += 0.012;
-    gimbalB.rotation.y -= 0.018;
+    // =======================================================================
+    // STAGE 04 (0.42 – 0.60): PORTFOLIO MONOLITH CO_01 (SHADOW / III)
+    // =======================================================================
+    mono1Mesh.rotation.y = 0.22 + Math.sin(elapsed * 0.6) * 0.08 + pointerX * 0.35;
+    mono1Mesh.rotation.x = -pointerY * 0.22;
+    mono1Wire.rotation.y = mono1Mesh.rotation.y;
+    mono1Wire.rotation.x = mono1Mesh.rotation.x;
+
+    // =======================================================================
+    // STAGE 05 (0.60 – 0.80): PORTFOLIO MONOLITH CO_02 (CHAKRA)
+    // =======================================================================
+    mono2Mesh.rotation.y = -0.22 + Math.cos(elapsed * 0.6) * 0.08 + pointerX * 0.35;
+    mono2Mesh.rotation.x = -pointerY * 0.22;
+    mono2Wire.rotation.y = mono2Mesh.rotation.y;
+    mono2Wire.rotation.x = mono2Mesh.rotation.x;
+
+    // =======================================================================
+    // STAGE 06 (0.80 – 0.92): CIRCULAR DAIS HOLOGRAM & TERMINAL LINKS
+    // =======================================================================
+    holoPoints.rotation.y = elapsed * 0.45;
+    holoMat.opacity = 0.75 + Math.sin(elapsed * 2.2) * 0.15;
+
+    // =======================================================================
+    // STAGE 07 (0.92 – 1.00): SEAMLESS RETURN
+    // =======================================================================
+    if (p > 0.94) {
+      // Seamlessly bring back Stage 01 blocks as camera ascends back
+      const returnRatio = (p - 0.94) / 0.06;
+      floatingBlocks.forEach((fb) => {
+        fb.mesh.position.lerpVectors(fb.restingPos, fb.offsetPos, returnRatio * 0.3);
+      });
+    }
   };
 
   return {
@@ -901,6 +863,12 @@ export function buildCastleScene(
     zeeCoreGroup,
     astrolabeGroup,
     chandelierGroup,
+    clickableObjects,
+    stage01Group,
+    stage03RingGroup,
+    stage04Monolith,
+    stage05Monolith,
+    stage06DaisGroup,
     updateBeams,
     updateOpening,
     updateScrollScene,

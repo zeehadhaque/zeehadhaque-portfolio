@@ -39,6 +39,22 @@ export function FilmVaultSection() {
       : entries;
 
   useEffect(() => {
+    const handleScreenEvent = (e: Event) => {
+      const custom = e as CustomEvent<{ filmId: string }>;
+      const targetId = custom.detail?.filmId;
+      const found = allEntries.find(
+        (entry) => entry.film.id === targetId || entry.film.videoId === targetId,
+      );
+      if (found) {
+        setSelected({ film: found.film, index: found.index });
+      }
+    };
+    window.addEventListener("palace:screen-film", handleScreenEvent);
+    return () =>
+      window.removeEventListener("palace:screen-film", handleScreenEvent);
+  }, [allEntries]);
+
+  useEffect(() => {
     if (!selected) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setSelected(null);

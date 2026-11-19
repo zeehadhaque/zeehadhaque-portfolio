@@ -1089,3 +1089,255 @@ html {
   0%, 100% { opacity: 0.65; transform: translateY(0); }
   50% { opacity: 1; transform: translateY(4px); }
 }
+
+/* ==========================================================================
+   17. IGLOO-INSPIRED MINIMALIST FIXED HUD & CHROMATIC GLITCH SHADER
+   ========================================================================== */
+.identity-topbar__brand-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.identity-topbar__brand-meta {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono, "Space Mono", monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: rgba(125, 187, 255, 0.72);
+  line-height: 1.35;
+  user-select: none;
+}
+
+.identity-manifesto-block {
+  position: fixed;
+  top: 72px;
+  right: 28px;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 290px;
+  text-align: right;
+  font-family: var(--mono, "Space Mono", monospace);
+  user-select: none;
+  transition: opacity 280ms ease;
+}
+
+.identity-manifesto-block__tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--champagne);
+  font-weight: 600;
+}
+
+.identity-manifesto-block__statement {
+  font-size: 0.72rem;
+  line-height: 1.48;
+  color: rgba(220, 235, 255, 0.82);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.identity-bottom-directive {
+  position: fixed;
+  bottom: 64px;
+  left: 28px;
+  z-index: 45;
+  pointer-events: none;
+  font-family: var(--mono, "Space Mono", monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(220, 235, 255, 0.68);
+  transition: opacity 300ms ease;
+  user-select: none;
+  animation: heroPulseDirective 2.4s ease-in-out infinite;
+}
+
+.palace-chromatic-glitch {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 38;
+  opacity: 0;
+  background: transparent;
+  transition: opacity 120ms ease;
+}
+
+.palace-chromatic-glitch.is-active {
+  opacity: 1;
+  box-shadow: inset 0 0 100px rgba(125, 187, 255, 0.22);
+  animation: chromaticGlitchPulseRGB 0.28s steps(2) infinite;
+}
+
+@keyframes chromaticGlitchPulseRGB {
+  0% {
+    filter: drop-shadow(3px 0 0 rgba(255, 20, 80, 0.6)) drop-shadow(-3px 0 0 rgba(0, 230, 255, 0.6));
+    transform: translate(2px, -1px);
+  }
+  50% {
+    filter: drop-shadow(-3px 0 0 rgba(255, 20, 80, 0.6)) drop-shadow(3px 0 0 rgba(0, 230, 255, 0.6));
+    transform: translate(-2px, 1px);
+  }
+  100% {
+    filter: drop-shadow(0 0 0 transparent);
+    transform: translate(0, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .identity-manifesto-block {
+    top: 60px;
+    right: 14px;
+    max-width: 220px;
+  }
+  .identity-manifesto-block__statement {
+    font-size: 0.65rem;
+    line-height: 1.35;
+  }
+  .identity-bottom-directive {
+    bottom: 50px;
+    left: 14px;
+    font-size: 0.62rem;
+  }
+}
+
+/* ==========================================================================
+   07. 3D LATERAL SPLIT & UNOBSTRUCTED CENTER CORRIDOR (IGLOO PARITY)
+   ========================================================================== */
+
+:root[data-cinematic-motion="true"] .identity-main {
+  pointer-events: none;
+}
+
+:root[data-cinematic-motion="true"] .identity-main a,
+:root[data-cinematic-motion="true"] .identity-main button,
+:root[data-cinematic-motion="true"] .identity-main input,
+:root[data-cinematic-motion="true"] .identity-main textarea,
+:root[data-cinematic-motion="true"] .identity-main select,
+:root[data-cinematic-motion="true"] .identity-main [role="button"],
+:root[data-cinematic-motion="true"] .identity-main .spotlight-plate__trigger,
+:root[data-cinematic-motion="true"] .identity-main .ledger-reel__trigger,
+:root[data-cinematic-motion="true"] .identity-main .hud-bracket-card,
+:root[data-cinematic-motion="true"] .identity-main .identity-modal {
+  pointer-events: auto;
+}
+
+:root[data-cinematic-motion="true"] .dest {
+  background: transparent !important;
+}
+
+/* Chamber 01 - The Origin */
+:root[data-cinematic-motion="true"] .dest-origin .origin-canvas {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+:root[data-cinematic-motion="true"] .dest-origin .origin-header {
+  border-bottom: 1px solid rgba(125, 187, 255, 0.15);
+  background: transparent;
+}
+
+/* Chamber 02 - Screening Hall (Monolith 1 & Ring Gate) */
+:root[data-cinematic-motion="true"] .dest-filmography .filmography-spotlight {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 360px);
+  justify-content: space-between;
+  gap: 32vw;
+  margin-bottom: 3rem;
+}
+
+:root[data-cinematic-motion="true"] .dest-filmography .spotlight-plate__trigger {
+  background: rgba(3, 6, 12, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(125, 187, 255, 0.16);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-cinematic-motion="true"] .dest-filmography .filmography-ledger {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 380px);
+  justify-content: space-between;
+  gap: 28vw;
+}
+
+:root[data-cinematic-motion="true"] .dest-filmography .ledger-reel__trigger {
+  background: rgba(3, 6, 12, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(125, 187, 255, 0.12);
+}
+
+/* Chamber 03 - Visual Chamber */
+:root[data-cinematic-motion="true"] .dest-frame .frame-exhibition {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 360px);
+  justify-content: space-between;
+  gap: 28vw;
+}
+
+:root[data-cinematic-motion="true"] .dest-frame .frame-stage {
+  background: rgba(3, 6, 12, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(125, 187, 255, 0.16);
+}
+
+/* Chamber 04 - Director's Suite (Monolith 2 - CHAKRA) */
+:root[data-cinematic-motion="true"] .dest-auteur .suite-atmosphere-banner {
+  margin: 0 0 1.5rem auto;
+  max-width: 360px;
+  background: rgba(3, 6, 12, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(125, 187, 255, 0.16);
+}
+
+:root[data-cinematic-motion="true"] .dest-auteur .auteur-monograph {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 380px);
+  justify-content: space-between;
+  gap: 28vw;
+}
+
+:root[data-cinematic-motion="true"] .dest-auteur .auteur-portrait img {
+  max-width: 200px;
+  border-radius: 4px;
+  border: 1px solid rgba(125, 187, 255, 0.2);
+}
+
+:root[data-cinematic-motion="true"] .dest-auteur .auteur-method {
+  background: rgba(3, 6, 12, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(125, 187, 255, 0.16);
+}
+
+/* Chamber 05 - Filmmaking Institute & Chamber 06 - Intelligence (Stage 06 Dais) */
+:root[data-cinematic-motion="true"] .dest-academy .academy-layout,
+:root[data-cinematic-motion="true"] .dest-intelligence .intelligence-stage__content {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 380px);
+  justify-content: space-between;
+  gap: 28vw;
+}
+
+:root[data-cinematic-motion="true"] .intelligence-stage__backdrop {
+  opacity: 0.15;
+}
+
+@media (max-width: 1024px) {
+  :root[data-cinematic-motion="true"] .dest-filmography .filmography-spotlight,
+  :root[data-cinematic-motion="true"] .dest-filmography .filmography-ledger,
+  :root[data-cinematic-motion="true"] .dest-frame .frame-exhibition,
+  :root[data-cinematic-motion="true"] .dest-auteur .auteur-monograph,
+  :root[data-cinematic-motion="true"] .dest-academy .academy-layout,
+  :root[data-cinematic-motion="true"] .dest-intelligence .intelligence-stage__content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+

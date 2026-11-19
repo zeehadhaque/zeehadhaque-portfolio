@@ -58,13 +58,19 @@ export function SiteNavigation({
           style={{ width: progressWidth }}
         />
         <div className="identity-topbar__inner">
-          <a
-            className="identity-topbar__brand"
-            href="#foyer"
-            onClick={onClose}
-          >
-            ZEEHAD HAQUE
-          </a>
+          <div className="identity-topbar__brand-wrap">
+            <a
+              className="identity-topbar__brand"
+              href="#foyer"
+              onClick={onClose}
+            >
+              ZEEHAD HAQUE
+            </a>
+            <div className="identity-topbar__brand-meta" aria-hidden="true">
+              <span>// Copyright &copy; 2026</span>
+              <span>Independent Practice &middot; Gazipur, Bangladesh</span>
+            </div>
+          </div>
 
           <nav className="identity-topbar__nav" aria-label="Primary palace navigation">
             {primaryLinks.map((dest) => {
@@ -249,6 +255,33 @@ export function SiteNavigation({
           </div>
         </div>
       </div>
+
+      {/* Igloo-inspired Fixed In-Canvas Editorial Manifesto (Top-Right) */}
+      {scrollProgress < 0.18 && (
+        <div
+          className="identity-manifesto-block"
+          style={{
+            opacity:
+              scrollProgress < 0.12
+                ? 1
+                : Math.max(0, 1 - (scrollProgress - 0.12) / 0.06),
+          }}
+          aria-hidden="true"
+        >
+          <span className="identity-manifesto-block__tag">////// Manifesto</span>
+          <p className="identity-manifesto-block__statement">
+            Cinema begins where words fall silent. An independent auteur practice
+            in psychological suspense &amp; visual atmosphere.
+          </p>
+        </div>
+      )}
+
+      {/* Igloo-inspired Fading Bottom-Left Directive */}
+      {scrollProgress < 0.08 && (
+        <div className="identity-bottom-directive" aria-hidden="true">
+          <span>Scroll down to discover.</span>
+        </div>
+      )}
 
       {/* Igloo-inspired Monospaced Corner Telemetry HUD */}
       <aside className="telemetry-hud telemetry-hud--bottom-left" aria-hidden="true">

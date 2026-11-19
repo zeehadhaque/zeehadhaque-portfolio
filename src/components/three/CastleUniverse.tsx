@@ -278,7 +278,12 @@ export function CastleUniverse({
 
       castle.updateOpening(openingShot, elapsed);
       castle.updateBeams(pose.beamIntensity, elapsed);
-      castle.updateScrollScene(current.scrollProgress, elapsed);
+      castle.updateScrollScene(
+        current.scrollProgress,
+        elapsed,
+        current.pointerX,
+        current.pointerY,
+      );
       renderer.render(scene, camera);
     };
 
@@ -310,12 +315,51 @@ export function CastleUniverse({
       }
     };
 
+    const raycaster = new THREE.Raycaster();
+    const pointerVec = new THREE.Vector2();
+
     const onPointerMove = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       stateRef.current.pointerX =
         (event.clientX / Math.max(1, window.innerWidth) - 0.5) * 2;
       stateRef.current.pointerY =
         (event.clientY / Math.max(1, window.innerHeight) - 0.5) * 2;
+
+      pointerVec.x = (event.clientX / Math.max(1, window.innerWidth)) * 2 - 1;
+      pointerVec.y = -(event.clientY / Math.max(1, window.innerHeight)) * 2 + 1;
+      raycaster.setFromCamera(pointerVec, camera);
+      const hits = raycaster.intersectObjects(castle.clickableObjects, true);
+      canvas.style.cursor = hits.length > 0 ? "pointer" : "default";
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      pointerVec.x = (event.clientX / Math.max(1, window.innerWidth)) * 2 - 1;
+      pointerVec.y = -(event.clientY / Math.max(1, window.innerHeight)) * 2 + 1;
+      raycaster.setFromCamera(pointerVec, camera);
+      const hits = raycaster.intersectObjects(castle.clickableObjects, true);
+      if (hits.length > 0) {
+        let currentObj: THREE.Object3D | null = hits[0].object;
+        while (currentObj && !currentObj.userData?.action) {
+          currentObj = currentObj.parent;
+        }
+        const action = currentObj?.userData?.action;
+        if (action === "screen-shadow") {
+          window.dispatchEvent(
+            new CustomEvent("palace:screen-film", { detail: { filmId: "film-03" } }),
+          );
+        } else if (action === "screen-chakra") {
+          window.dispatchEvent(
+            new CustomEvent("palace:screen-film", { detail: { filmId: "film-02" } }),
+          );
+        } else if (action === "goto-institute") {
+          window.location.hash = "#institute";
+        } else if (action === "summon-zee") {
+          window.dispatchEvent(new CustomEvent("palace:summon-zee"));
+        } else if (action === "goto-contact") {
+          window.location.hash = "#grand-exit";
+        }
+      }
     };
 
     const onResize = () => {
@@ -357,6 +401,7 @@ export function CastleUniverse({
 
     canvas.addEventListener("webglcontextlost", onContextLost);
     canvas.addEventListener("webglcontextrestored", onContextRestored);
+    canvas.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("scroll", onScrollWake, { passive: true });
     window.addEventListener("resize", onResize);
@@ -370,6 +415,7 @@ export function CastleUniverse({
       window.clearTimeout(frameId);
       canvas.removeEventListener("webglcontextlost", onContextLost);
       canvas.removeEventListener("webglcontextrestored", onContextRestored);
+      canvas.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("scroll", onScrollWake);
       window.removeEventListener("resize", onResize);

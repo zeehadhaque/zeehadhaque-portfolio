@@ -87,6 +87,14 @@ export function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [intelligenceSignal, setIntelligenceSignal] = useState(0);
 
+  useEffect(() => {
+    const onSummonZee = () => setIntelligenceSignal((s) => s + 1);
+    window.addEventListener("palace:summon-zee", onSummonZee);
+    return () => window.removeEventListener("palace:summon-zee", onSummonZee);
+  }, []);
+
+  const isGlitchActive = scrollProgress >= 0.15 && scrollProgress <= 0.25;
+
   useCinematicMotion(!isLoading);
 
   const [liteMode, setLiteMode] = useState<boolean>(() => {
@@ -183,6 +191,10 @@ export function App() {
         reducedMotion={reducedMotion}
         isOpening={isLoading}
         openingProgress={openingProgress}
+      />
+      <div
+        className={`palace-chromatic-glitch ${isGlitchActive ? "is-active" : ""}`}
+        aria-hidden="true"
       />
       <SkipLink />
       <LoadingCurtain
