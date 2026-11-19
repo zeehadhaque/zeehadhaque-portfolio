@@ -353,11 +353,11 @@ export function CastleUniverse({
             new CustomEvent("palace:screen-film", { detail: { filmId: "film-02" } }),
           );
         } else if (action === "goto-institute") {
-          window.location.hash = "#institute";
+          window.dispatchEvent(new CustomEvent("palace:open-institute"));
         } else if (action === "summon-zee") {
           window.dispatchEvent(new CustomEvent("palace:summon-zee"));
         } else if (action === "goto-contact") {
-          window.location.hash = "#grand-exit";
+          window.dispatchEvent(new CustomEvent("palace:open-contact"));
         }
       }
     };

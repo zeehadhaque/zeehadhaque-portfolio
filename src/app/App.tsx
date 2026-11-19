@@ -1,81 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
-import { MainFooter } from "../components/layout/MainFooter";
+import { IglooExperience } from "../components/igloo/IglooExperience";
 import { SkipLink } from "../components/layout/SkipLink";
 import { LoadingCurtain } from "../components/motion/LoadingCurtain";
-import { SiteNavigation } from "../components/navigation/SiteNavigation";
-import { CompletePortfolio } from "../components/portfolio/CompletePortfolio";
 import { CastleUniverse } from "../components/three/CastleUniverse";
 import { ZeeAIAssistant } from "../components/zee-ai/ZeeAIAssistant";
-import { useActiveSection } from "../hooks/useActiveSection";
-import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useCinematicMotion } from "../hooks/useCinematicMotion";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 import {
-  normalizeActiveChamber,
+  type DestinationId,
   resolveInitialLiteMode,
 } from "../utils/castleConfig";
 
 const LITE_STORAGE_KEY = "zee-castle-lite-mode-v1";
 
-const SECTION_IDS = [
-  "foyer",
-  "screening-hall",
-  "projection-room",
-  "directors-suite",
-  "institute",
-  "intelligence",
-  "grand-exit",
-];
-
-let cachedAnchors: number[] | null = null;
-
-function recalculateAnchors() {
-  if (typeof document === "undefined") return;
-  const starts = SECTION_IDS.map((id) => {
-    const section = document.getElementById(id);
-    return section ? section.getBoundingClientRect().top + window.scrollY : null;
-  });
-  if (starts.some((value) => value === null)) {
-    cachedAnchors = null;
-  } else {
-    cachedAnchors = starts as number[];
-  }
-}
-
 function getPalaceScrollProgress(): number {
-  const fallbackMax = Math.max(
+  const maxScroll = Math.max(
     1,
     document.documentElement.scrollHeight - window.innerHeight,
   );
-  const fallback = Math.min(1, Math.max(0, window.scrollY / fallbackMax));
-
-  if (!cachedAnchors) {
-    recalculateAnchors();
-  }
-  const anchors = cachedAnchors;
-  if (!anchors || anchors.length < 2) return fallback;
-
-  const y = Math.max(0, window.scrollY);
-  if (y <= anchors[0]) return 0;
-
-  for (let index = 0; index < anchors.length - 1; index += 1) {
-    const start = anchors[index];
-    const end = anchors[index + 1];
-    if (y <= end) {
-      const local = Math.min(1, Math.max(0, (y - start) / Math.max(1, end - start)));
-      return (index + local) / (anchors.length - 1);
-    }
-  }
-
-  return 1;
+  return Math.min(1, Math.max(0, window.scrollY / maxScroll));
 }
 
 export function App() {
   const reducedMotion = useReducedMotion();
-  const activeSection = useActiveSection(SECTION_IDS);
-  const activeChamber = useMemo(
-    () => normalizeActiveChamber(activeSection),
-    [activeSection],
-  );
 
   const [isLoading, setIsLoading] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -83,9 +30,18 @@ export function App() {
   });
   const [openingProgress, setOpeningProgress] = useState(0);
   const [introRunKey, setIntroRunKey] = useState(0);
-  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [intelligenceSignal, setIntelligenceSignal] = useState(0);
+
+  const activeChamber: DestinationId = useMemo(() => {
+    if (scrollProgress < 0.15) return "foyer";
+    if (scrollProgress < 0.28) return "screening-hall";
+    if (scrollProgress < 0.42) return "projection-room";
+    if (scrollProgress < 0.6) return "directors-suite";
+    if (scrollProgress < 0.8) return "institute";
+    if (scrollProgress < 0.94) return "intelligence";
+    return "grand-exit";
+  }, [scrollProgress]);
 
   useEffect(() => {
     const onSummonZee = () => setIntelligenceSignal((s) => s + 1);
@@ -131,11 +87,6 @@ export function App() {
   }, [liteMode]);
 
   useEffect(() => {
-    document.body.classList.toggle("navigation-is-open", isNavigationOpen);
-    return () => document.body.classList.remove("navigation-is-open");
-  }, [isNavigationOpen]);
-
-  useEffect(() => {
     let raf = 0;
     const updateScroll = () => {
       raf = 0;
@@ -146,31 +97,29 @@ export function App() {
       raf = window.requestAnimationFrame(updateScroll);
     };
     const onResize = () => {
-      recalculateAnchors();
       onScroll();
     };
 
-    recalculateAnchors();
     updateScroll();
-
-    // Re-check anchors after fonts and deferred chunks load
-    const timer = setTimeout(recalculateAnchors, 800);
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
     return () => {
-      clearTimeout(timer);
       if (raf) window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
   }, []);
 
-  const replayIntro = () => {
-    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-    setOpeningProgress(0);
-    setIntroRunKey((key) => key + 1);
-    setIsLoading(true);
+  const handleScrollToStage = (p: number) => {
+    const maxScroll = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+    window.scrollTo({
+      top: p * maxScroll,
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
   };
 
   return (
@@ -181,9 +130,7 @@ export function App() {
       data-lite-mode={liteMode}
       data-chamber={activeChamber}
     >
-      <div className="cinematic-scroll-progress" aria-hidden="true">
-        <span />
-      </div>
+      {/* 01. Fullscreen Persistent 3D WebGL Canvas */}
       <CastleUniverse
         activeChamber={activeChamber}
         scrollProgress={scrollProgress}
@@ -192,11 +139,16 @@ export function App() {
         isOpening={isLoading}
         openingProgress={openingProgress}
       />
+
+      {/* 02. Chromatic Glitch Shift Overlay */}
       <div
         className={`palace-chromatic-glitch ${isGlitchActive ? "is-active" : ""}`}
         aria-hidden="true"
       />
+
       <SkipLink />
+
+      {/* 03. Cinematic Loading Curtain */}
       <LoadingCurtain
         key={introRunKey}
         visible={isLoading}
@@ -206,20 +158,15 @@ export function App() {
         onProgress={setOpeningProgress}
         onComplete={() => setIsLoading(false)}
       />
-      <SiteNavigation
-        activeChamber={activeChamber}
+
+      {/* 04. 1:1 Igloo Cyber-Brutalist HUD & Scroll Orchestrator */}
+      <IglooExperience
         scrollProgress={scrollProgress}
-        isOpen={isNavigationOpen}
-        liteMode={liteMode}
-        onToggleLiteMode={() => setLiteMode((prev) => !prev)}
-        onReplayIntro={replayIntro}
-        onToggle={() => setIsNavigationOpen((open) => !open)}
-        onClose={() => setIsNavigationOpen(false)}
+        onScrollToStage={handleScrollToStage}
+        onSummonZee={() => setIntelligenceSignal((s) => s + 1)}
       />
-      <CompletePortfolio
-        onSummonIntelligence={() => setIntelligenceSignal((s) => s + 1)}
-      />
-      <MainFooter />
+
+      {/* 05. ZEE AI Interactive Assistant */}
       <ZeeAIAssistant externalOpenSignal={intelligenceSignal} />
     </div>
   );
