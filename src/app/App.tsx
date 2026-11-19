@@ -26,21 +26,33 @@ const SECTION_IDS = [
   "grand-exit",
 ];
 
+let cachedAnchors: number[] | null = null;
+
+function recalculateAnchors() {
+  if (typeof document === "undefined") return;
+  const starts = SECTION_IDS.map((id) => {
+    const section = document.getElementById(id);
+    return section ? section.getBoundingClientRect().top + window.scrollY : null;
+  });
+  if (starts.some((value) => value === null)) {
+    cachedAnchors = null;
+  } else {
+    cachedAnchors = starts as number[];
+  }
+}
+
 function getPalaceScrollProgress(): number {
   const fallbackMax = Math.max(
     1,
     document.documentElement.scrollHeight - window.innerHeight,
   );
   const fallback = Math.min(1, Math.max(0, window.scrollY / fallbackMax));
-  const starts = SECTION_IDS.map((id) => {
-    const section = document.getElementById(id);
-    return section ? section.getBoundingClientRect().top + window.scrollY : null;
-  });
 
-  // If a chamber has not mounted yet, preserve the safe document-based path.
-  if (starts.some((value) => value === null)) return fallback;
-  const anchors = starts as number[];
-  if (anchors.length < 2) return fallback;
+  if (!cachedAnchors) {
+    recalculateAnchors();
+  }
+  const anchors = cachedAnchors;
+  if (!anchors || anchors.length < 2) return fallback;
 
   const y = Math.max(0, window.scrollY);
   if (y <= anchors[0]) return 0;
@@ -125,13 +137,24 @@ export function App() {
       if (raf) return;
       raf = window.requestAnimationFrame(updateScroll);
     };
+    const onResize = () => {
+      recalculateAnchors();
+      onScroll();
+    };
+
+    recalculateAnchors();
     updateScroll();
+
+    // Re-check anchors after fonts and deferred chunks load
+    const timer = setTimeout(recalculateAnchors, 800);
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
     return () => {
+      clearTimeout(timer);
       if (raf) window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -150,6 +173,9 @@ export function App() {
       data-lite-mode={liteMode}
       data-chamber={activeChamber}
     >
+      <div className="cinematic-scroll-progress" aria-hidden="true">
+        <span />
+      </div>
       <CastleUniverse
         activeChamber={activeChamber}
         scrollProgress={scrollProgress}

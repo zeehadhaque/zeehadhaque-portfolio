@@ -19,12 +19,18 @@ export function GrandHallSection() {
 
       <div className="origin-canvas castle-shell">
         <header className="origin-header">
-          <p className="identity-kicker">
-            01 · The Grand Foyer · Gazipur, Dhaka, Bangladesh
-          </p>
-          <span className="origin-coordinates tabular-nums" aria-hidden="true">
-            23°59′N · 90°25′E
-          </span>
+          <div className="origin-status-badge">
+            <span className="origin-status-beacon" aria-hidden="true" />
+            <span>Available for Direction &amp; Collaborations · 2026/2027</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", flexWrap: "wrap", gap: "0.75rem" }}>
+            <p className="identity-kicker">
+              01 · The Grand Foyer · Gazipur, Dhaka, Bangladesh
+            </p>
+            <span className="origin-coordinates tabular-nums" aria-hidden="true">
+              23°59′N · 90°25′E
+            </span>
+          </div>
         </header>
 
         <div className="origin-monument">

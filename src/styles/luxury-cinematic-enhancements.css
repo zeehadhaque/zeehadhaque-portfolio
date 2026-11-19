@@ -1,0 +1,699 @@
+/* ==========================================================================
+   ZEEHAD HAQUE — LUXURY CINEMATIC ENHANCEMENTS & SMOOTH SCROLL SYSTEM
+   Obsidian Onyx (#020305) · Champagne Gold (#E5C58E / #C6A875) · Moonlight (#7DBBFF)
+   ========================================================================== */
+
+:root {
+  --lux-gold: #e5c58e;
+  --lux-gold-dim: #c6a875;
+  --lux-gold-soft: rgba(229, 197, 142, 0.16);
+  --lux-gold-glow: rgba(229, 197, 142, 0.28);
+  --lux-moonlight: #7dbbff;
+  --lux-moonlight-glow: rgba(125, 187, 255, 0.25);
+  --lux-surface-glass: rgba(5, 9, 18, 0.78);
+  --lux-border-gold: rgba(229, 197, 142, 0.22);
+  --lux-border-moon: rgba(125, 187, 255, 0.2);
+  --lux-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --lux-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --------------------------------------------------------------------------
+   00. ULTRA-SMOOTH HARDWARE ACCELERATED SCROLLBAR & BASE
+   -------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(229, 197, 142, 0.45) #020305;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #020305;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #c6a875 0%, #7dbbff 100%);
+  border-radius: 999px;
+  border: 2px solid #020305;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #e5c58e 0%, #a9d4ff 100%);
+}
+
+/* Top Luxury Scroll Progress Indicator */
+.cinematic-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  pointer-events: none;
+  background: rgba(2, 3, 5, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.cinematic-scroll-progress span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(var(--page-scroll-progress, 0));
+  transform-origin: left center;
+  background: linear-gradient(90deg, #c6a875 0%, #e5c58e 40%, #7dbbff 80%, #ffffff 100%);
+  box-shadow: 0 0 16px rgba(229, 197, 142, 0.7), 0 0 8px rgba(125, 187, 255, 0.8);
+  will-change: transform;
+  transition: transform 60ms linear;
+}
+
+/* --------------------------------------------------------------------------
+   01. ZERO-LAG CINEMATIC REVEALS (GPU-Optimized Without Heavy Gaussian Blurs)
+   -------------------------------------------------------------------------- */
+:root[data-cinematic-motion="true"] .cinema-reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  filter: none !important; /* Removed heavy CPU/GPU blur that caused stutter */
+  transition:
+    opacity 800ms var(--lux-ease),
+    transform 900ms var(--lux-ease) !important;
+  transition-delay: var(--cinema-stagger, 0ms);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+:root[data-cinematic-motion="true"] .cinema-reveal.is-in-view {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+/* --------------------------------------------------------------------------
+   02. HERO / FOYER SECTION — MONUMENTAL LUXURY REDESIGN
+   -------------------------------------------------------------------------- */
+.origin-canvas {
+  position: relative;
+  padding-top: clamp(2.5rem, 6vw, 5rem);
+}
+
+/* Status Available Beacon */
+.origin-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lux-gold);
+  background: rgba(198, 168, 117, 0.08);
+  border: 1px solid var(--lux-border-gold);
+  backdrop-filter: blur(12px);
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(229, 197, 142, 0.2);
+  transition: all 300ms var(--lux-ease);
+}
+
+.origin-status-badge:hover {
+  border-color: var(--lux-gold);
+  background: rgba(198, 168, 117, 0.14);
+  box-shadow: 0 0 24px var(--lux-gold-glow);
+  transform: translateY(-1px);
+}
+
+.origin-status-beacon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399, 0 0 18px rgba(52, 211, 153, 0.6);
+  animation: beaconPulse 2.4s infinite ease-in-out;
+}
+
+@keyframes beaconPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.35); }
+}
+
+/* Shimmering Metallic Gold Monument Heading */
+.origin-monument__name {
+  background: linear-gradient(135deg, #ffffff 0%, #f4e3c1 35%, #e5c58e 65%, #c6a875 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 40px rgba(229, 197, 142, 0.15);
+  letter-spacing: -0.02em;
+}
+
+.origin-monument__roles {
+  font-family: var(--sans);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  color: var(--lux-gold) !important;
+  opacity: 0.95;
+  margin-top: 0.75rem;
+}
+
+/* Luxury Quote Box */
+.origin-quote {
+  position: relative;
+  background: linear-gradient(145deg, rgba(9, 20, 38, 0.75), rgba(5, 8, 16, 0.85));
+  border: 1px solid var(--lux-border-gold);
+  border-left: 3px solid var(--lux-gold);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(229, 197, 142, 0.12);
+  transition: transform 400ms var(--lux-ease), border-color 400ms ease, box-shadow 400ms ease;
+}
+
+.origin-quote:hover {
+  transform: translateY(-2px);
+  border-color: rgba(229, 197, 142, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 28px rgba(229, 197, 142, 0.15);
+}
+
+.origin-quote p em {
+  font-style: normal;
+  color: var(--lux-gold);
+  font-weight: 600;
+}
+
+/* Luxury Interactive CTA Buttons */
+.identity-btn--primary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #c6a875 0%, #dfba73 50%, #b89349 100%) !important;
+  color: #030508 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 237, 199, 0.5) !important;
+  border-radius: 999px !important;
+  padding: 12px 26px !important;
+  box-shadow: 0 8px 24px rgba(198, 168, 117, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  transition: all 350ms var(--lux-ease) !important;
+  will-change: transform, box-shadow;
+}
+
+.identity-btn--primary::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  transition: none;
+  pointer-events: none;
+}
+
+.identity-btn--primary:hover::after {
+  left: 140%;
+  transition: left 750ms ease-in-out;
+}
+
+.identity-btn--primary:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 12px 32px rgba(198, 168, 117, 0.55), 0 0 20px rgba(229, 197, 142, 0.4) !important;
+}
+
+.identity-btn--ghost {
+  position: relative;
+  background: rgba(9, 20, 38, 0.6) !important;
+  border: 1px solid var(--lux-border-moon) !important;
+  color: var(--lux-moonlight) !important;
+  border-radius: 999px !important;
+  padding: 12px 24px !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+  transition: all 350ms var(--lux-ease) !important;
+}
+
+.identity-btn--ghost:hover {
+  background: rgba(125, 187, 255, 0.14) !important;
+  border-color: var(--lux-moonlight) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(125, 187, 255, 0.3) !important;
+}
+
+/* Director Portrait Frame with Viewfinder Accents */
+.origin-portrait-frame {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--lux-border-gold);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 32px rgba(229, 197, 142, 0.12);
+  transition: transform 500ms var(--lux-ease), box-shadow 500ms var(--lux-ease), border-color 400ms ease;
+}
+
+.origin-portrait-frame:hover {
+  border-color: rgba(229, 197, 142, 0.5);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.85), 0 0 45px rgba(229, 197, 142, 0.22);
+}
+
+.origin-portrait-frame img {
+  transition: transform 800ms var(--lux-ease);
+}
+
+.origin-portrait-frame:hover img {
+  transform: scale(1.035);
+}
+
+/* Architectural Palace Portals */
+.foyer-portal-card {
+  position: relative;
+  background: linear-gradient(160deg, rgba(9, 20, 38, 0.7), rgba(4, 8, 16, 0.85)) !important;
+  border: 1px solid rgba(220, 235, 255, 0.1) !important;
+  border-radius: 14px !important;
+  padding: 1.25rem !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+  transition: all 350ms var(--lux-ease) !important;
+}
+
+.foyer-portal-card:hover {
+  border-color: var(--lux-border-gold) !important;
+  transform: translateY(-4px) scale(1.01) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(229, 197, 142, 0.15) !important;
+}
+
+.foyer-portal-card:hover .tabular-nums {
+  color: var(--lux-gold) !important;
+}
+
+/* Horizon Counters */
+.origin-horizon__item {
+  position: relative;
+  background: rgba(5, 9, 18, 0.55);
+  border: 1px solid rgba(220, 235, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all 300ms var(--lux-ease);
+}
+
+.origin-horizon__item:hover {
+  border-color: var(--lux-border-gold);
+  background: rgba(9, 20, 38, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(229, 197, 142, 0.1);
+}
+
+.origin-horizon__item strong {
+  background: linear-gradient(135deg, #ffffff 0%, #e5c58e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.2rem;
+  line-height: 1.1;
+}
+
+/* --------------------------------------------------------------------------
+   03. SCREENING HALL (FILM SHOWCASE) — LUXURY CARD LAYOUT & HOVER
+   -------------------------------------------------------------------------- */
+.filmography-filters {
+  display: inline-flex;
+  gap: 8px;
+  background: rgba(5, 9, 18, 0.85);
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--lux-border-gold);
+  backdrop-filter: blur(16px);
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.filmography-filters button {
+  border-radius: 999px !important;
+  padding: 8px 20px !important;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--silver);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 250ms var(--lux-ease);
+}
+
+.filmography-filters button:hover {
+  color: #ffffff;
+  background: rgba(229, 197, 142, 0.1);
+}
+
+.filmography-filters button.is-active {
+  background: linear-gradient(135deg, #c6a875 0%, #e5c58e 100%) !important;
+  color: #030508 !important;
+  box-shadow: 0 4px 14px rgba(198, 168, 117, 0.4) !important;
+}
+
+/* Spotlight Premiere Plate Cards */
+.spotlight-plate,
+.ledger-reel {
+  position: relative;
+  background: linear-gradient(160deg, rgba(9, 20, 38, 0.82), rgba(5, 8, 16, 0.9)) !important;
+  border: 1px solid rgba(220, 235, 255, 0.12) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.5) !important;
+  transition: all 400ms var(--lux-ease) !important;
+}
+
+.spotlight-plate:hover,
+.ledger-reel:hover {
+  border-color: var(--lux-border-gold) !important;
+  transform: translateY(-6px) scale(1.015) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(229, 197, 142, 0.22) !important;
+}
+
+.spotlight-plate__poster,
+.ledger-reel__poster {
+  overflow: hidden;
+  position: relative;
+}
+
+.spotlight-plate__poster img,
+.ledger-reel__poster img {
+  transition: transform 600ms var(--lux-ease) !important;
+  will-change: transform;
+}
+
+.spotlight-plate:hover .spotlight-plate__poster img,
+.ledger-reel:hover .ledger-reel__poster img {
+  transform: scale(1.06) !important;
+}
+
+/* Pulsing Play Trigger */
+.spotlight-plate__play {
+  background: rgba(2, 3, 5, 0.75) !important;
+  border: 1px solid var(--lux-gold) !important;
+  color: var(--lux-gold) !important;
+  box-shadow: 0 0 24px rgba(229, 197, 142, 0.35) !important;
+  transition: all 300ms var(--lux-ease) !important;
+}
+
+.spotlight-plate:hover .spotlight-plate__play {
+  background: var(--lux-gold) !important;
+  color: #020305 !important;
+  transform: translate(-50%, -50%) scale(1.15) !important;
+  box-shadow: 0 0 36px rgba(229, 197, 142, 0.7) !important;
+}
+
+/* --------------------------------------------------------------------------
+   04. DIRECTOR'S CRAFT, SKILLS & CRITICAL ACCLAIM (NEW SECTIONS)
+   -------------------------------------------------------------------------- */
+.auteur-skills-matrix {
+  margin: 3.5rem 0 2rem;
+  padding: 2.5rem;
+  border-radius: 18px;
+  background: linear-gradient(150deg, rgba(9, 20, 38, 0.75), rgba(4, 7, 14, 0.85));
+  border: 1px solid var(--lux-border-gold);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(229, 197, 142, 0.15);
+}
+
+.auteur-skills-matrix__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.auteur-skills-matrix__head h3 {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0.35rem 0 0;
+}
+
+.auteur-skills-matrix__head h3 em {
+  color: var(--lux-gold);
+  font-style: normal;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.skill-card {
+  position: relative;
+  background: rgba(5, 9, 18, 0.65);
+  border: 1px solid rgba(220, 235, 255, 0.09);
+  border-radius: 14px;
+  padding: 1.5rem;
+  transition: all 350ms var(--lux-ease);
+}
+
+.skill-card:hover {
+  border-color: var(--lux-border-gold);
+  background: rgba(9, 20, 38, 0.8);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 22px rgba(229, 197, 142, 0.15);
+}
+
+.skill-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.skill-card__num {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--lux-gold);
+  letter-spacing: 0.1em;
+}
+
+.skill-card__tag {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(125, 187, 255, 0.12);
+  color: var(--lux-moonlight);
+  border: 1px solid rgba(125, 187, 255, 0.25);
+}
+
+.skill-card h4 {
+  font-family: var(--sans);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 0.5rem;
+}
+
+.skill-card p {
+  font-size: 0.88rem;
+  color: var(--body-muted);
+  line-height: 1.55;
+  margin: 0 0 1rem;
+}
+
+.skill-card__bar {
+  height: 4px;
+  width: 100%;
+  background: rgba(220, 235, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.skill-card__bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #c6a875 0%, #e5c58e 70%, #7dbbff 100%);
+  box-shadow: 0 0 10px rgba(229, 197, 142, 0.6);
+  transition: width 1s var(--lux-ease);
+}
+
+/* Testimonials / Critical Acclaim Section */
+.critical-reception {
+  margin: 3.5rem 0;
+  padding: 2.5rem;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(9, 20, 38, 0.65), rgba(3, 6, 12, 0.85));
+  border: 1px solid rgba(125, 187, 255, 0.18);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.critical-reception__heading {
+  margin-bottom: 2rem;
+}
+
+.critical-reception__heading h3 {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0.35rem 0 0;
+}
+
+.critical-reception__heading h3 em {
+  color: var(--lux-moonlight);
+  font-style: normal;
+}
+
+.critical-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.critical-card {
+  position: relative;
+  background: rgba(5, 9, 18, 0.7);
+  border: 1px solid rgba(220, 235, 255, 0.1);
+  border-radius: 14px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 350ms var(--lux-ease);
+}
+
+.critical-card:hover {
+  border-color: var(--lux-border-moon);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(125, 187, 255, 0.15);
+}
+
+.critical-card blockquote {
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--silver);
+  margin: 0 0 1.25rem;
+  position: relative;
+}
+
+.critical-card blockquote::before {
+  content: "“";
+  font-size: 2.8rem;
+  line-height: 0;
+  position: absolute;
+  top: 12px;
+  left: -14px;
+  color: var(--lux-gold);
+  opacity: 0.3;
+}
+
+.critical-card footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid rgba(220, 235, 255, 0.08);
+  padding-top: 1rem;
+}
+
+.critical-card__author {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.critical-card__role {
+  font-size: 0.78rem;
+  color: var(--lux-gold);
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   05. CONTACT SANCTUARY REDESIGN
+   -------------------------------------------------------------------------- */
+.contact-sanctuary {
+  position: relative;
+}
+
+.contact-console {
+  background: linear-gradient(155deg, rgba(9, 20, 38, 0.8), rgba(4, 7, 14, 0.9)) !important;
+  border: 1px solid var(--lux-border-gold) !important;
+  border-radius: 18px !important;
+  padding: 2.25rem !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(229, 197, 142, 0.15) !important;
+}
+
+.contact-console input,
+.contact-console textarea,
+.contact-console select {
+  background: rgba(3, 5, 10, 0.75) !important;
+  border: 1px solid rgba(220, 235, 255, 0.14) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  padding: 12px 16px !important;
+  transition: all 250ms var(--lux-ease) !important;
+}
+
+.contact-console input:focus,
+.contact-console textarea:focus,
+.contact-console select:focus {
+  border-color: var(--lux-gold) !important;
+  outline: none !important;
+  box-shadow: 0 0 16px var(--lux-gold-glow) !important;
+  background: rgba(5, 9, 18, 0.9) !important;
+}
+
+.contact-sanctuary__channels a {
+  border: 1px solid rgba(220, 235, 255, 0.1) !important;
+  border-radius: 14px !important;
+  padding: 1rem 1.25rem !important;
+  background: rgba(5, 9, 18, 0.7) !important;
+  transition: all 300ms var(--lux-ease) !important;
+}
+
+.contact-sanctuary__channels a:hover {
+  border-color: var(--lux-border-gold) !important;
+  transform: translateX(4px) !important;
+  background: rgba(9, 20, 38, 0.9) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(229, 197, 142, 0.15) !important;
+}
+
+/* --------------------------------------------------------------------------
+   06. MOBILE & RESPONSIVE POLISH
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .origin-status-badge {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+
+  .origin-quote {
+    padding: 1.25rem;
+  }
+
+  .origin-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .origin-actions a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .auteur-skills-matrix,
+  .critical-reception {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .contact-console {
+    padding: 1.5rem !important;
+  }
+}

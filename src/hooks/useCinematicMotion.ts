@@ -145,32 +145,51 @@ export function useCinematicMotion(enabled: boolean): void {
       document.querySelectorAll<HTMLElement>(".identity-main .dest"),
     );
 
+    interface SectionMetrics {
+      element: HTMLElement;
+      top: number;
+      height: number;
+    }
+    let sectionMetrics: SectionMetrics[] = [];
+
+    const measureSectionMetrics = () => {
+      const scrollY = window.scrollY;
+      sectionMetrics = sections.map((element) => {
+        const top = element.getBoundingClientRect().top + scrollY;
+        const height = element.offsetHeight || 1;
+        return { element, top, height };
+      });
+    };
+
+    measureSectionMetrics();
+
     let scrollFrame = 0;
 
     const updateDepth = () => {
       scrollFrame = 0;
       const viewportHeight = Math.max(1, window.innerHeight);
+      const scrollY = window.scrollY;
       const maxScroll = Math.max(
         1,
         document.documentElement.scrollHeight - viewportHeight,
       );
-      const pageProgress = clamp(window.scrollY / maxScroll, 0, 1);
+      const pageProgress = clamp(scrollY / maxScroll, 0, 1);
 
       root.style.setProperty("--page-scroll-progress", pageProgress.toFixed(4));
 
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
+      for (const item of sectionMetrics) {
+        const rectTop = item.top - scrollY;
         const progress = clamp(
-          (viewportHeight - rect.top) / (viewportHeight + rect.height),
+          (viewportHeight - rectTop) / (viewportHeight + item.height),
           0,
           1,
         );
         const shift = (0.5 - progress) * 38;
         const lightX = 50 + (progress - 0.5) * 30;
 
-        section.style.setProperty("--section-progress", progress.toFixed(3));
-        section.style.setProperty("--section-shift", `${shift.toFixed(1)}px`);
-        section.style.setProperty("--section-light-x", `${lightX.toFixed(1)}%`);
+        item.element.style.setProperty("--section-progress", progress.toFixed(3));
+        item.element.style.setProperty("--section-shift", `${shift.toFixed(1)}px`);
+        item.element.style.setProperty("--section-light-x", `${lightX.toFixed(1)}%`);
       }
     };
 
@@ -179,9 +198,14 @@ export function useCinematicMotion(enabled: boolean): void {
       scrollFrame = window.requestAnimationFrame(updateDepth);
     };
 
+    const handleResize = () => {
+      measureSectionMetrics();
+      requestDepthUpdate();
+    };
+
     updateDepth();
     window.addEventListener("scroll", requestDepthUpdate, { passive: true });
-    window.addEventListener("resize", requestDepthUpdate, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
 
     let activeMedia: HTMLElement | null = null;
 
@@ -251,7 +275,7 @@ export function useCinematicMotion(enabled: boolean): void {
       contentObserver?.disconnect();
       window.cancelAnimationFrame(scrollFrame);
       window.removeEventListener("scroll", requestDepthUpdate);
-      window.removeEventListener("resize", requestDepthUpdate);
+      window.removeEventListener("resize", handleResize);
       document.removeEventListener("pointermove", handlePointerMove);
       document.removeEventListener("pointerout", handlePointerOut);
       clearMedia();

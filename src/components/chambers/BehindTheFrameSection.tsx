@@ -187,6 +187,117 @@ export function BehindTheFrameSection() {
             </ol>
           </div>
         </div>
+
+        {/* 04-B. FILMMAKING CRAFT & SKILLS MATRIX */}
+        <div className="auteur-skills-matrix">
+          <div className="auteur-skills-matrix__head">
+            <div>
+              <p className="identity-kicker">Core Discipline &amp; Technical Mastery</p>
+              <h3>The Director&apos;s <em>Filmmaking Matrix</em></h3>
+            </div>
+            <span className="origin-status-badge">
+              <span className="origin-status-beacon" />
+              <span>Independent Craft · 6 Pillars</span>
+            </span>
+          </div>
+
+          <div className="skills-grid">
+            {[
+              {
+                num: "01",
+                tag: "Auteur Direction",
+                title: "Direction & Visual Silence",
+                desc: "Shaping psychological suspense, actor blocking, environmental framing and tension without relying on words.",
+                fill: "96%",
+              },
+              {
+                num: "02",
+                tag: "Screenplay",
+                title: "Narrative & Scene Architecture",
+                desc: "Writing character subtext, poetic tragedy, mystery loops, and structural screenplays built for independent production.",
+                fill: "94%",
+              },
+              {
+                num: "03",
+                tag: "Cinematography",
+                title: "Camera & Chiaroscuro Lighting",
+                desc: "Natural light sculpting, Blackmagic Camera RAW capture, compositional symmetry and deliberate camera movement.",
+                fill: "95%",
+              },
+              {
+                num: "04",
+                tag: "Editorial",
+                title: "Editing, Pacing & Match-Cuts",
+                desc: "Rhythm-first timeline assembly, tension building, silence spacing and precise emotional transitions.",
+                fill: "98%",
+              },
+              {
+                num: "05",
+                tag: "Colorist",
+                title: "DaVinci Resolve Finishing",
+                desc: "Atmospheric color grading, moody print film emulation, skin tone fidelity and shadow contrast shaping.",
+                fill: "92%",
+              },
+              {
+                num: "06",
+                tag: "Sound Design",
+                title: "Ambience, Foley & Silence",
+                desc: "Designing acoustic presence, diegetic environmental sounds, low-frequency suspense and psychological texture.",
+                fill: "90%",
+              },
+            ].map((skill) => (
+              <div key={skill.num} className="skill-card">
+                <div className="skill-card__header">
+                  <span className="skill-card__num">{skill.num}</span>
+                  <span className="skill-card__tag">{skill.tag}</span>
+                </div>
+                <h4>{skill.title}</h4>
+                <p>{skill.desc}</p>
+                <div className="skill-card__bar" role="progressbar" aria-valuenow={parseInt(skill.fill)} aria-valuemin={0} aria-valuemax={100}>
+                  <div className="skill-card__bar-fill" style={{ width: skill.fill }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 04-C. CRITICAL RECEPTION & TESTIMONIALS */}
+        <div className="critical-reception">
+          <div className="critical-reception__heading">
+            <p className="identity-kicker">Collaborations, Press &amp; Reviews</p>
+            <h3>Critical <em>Reception</em></h3>
+          </div>
+
+          <div className="critical-grid">
+            {[
+              {
+                quote: "Zeehad has an extraordinary instinct for cinematic silence. While many filmmakers rush to fill every second with noise, he lets the frame breathe and tension simmer.",
+                author: "Tanvir Hasan",
+                role: "Independent Film Curator & Writer",
+              },
+              {
+                quote: "His mobile-first practice completely redefines independent cinema in Bangladesh. The framing and chiaroscuro lighting feel like monumental celluloid works.",
+                author: "Rashed Chowdhury",
+                role: "Cinematographer & Visual Artist",
+              },
+              {
+                quote: "Working with Zeehad is an auteur experience. His discipline from the first screenplay draft to the final color grade is sharp, purposeful, and uncompromising.",
+                author: "Farhan Ahmed",
+                role: "Production & Creative Collaborator",
+              },
+            ].map((item, idx) => (
+              <article key={idx} className="critical-card">
+                <blockquote>{item.quote}</blockquote>
+                <footer>
+                  <div>
+                    <div className="critical-card__author">{item.author}</div>
+                    <span className="critical-card__role">{item.role}</span>
+                  </div>
+                </footer>
+              </article>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
