@@ -83,8 +83,6 @@ export function GrandHallSection() {
               <span>Auteur · Founder</span>
             </div>
             <figure className="origin-portrait-frame">
-              <span className="aesthetic-sticker aesthetic-sticker--top-right">✦ 35MM CINEMA</span>
-              <span className="aesthetic-sticker aesthetic-sticker--bottom-left">⚡ DIRECTED BY ZEEHAD</span>
               {!portraitFailed ? (
                 <img
                   src={identityPortraitAsset}
@@ -107,23 +105,25 @@ export function GrandHallSection() {
           </div>
         </div>
 
-        {/* Kinetic Infinite Marquee Ribbon */}
+        {/* Architectural Palace Chambers Ribbon */}
         <div className="viral-marquee-container" aria-hidden="true">
           <div className="viral-marquee-track">
-            <span>✦ ZEEHAD HAQUE</span>
-            <span>🎬 <em>AUTEUR FILMMAKER</em></span>
-            <span>⚡ 4K ANAMORPHIC</span>
-            <span>👁️ <em>VISUAL SILENCE</em></span>
-            <span>BLACKMAGIC RAW</span>
-            <span>📍 GAZIPUR · BANGLADESH</span>
-            <span>✦ <em>2026/2027 PRODUCTION SLATE</em></span>
-            <span>✦ ZEEHAD HAQUE</span>
-            <span>🎬 <em>AUTEUR FILMMAKER</em></span>
-            <span>⚡ 4K ANAMORPHIC</span>
-            <span>👁️ <em>VISUAL SILENCE</em></span>
-            <span>BLACKMAGIC RAW</span>
-            <span>📍 GAZIPUR · BANGLADESH</span>
-            <span>✦ <em>2026/2027 PRODUCTION SLATE</em></span>
+            <span>✦ ZEEHAD HAQUE · <em>INDEPENDENT AUTEUR</em></span>
+            <span>01 · <em>GRAND FOYER</em></span>
+            <span>02 · <em>SCREENING HALL</em></span>
+            <span>03 · <em>PROJECTION ROOM</em></span>
+            <span>04 · <em>DIRECTOR&apos;S SUITE</em></span>
+            <span>05 · <em>INSTITUTE</em></span>
+            <span>06 · <em>ZEE AI</em></span>
+            <span>07 · <em>GRAND EXIT</em></span>
+            <span>✦ ZEEHAD HAQUE · <em>INDEPENDENT AUTEUR</em></span>
+            <span>01 · <em>GRAND FOYER</em></span>
+            <span>02 · <em>SCREENING HALL</em></span>
+            <span>03 · <em>PROJECTION ROOM</em></span>
+            <span>04 · <em>DIRECTOR&apos;S SUITE</em></span>
+            <span>05 · <em>INSTITUTE</em></span>
+            <span>06 · <em>ZEE AI</em></span>
+            <span>07 · <em>GRAND EXIT</em></span>
           </div>
         </div>
 

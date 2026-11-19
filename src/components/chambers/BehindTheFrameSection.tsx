@@ -260,44 +260,6 @@ export function BehindTheFrameSection() {
             ))}
           </div>
         </div>
-
-        {/* 04-C. CRITICAL RECEPTION & TESTIMONIALS */}
-        <div className="critical-reception">
-          <div className="critical-reception__heading">
-            <p className="identity-kicker">Collaborations, Press &amp; Reviews</p>
-            <h3>Critical <em>Reception</em></h3>
-          </div>
-
-          <div className="critical-grid">
-            {[
-              {
-                quote: "Zeehad has an extraordinary instinct for cinematic silence. While many filmmakers rush to fill every second with noise, he lets the frame breathe and tension simmer.",
-                author: "Tanvir Hasan",
-                role: "Independent Film Curator & Writer",
-              },
-              {
-                quote: "His mobile-first practice completely redefines independent cinema in Bangladesh. The framing and chiaroscuro lighting feel like monumental celluloid works.",
-                author: "Rashed Chowdhury",
-                role: "Cinematographer & Visual Artist",
-              },
-              {
-                quote: "Working with Zeehad is an auteur experience. His discipline from the first screenplay draft to the final color grade is sharp, purposeful, and uncompromising.",
-                author: "Farhan Ahmed",
-                role: "Production & Creative Collaborator",
-              },
-            ].map((item, idx) => (
-              <article key={idx} className="critical-card">
-                <blockquote>{item.quote}</blockquote>
-                <footer>
-                  <div>
-                    <div className="critical-card__author">{item.author}</div>
-                    <span className="critical-card__role">{item.role}</span>
-                  </div>
-                </footer>
-              </article>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );

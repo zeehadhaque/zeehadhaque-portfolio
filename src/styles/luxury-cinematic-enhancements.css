@@ -1,67 +1,74 @@
 /* ==========================================================================
-   ZEEHAD HAQUE — INSTAGRAM VIRAL AESTHETIC & CYBER-CINEMATIC THEME
-   Holographic Aurora · Liquid Glass · Cyber Neon · Kinetic Typography
+   ZEEHAD HAQUE — THE INFINITE CINEMATIC CASTLE UNIVERSE
+   Master 3D Spatial Design System | Dimensional Materials | Auteur Identity
+   Colors: Obsidian (#020305) · Midnight (#050810) · Deep Navy (#091426)
+           Moonlight (#7DBBFF) · Ice Silver (#DCEBFF) · Pale Electric (#A9D4FF)
+           Champagne (#C6A875 / #E5C58E)
    ========================================================================== */
 
-:root {
-  --lux-gold: #e5c58e;
-  --lux-gold-dim: #c6a875;
-  --lux-gold-soft: rgba(229, 197, 142, 0.16);
-  --lux-gold-glow: rgba(229, 197, 142, 0.35);
-
-  /* Instagram Viral Neon Palette */
-  --viral-cyan: #00f2fe;
-  --viral-cyan-glow: rgba(0, 242, 254, 0.45);
-  --viral-violet: #9d4edd;
-  --viral-violet-glow: rgba(157, 78, 221, 0.45);
-  --viral-pink: #ff2a85;
-  --viral-pink-glow: rgba(255, 42, 133, 0.45);
-  --viral-mint: #00f5a0;
-  --viral-bg-dark: #040509;
-
-  --lux-moonlight: #7dbbff;
-  --lux-moonlight-glow: rgba(125, 187, 255, 0.3);
-  --lux-surface-glass: rgba(6, 10, 20, 0.76);
-  --lux-border-gold: rgba(229, 197, 142, 0.28);
-  --lux-border-neon: rgba(0, 242, 254, 0.3);
-  --lux-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --lux-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
 /* --------------------------------------------------------------------------
-   00. ULTRA-SMOOTH SCROLLBAR & BASE
+   01. 3D SPATIAL CANVAS & PERSPECTIVE CONTEXT
    -------------------------------------------------------------------------- */
 html {
   scroll-behavior: smooth !important;
+  background: var(--obsidian);
+  color: var(--ice);
   scrollbar-width: thin;
-  scrollbar-color: var(--viral-cyan) #040509;
+  scrollbar-color: rgba(125, 187, 255, 0.35) #020305;
 }
 
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #040509;
+  background: #020305;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--viral-cyan) 0%, var(--viral-violet) 50%, var(--lux-gold) 100%);
+  background: linear-gradient(180deg, var(--champagne) 0%, var(--moonlight) 100%);
   border-radius: 999px;
-  border: 1px solid #040509;
+  border: 2px solid #020305;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ffffff 0%, var(--viral-cyan) 50%, var(--viral-pink) 100%);
+  background: linear-gradient(180deg, var(--champagne-bright) 0%, var(--electric) 100%);
 }
 
-/* Viral Top Progress Bar */
+/* The 3D Architecture Behind All Content Must Never Be Hidden */
+.identity-main {
+  position: relative;
+  z-index: 10;
+  background: transparent !important;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.dest {
+  position: relative;
+  background: transparent !important;
+  transform-style: preserve-3d;
+}
+
+/* Subtle architectural depth guide rails */
+.dest::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(125, 187, 255, 0.15) 30%, rgba(198, 168, 117, 0.25) 50%, rgba(125, 187, 255, 0.15) 70%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Top Spatial Scroll Progress Indicator */
 .cinematic-scroll-progress {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2.5px;
   z-index: 99999;
   pointer-events: none;
-  background: rgba(4, 5, 9, 0.7);
+  background: rgba(2, 3, 5, 0.6);
   backdrop-filter: blur(8px);
 }
 
@@ -71,74 +78,21 @@ html {
   width: 100%;
   transform: scaleX(var(--page-scroll-progress, 0));
   transform-origin: left center;
-  background: linear-gradient(90deg, #00f2fe 0%, #9d4edd 35%, #ff2a85 70%, #e5c58e 100%);
-  box-shadow: 0 0 16px rgba(0, 242, 254, 0.8), 0 0 24px rgba(255, 42, 133, 0.6);
+  background: linear-gradient(90deg, var(--champagne) 0%, var(--moonlight) 65%, var(--ice) 100%);
+  box-shadow: 0 0 16px rgba(125, 187, 255, 0.6), 0 0 24px rgba(198, 168, 117, 0.4);
   will-change: transform;
   transition: transform 60ms linear;
 }
 
 /* --------------------------------------------------------------------------
-   01. VIRAL AURORA MESH ORBS (AESTHETIC BACKGROUND GLOW)
-   -------------------------------------------------------------------------- */
-.viral-aurora-bg {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  opacity: 0.65;
-}
-
-.viral-aurora-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  will-change: transform;
-  animation: orbFloat 20s infinite ease-in-out alternate;
-}
-
-.viral-aurora-orb--1 {
-  top: -15%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(157, 78, 221, 0.38) 0%, rgba(255, 42, 133, 0.18) 60%, transparent 80%);
-}
-
-.viral-aurora-orb--2 {
-  top: 35%;
-  left: -12%;
-  width: 650px;
-  height: 650px;
-  background: radial-gradient(circle, rgba(0, 242, 254, 0.32) 0%, rgba(125, 187, 255, 0.15) 60%, transparent 80%);
-  animation-delay: -7s;
-}
-
-.viral-aurora-orb--3 {
-  bottom: 10%;
-  right: 5%;
-  width: 550px;
-  height: 550px;
-  background: radial-gradient(circle, rgba(229, 197, 142, 0.28) 0%, rgba(157, 78, 221, 0.18) 60%, transparent 80%);
-  animation-delay: -14s;
-}
-
-@keyframes orbFloat {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(-30px, 40px, 0) scale(1.1); }
-  100% { transform: translate3d(30px, -20px, 0) scale(0.95); }
-}
-
-/* --------------------------------------------------------------------------
-   02. ZERO-LAG CINEMATIC REVEALS (GPU-Optimized 120fps)
+   02. ZERO-LAG REVEALS & 3D SPATIAL ENTRANCES
    -------------------------------------------------------------------------- */
 :root[data-cinematic-motion="true"] .cinema-reveal {
   opacity: 0;
-  transform: translate3d(0, 24px, 0);
-  filter: none !important;
+  transform: translate3d(0, 32px, -40px) rotateX(4deg);
   transition:
-    opacity 800ms var(--lux-ease),
-    transform 900ms var(--lux-ease) !important;
+    opacity 850ms var(--ease-cinema),
+    transform 950ms var(--ease-cinema) !important;
   transition-delay: var(--cinema-stagger, 0ms);
   will-change: opacity, transform;
   backface-visibility: hidden;
@@ -146,18 +100,152 @@ html {
 
 :root[data-cinematic-motion="true"] .cinema-reveal.is-in-view {
   opacity: 1 !important;
-  transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) rotateX(0deg) !important;
 }
 
 /* --------------------------------------------------------------------------
-   03. HERO / FOYER SECTION — VIRAL AESTHETIC REDESIGN
+   03. DIMENSIONAL TYPOGRAPHY (Layered Depth & Extrusions)
+   -------------------------------------------------------------------------- */
+.origin-monument__name {
+  position: relative;
+  font-family: var(--display);
+  font-size: clamp(3.2rem, 8vw, 6.8rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--ice);
+  text-shadow:
+    0 1px 0 rgba(220, 235, 255, 0.2),
+    0 12px 32px rgba(0, 0, 0, 0.9),
+    0 0 50px rgba(125, 187, 255, 0.2);
+  transform: translateZ(30px);
+}
+
+.origin-monument__line {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffffff 0%, #dcebff 45%, #c6a875 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.origin-monument__roles {
+  font-family: var(--sans);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  color: var(--champagne-bright) !important;
+  margin-top: 0.85rem;
+  text-shadow: 0 0 20px rgba(198, 168, 117, 0.35);
+  transform: translateZ(20px);
+}
+
+.identity-kicker {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--moonlight);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dest-head h2 {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--ice);
+  letter-spacing: -0.015em;
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.dest-head h2 em {
+  font-style: italic;
+  color: var(--champagne-bright);
+}
+
+/* --------------------------------------------------------------------------
+   04. 3D PHYSICAL INTERFACE BUTTONS
+   -------------------------------------------------------------------------- */
+.identity-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+  transition:
+    transform 350ms var(--ease-cinema),
+    box-shadow 350ms var(--ease-cinema),
+    border-color 300ms ease,
+    background-color 300ms ease !important;
+}
+
+.identity-btn--primary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #dfba73 0%, #c6a875 50%, #9e7a36 100%) !important;
+  color: #020305 !important;
+  font-family: var(--sans);
+  font-weight: 700 !important;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255, 245, 225, 0.5) !important;
+  border-radius: 999px !important;
+  padding: 13px 28px !important;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(198, 168, 117, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  transform: perspective(600px) translateZ(8px);
+}
+
+.identity-btn--primary:hover {
+  transform: perspective(600px) translateZ(18px) translateY(-3px) rotateX(4deg) !important;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.75),
+    0 0 35px rgba(229, 197, 142, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.identity-btn--primary:active {
+  transform: perspective(600px) translateZ(4px) translateY(1px) !important;
+}
+
+.identity-btn--ghost {
+  position: relative;
+  background: rgba(9, 20, 38, 0.65) !important;
+  border: 1px solid rgba(125, 187, 255, 0.28) !important;
+  color: var(--ice) !important;
+  font-family: var(--sans);
+  font-weight: 600 !important;
+  font-size: 0.88rem;
+  border-radius: 999px !important;
+  padding: 13px 26px !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(220, 235, 255, 0.08) !important;
+  transform: perspective(600px) translateZ(6px);
+}
+
+.identity-btn--ghost:hover {
+  background: rgba(125, 187, 255, 0.16) !important;
+  border-color: var(--moonlight) !important;
+  color: #ffffff !important;
+  transform: perspective(600px) translateZ(14px) translateY(-2px) !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 24px rgba(125, 187, 255, 0.3) !important;
+}
+
+/* --------------------------------------------------------------------------
+   05. CHAMBER 01 — GRAND FOYER & PORTAL ARCHITECTURE
    -------------------------------------------------------------------------- */
 .origin-canvas {
   position: relative;
-  padding-top: clamp(2.5rem, 6vw, 4.5rem);
+  padding-top: clamp(2.5rem, 5vw, 4.5rem);
 }
 
-/* Status Pill with Soundwave */
+/* Status Available Beacon */
 .origin-status-badge {
   display: inline-flex;
   align-items: center;
@@ -168,342 +256,125 @@ html {
   font-size: 0.76rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #ffffff;
-  background: linear-gradient(135deg, rgba(6, 12, 24, 0.85), rgba(16, 28, 54, 0.75));
-  border: 1px solid rgba(0, 242, 254, 0.4);
-  backdrop-filter: blur(16px);
+  color: var(--champagne-bright);
+  background: rgba(5, 8, 16, 0.75);
+  border: 1px solid rgba(198, 168, 117, 0.3);
+  backdrop-filter: blur(14px);
   margin-bottom: 1.25rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.2);
-  transition: all 350ms var(--lux-ease);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(220, 235, 255, 0.08);
+  transform: translateZ(15px);
+  transition: all 350ms var(--ease-cinema);
 }
 
 .origin-status-badge:hover {
-  border-color: var(--viral-cyan);
-  box-shadow: 0 0 30px var(--viral-cyan-glow);
-  transform: translateY(-2px);
+  border-color: var(--champagne);
+  box-shadow: 0 0 30px rgba(198, 168, 117, 0.35);
+  transform: translateZ(22px) translateY(-2px);
 }
 
 .origin-status-beacon {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: var(--viral-cyan);
-  box-shadow: 0 0 12px var(--viral-cyan), 0 0 22px rgba(0, 242, 254, 0.8);
-  animation: beaconPulse 2s infinite ease-in-out;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399, 0 0 18px rgba(52, 211, 153, 0.6);
+  animation: beaconPulse 2.4s infinite ease-in-out;
 }
 
 @keyframes beaconPulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.4); }
+  50% { opacity: 0.45; transform: scale(1.35); }
 }
 
-/* Animated Soundwave Visualizer Bars */
-.soundwave-bars {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  height: 14px;
-}
-
-.soundwave-bar {
-  width: 2.5px;
-  background: linear-gradient(180deg, var(--viral-cyan), var(--lux-gold));
-  border-radius: 999px;
-  animation: soundwaveBounce 1.2s ease-in-out infinite alternate;
-}
-
-.soundwave-bar:nth-child(1) { height: 6px; animation-delay: 0.1s; }
-.soundwave-bar:nth-child(2) { height: 14px; animation-delay: 0.35s; }
-.soundwave-bar:nth-child(3) { height: 8px; animation-delay: 0.15s; }
-.soundwave-bar:nth-child(4) { height: 12px; animation-delay: 0.45s; }
-
-@keyframes soundwaveBounce {
-  0% { transform: scaleY(0.4); }
-  100% { transform: scaleY(1.3); }
-}
-
-/* Viral Holographic Title */
-@keyframes holographicShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.origin-monument__name {
-  background: linear-gradient(
-    135deg,
-    #ffffff 0%,
-    #f4e3c1 16%,
-    #00f2fe 34%,
-    #9d4edd 52%,
-    #ff2a85 70%,
-    #e5c58e 88%,
-    #ffffff 100%
-  ) !important;
-  background-size: 300% 300% !important;
-  animation: holographicShift 9s ease infinite !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 0 45px rgba(0, 242, 254, 0.25));
-  letter-spacing: -0.025em;
-}
-
-.origin-monument__roles {
-  font-family: var(--sans);
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
-  background: linear-gradient(90deg, #e5c58e, #00f2fe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-top: 0.75rem;
-}
-
-/* Viral Quote Box */
+/* Quote Box in Architectural Glass */
 .origin-quote {
   position: relative;
-  background: linear-gradient(150deg, rgba(10, 18, 36, 0.8), rgba(4, 7, 15, 0.9));
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-left: 3px solid var(--viral-cyan);
-  border-radius: 16px;
-  padding: 1.6rem 2rem;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 242, 254, 0.1);
-  transition: transform 400ms var(--lux-ease), border-color 400ms ease, box-shadow 400ms ease;
+  background: rgba(5, 8, 16, 0.68) !important;
+  border: 1px solid rgba(220, 235, 255, 0.12) !important;
+  border-left: 3px solid var(--champagne) !important;
+  border-radius: 14px !important;
+  padding: 1.6rem 2rem !important;
+  backdrop-filter: blur(16px) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(220, 235, 255, 0.08) !important;
+  transform: translateZ(12px);
+  transition: transform 400ms var(--ease-cinema), border-color 350ms ease, box-shadow 400ms ease;
 }
 
 .origin-quote:hover {
-  transform: translateY(-3px);
-  border-color: rgba(0, 242, 254, 0.45);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(0, 242, 254, 0.2);
+  transform: translateZ(24px) translateY(-3px);
+  border-color: rgba(198, 168, 117, 0.45);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(198, 168, 117, 0.2);
 }
 
 .origin-quote p em {
   font-style: normal;
-  background: linear-gradient(90deg, #00f2fe, #e5c58e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 700;
+  color: var(--champagne-bright);
+  font-weight: 600;
 }
 
-/* Viral CTA Buttons */
-.identity-btn--primary {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 40%, #000 100%) !important;
-  background-size: 200% 200% !important;
-  color: #030508 !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.06em;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important;
-  border-radius: 999px !important;
-  padding: 13px 30px !important;
-  box-shadow: 0 10px 30px rgba(0, 242, 254, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
-  transition: all 350ms var(--lux-ease) !important;
-  will-change: transform, box-shadow;
-}
-
-.identity-btn--primary::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -70%;
-  width: 50%;
-  height: 200%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.6) 50%,
-    transparent 100%
-  );
-  transform: rotate(25deg);
-  transition: none;
-  pointer-events: none;
-}
-
-.identity-btn--primary:hover::after {
-  left: 140%;
-  transition: left 700ms ease-in-out;
-}
-
-.identity-btn--primary:hover {
-  transform: translateY(-3px) scale(1.03) !important;
-  box-shadow: 0 14px 40px rgba(0, 242, 254, 0.65), 0 0 30px rgba(0, 242, 254, 0.4) !important;
-  background-position: right center !important;
-}
-
-.identity-btn--ghost {
-  position: relative;
-  background: rgba(10, 20, 38, 0.65) !important;
-  border: 1px solid rgba(220, 235, 255, 0.25) !important;
-  color: #ffffff !important;
-  border-radius: 999px !important;
-  padding: 13px 26px !important;
-  backdrop-filter: blur(14px) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
-  transition: all 350ms var(--lux-ease) !important;
-}
-
-.identity-btn--ghost:hover {
-  background: rgba(157, 78, 221, 0.22) !important;
-  border-color: var(--viral-violet) !important;
-  color: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 10px 32px var(--viral-violet-glow) !important;
-}
-
-/* Director Portrait Frame with Aesthetic Stickers */
+/* 3D Director Portrait Monolith */
 .origin-portrait-frame {
   position: relative;
-  border-radius: 20px;
-  overflow: visible !important;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(4, 7, 15, 0.85);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 242, 254, 0.15);
-  transition: transform 500ms var(--lux-ease), box-shadow 500ms var(--lux-ease), border-color 400ms ease;
-}
-
-.origin-portrait-frame img {
-  border-radius: 20px;
-  transition: transform 800ms var(--lux-ease);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(220, 235, 255, 0.16);
+  background: rgba(5, 8, 16, 0.8);
+  box-shadow:
+    0 25px 65px rgba(0, 0, 0, 0.8),
+    0 0 35px rgba(125, 187, 255, 0.12);
+  transform: perspective(1200px) rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg)) translateZ(15px);
+  transform-style: preserve-3d;
+  transition: transform 600ms var(--ease-cinema), box-shadow 500ms var(--ease-cinema), border-color 400ms ease;
 }
 
 .origin-portrait-frame:hover {
-  border-color: var(--viral-cyan);
-  box-shadow: 0 36px 95px rgba(0, 0, 0, 0.9), 0 0 50px var(--viral-cyan-glow);
+  border-color: rgba(198, 168, 117, 0.45);
+  box-shadow:
+    0 35px 85px rgba(0, 0, 0, 0.9),
+    0 0 45px rgba(198, 168, 117, 0.22);
+}
+
+.origin-portrait-frame img {
+  width: 100%;
+  display: block;
+  transition: transform 800ms var(--ease-cinema);
 }
 
 .origin-portrait-frame:hover img {
-  transform: scale(1.04);
+  transform: scale(1.035);
 }
 
-/* Floating Aesthetic Stickers */
-.aesthetic-sticker {
-  position: absolute;
-  z-index: 12;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-  pointer-events: none;
-  transition: transform 350ms var(--lux-ease);
-}
-
-.aesthetic-sticker--top-right {
-  top: -14px;
-  right: -14px;
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.35), rgba(157, 78, 221, 0.45));
-  border: 1px solid rgba(0, 242, 254, 0.7);
-  color: #00f2fe;
-  transform: rotate(4deg);
-}
-
-.aesthetic-sticker--bottom-left {
-  bottom: 20px;
-  left: -16px;
-  background: linear-gradient(135deg, rgba(229, 197, 142, 0.35), rgba(255, 42, 133, 0.4));
-  border: 1px solid rgba(229, 197, 142, 0.7);
-  color: #fff0d4;
-  transform: rotate(-3deg);
-}
-
-.origin-portrait-frame:hover .aesthetic-sticker--top-right {
-  transform: rotate(7deg) scale(1.06);
-}
-
-.origin-portrait-frame:hover .aesthetic-sticker--bottom-left {
-  transform: rotate(-6deg) scale(1.06);
-}
-
-/* --------------------------------------------------------------------------
-   04. KINETIC MARQUEE RIBBON (INSTAGRAM SIGNATURE ELEMENT)
-   -------------------------------------------------------------------------- */
-.viral-marquee-container {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  overflow: hidden;
-  background: linear-gradient(90deg, rgba(6, 11, 24, 0.88), rgba(12, 6, 24, 0.88));
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(0, 242, 254, 0.25);
-  border-bottom: 1px solid rgba(157, 78, 221, 0.25);
-  padding: 14px 0;
-  margin-top: 3.5rem;
-  margin-bottom: 3.5rem;
-  transform: rotate(-0.75deg);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-}
-
-.viral-marquee-track {
-  display: flex;
-  gap: 3rem;
-  width: max-content;
-  animation: marqueeRoll 32s linear infinite;
-  font-family: var(--mono);
-  font-size: 0.84rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #ffffff;
-  font-weight: 700;
-  align-items: center;
-}
-
-.viral-marquee-track span {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.viral-marquee-track span em {
-  font-style: normal;
-  color: var(--viral-cyan);
-}
-
-@keyframes marqueeRoll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* --------------------------------------------------------------------------
-   05. BENTO WING PORTALS & HORIZON METRICS
-   -------------------------------------------------------------------------- */
+/* Palace Gateway Wings (Portals) */
 .foyer-portals {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 1.25rem;
+  margin-top: 2rem;
 }
 
 .foyer-portal-card {
   position: relative;
-  background: linear-gradient(160deg, rgba(12, 22, 44, 0.75), rgba(5, 9, 18, 0.9)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 18px !important;
-  padding: 1.5rem !important;
-  backdrop-filter: blur(16px) !important;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5) !important;
-  transition: all 400ms var(--lux-ease) !important;
+  background: rgba(5, 8, 16, 0.65) !important;
+  border: 1px solid rgba(220, 235, 255, 0.11) !important;
+  border-radius: 14px !important;
+  padding: 1.4rem !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
+  transform: perspective(1000px) translateZ(8px);
+  transition: all 350ms var(--ease-cinema) !important;
 }
 
 .foyer-portal-card:hover {
-  border-color: var(--viral-cyan) !important;
-  transform: translateY(-6px) scale(1.02) !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px var(--viral-cyan-glow) !important;
+  border-color: var(--border-strong) !important;
+  transform: perspective(1000px) translateZ(24px) translateY(-4px) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 25px rgba(125, 187, 255, 0.18) !important;
 }
 
 .foyer-portal-card:hover .tabular-nums {
-  color: var(--viral-cyan) !important;
+  color: var(--champagne-bright) !important;
 }
 
-/* Horizon Counters */
+/* Horizon Monolithic Stat Blocks */
 .origin-horizon {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -513,237 +384,498 @@ html {
 
 .origin-horizon__item {
   position: relative;
-  background: rgba(6, 11, 22, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  background: rgba(5, 8, 16, 0.62);
+  border: 1px solid rgba(220, 235, 255, 0.09);
+  border-radius: 14px;
   padding: 1.5rem 1.25rem;
   text-align: center;
   backdrop-filter: blur(14px);
-  transition: all 350ms var(--lux-ease);
+  transform: perspective(1000px) translateZ(6px);
+  transition: all 350ms var(--ease-cinema);
 }
 
 .origin-horizon__item:hover {
-  border-color: var(--viral-violet);
-  background: rgba(12, 18, 38, 0.85);
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--viral-violet-glow);
+  border-color: var(--border-champagne);
+  background: rgba(9, 20, 38, 0.72);
+  transform: perspective(1000px) translateZ(18px) translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 22px rgba(198, 168, 117, 0.15);
 }
 
 .origin-horizon__item strong {
-  background: linear-gradient(135deg, #ffffff 0%, var(--viral-cyan) 60%, var(--lux-gold) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, var(--ice) 50%, var(--champagne-bright) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 2.5rem;
+  font-size: 2.4rem;
   line-height: 1.1;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 /* --------------------------------------------------------------------------
-   06. SCREENING HALL — VIRAL REEL & BENTO GRID
+   06. CHAMBER 02 — THE SCREENING HALL (Architectural Floating Plates)
    -------------------------------------------------------------------------- */
 .filmography-filters {
   display: inline-flex;
-  gap: 10px;
-  background: rgba(6, 11, 24, 0.88);
-  padding: 8px;
+  gap: 8px;
+  background: rgba(5, 8, 16, 0.8);
+  padding: 6px;
   border-radius: 999px;
-  border: 1px solid rgba(0, 242, 254, 0.35);
-  backdrop-filter: blur(20px);
-  margin-bottom: 3rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(220, 235, 255, 0.14);
+  backdrop-filter: blur(16px);
+  margin-bottom: 2.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  transform: translateZ(10px);
 }
 
 .filmography-filters button {
   border-radius: 999px !important;
-  padding: 10px 24px !important;
+  padding: 8px 22px !important;
   font-family: var(--sans);
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #dcebff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ice);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 280ms var(--lux-ease);
+  transition: all 250ms var(--ease-cinema);
 }
 
 .filmography-filters button:hover {
   color: #ffffff;
-  background: rgba(0, 242, 254, 0.12);
+  background: rgba(125, 187, 255, 0.1);
 }
 
 .filmography-filters button.is-active {
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
-  color: #030508 !important;
-  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5) !important;
+  background: linear-gradient(135deg, var(--champagne) 0%, var(--champagne-bright) 100%) !important;
+  color: #020305 !important;
+  box-shadow: 0 4px 16px rgba(198, 168, 117, 0.4) !important;
 }
 
-/* Bento Spotlight Plate Cards */
+/* Floating Architectural Screening Plates */
 .spotlight-plate,
 .ledger-reel {
   position: relative;
-  background: linear-gradient(160deg, rgba(10, 18, 36, 0.85), rgba(4, 7, 16, 0.95)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  border-radius: 20px !important;
+  background: rgba(5, 8, 16, 0.65) !important;
+  border: 1px solid rgba(220, 235, 255, 0.11) !important;
+  border-radius: 16px !important;
   overflow: hidden;
-  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.6) !important;
-  transition: all 450ms var(--lux-ease) !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.55) !important;
+  transform: perspective(1200px) translateZ(8px);
+  transition: all 400ms var(--ease-cinema) !important;
 }
 
 .spotlight-plate:hover,
 .ledger-reel:hover {
-  border-color: var(--viral-cyan) !important;
-  transform: translateY(-8px) scale(1.02) !important;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 45px var(--viral-cyan-glow) !important;
+  border-color: rgba(125, 187, 255, 0.35) !important;
+  transform: perspective(1200px) translateZ(28px) translateY(-6px) !important;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.8), 0 0 35px rgba(125, 187, 255, 0.2) !important;
 }
 
 .spotlight-plate__poster,
 .ledger-reel__poster {
   overflow: hidden;
   position: relative;
+  aspect-ratio: 16 / 9;
 }
 
 .spotlight-plate__poster img,
 .ledger-reel__poster img {
-  transition: transform 700ms var(--lux-ease) !important;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms var(--ease-cinema) !important;
   will-change: transform;
 }
 
 .spotlight-plate:hover .spotlight-plate__poster img,
 .ledger-reel:hover .ledger-reel__poster img {
-  transform: scale(1.08) !important;
+  transform: scale(1.06) !important;
 }
 
-/* Play Trigger Button with Neon Glow */
 .spotlight-plate__play {
-  background: rgba(4, 7, 15, 0.8) !important;
-  border: 1px solid var(--viral-cyan) !important;
-  color: var(--viral-cyan) !important;
-  box-shadow: 0 0 25px var(--viral-cyan-glow) !important;
-  transition: all 300ms var(--lux-ease) !important;
+  background: rgba(2, 3, 5, 0.8) !important;
+  border: 1px solid var(--champagne-bright) !important;
+  color: var(--champagne-bright) !important;
+  box-shadow: 0 0 20px rgba(198, 168, 117, 0.35) !important;
+  transition: all 300ms var(--ease-cinema) !important;
 }
 
 .spotlight-plate:hover .spotlight-plate__play {
-  background: var(--viral-cyan) !important;
-  color: #040509 !important;
-  transform: translate(-50%, -50%) scale(1.2) !important;
-  box-shadow: 0 0 45px rgba(0, 242, 254, 0.9) !important;
+  background: var(--champagne-bright) !important;
+  color: #020305 !important;
+  transform: translate(-50%, -50%) scale(1.15) !important;
+  box-shadow: 0 0 35px rgba(229, 197, 142, 0.7) !important;
 }
 
 /* --------------------------------------------------------------------------
-   07. DIRECTOR'S CRAFT MATRIX & TESTIMONIALS
+   07. CHAMBER 03 — THE PROJECTION ROOM (Visual Chamber)
    -------------------------------------------------------------------------- */
+.dest-visual-chamber {
+  min-height: 100svh;
+}
+
+.frame-study__diagram {
+  border-radius: 12px;
+  background: rgba(5, 8, 16, 0.72);
+  border: 1px solid rgba(220, 235, 255, 0.1);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  transform: perspective(1000px) translateZ(10px);
+  transition: all 400ms var(--ease-cinema);
+}
+
+.frame-study__diagram:hover {
+  border-color: rgba(125, 187, 255, 0.35);
+  transform: perspective(1000px) translateZ(24px) translateY(-3px);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.7), 0 0 28px rgba(125, 187, 255, 0.18);
+}
+
+/* --------------------------------------------------------------------------
+   08. CHAMBER 04 — THE DIRECTOR'S SUITE (Auteur Craft Matrix & Dossier)
+   -------------------------------------------------------------------------- */
+.suite-atmosphere-banner {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(220, 235, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  transform: perspective(1200px) translateZ(10px);
+}
+
+.suite-atmosphere-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-cinema);
+}
+
+.suite-atmosphere-banner:hover img {
+  transform: scale(1.03);
+}
+
+/* Craft Matrix */
 .auteur-skills-matrix {
-  margin: 4rem 0 2rem;
-  padding: 3rem;
-  border-radius: 24px;
-  background: linear-gradient(155deg, rgba(12, 22, 44, 0.8), rgba(4, 7, 16, 0.92));
-  border: 1px solid rgba(0, 242, 254, 0.28);
-  backdrop-filter: blur(24px);
-  box-shadow: 0 25px 75px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  margin: 3.5rem 0 2rem;
+  padding: 2.75rem;
+  border-radius: 18px;
+  background: rgba(5, 8, 16, 0.68);
+  border: 1px solid rgba(220, 235, 255, 0.12);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(220, 235, 255, 0.08);
+  transform: perspective(1200px) translateZ(10px);
 }
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
 }
 
 .skill-card {
   position: relative;
-  background: rgba(6, 11, 24, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
-  padding: 1.75rem;
-  transition: all 350ms var(--lux-ease);
+  background: rgba(9, 20, 38, 0.55);
+  border: 1px solid rgba(220, 235, 255, 0.09);
+  border-radius: 14px;
+  padding: 1.5rem;
+  transform: perspective(800px) translateZ(6px);
+  transition: all 350ms var(--ease-cinema);
 }
 
 .skill-card:hover {
-  border-color: var(--viral-violet);
-  background: rgba(14, 20, 44, 0.9);
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--viral-violet-glow);
+  border-color: var(--border-champagne);
+  background: rgba(9, 20, 38, 0.78);
+  transform: perspective(800px) translateZ(20px) translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 22px rgba(198, 168, 117, 0.15);
 }
 
 .skill-card__bar-fill {
-  background: linear-gradient(90deg, #00f2fe 0%, #9d4edd 50%, #ff2a85 100%) !important;
-  box-shadow: 0 0 14px rgba(0, 242, 254, 0.8) !important;
+  background: linear-gradient(90deg, var(--champagne) 0%, var(--champagne-bright) 65%, var(--moonlight) 100%) !important;
+  box-shadow: 0 0 12px rgba(198, 168, 117, 0.4) !important;
 }
 
-/* Critical Reception Bento Grid */
-.critical-reception {
-  margin: 4rem 0;
-  padding: 3rem;
-  border-radius: 24px;
-  background: linear-gradient(160deg, rgba(14, 10, 32, 0.8), rgba(4, 6, 14, 0.92));
-  border: 1px solid rgba(157, 78, 221, 0.28);
-  backdrop-filter: blur(24px);
-  box-shadow: 0 25px 75px rgba(0, 0, 0, 0.7);
+/* Dossier Accordion */
+.dossier-item {
+  background: rgba(5, 8, 16, 0.62) !important;
+  border: 1px solid rgba(220, 235, 255, 0.1) !important;
+  border-radius: 12px !important;
+  margin-bottom: 0.75rem !important;
+  backdrop-filter: blur(12px) !important;
+  transform: translateZ(6px);
+  transition: all 300ms var(--ease-cinema) !important;
 }
 
-.critical-card {
-  border-radius: 18px;
-  padding: 2rem;
-  background: rgba(6, 11, 24, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 350ms var(--lux-ease);
-}
-
-.critical-card:hover {
-  border-color: var(--viral-pink);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px var(--viral-pink-glow);
-}
-
-.critical-card blockquote::before {
-  color: var(--viral-cyan) !important;
+.dossier-item:hover {
+  border-color: var(--border-strong) !important;
+  transform: translateZ(16px) translateY(-2px) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(125, 187, 255, 0.12) !important;
 }
 
 /* --------------------------------------------------------------------------
-   08. CONTACT SANCTUARY BENTO
+   09. CHAMBER 05 & 06 — INSTITUTE & ZEE AI INTELLIGENCE
+   -------------------------------------------------------------------------- */
+.dest-academy,
+.dest-intelligence {
+  background: transparent !important;
+}
+
+.intelligence-stage {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(125, 187, 255, 0.2);
+  background: rgba(5, 8, 16, 0.68) !important;
+  backdrop-filter: blur(18px) !important;
+  box-shadow: 0 24px 65px rgba(0, 0, 0, 0.75), 0 0 35px rgba(125, 187, 255, 0.12) !important;
+  transform: perspective(1200px) translateZ(12px);
+}
+
+.intelligence-core-emblem {
+  filter: drop-shadow(0 0 28px rgba(125, 187, 255, 0.45));
+  animation: coreGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes coreGlow {
+  0% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(125, 187, 255, 0.3)); }
+  100% { transform: scale(1.04); filter: drop-shadow(0 0 36px rgba(198, 168, 117, 0.5)); }
+}
+
+/* --------------------------------------------------------------------------
+   10. CHAMBER 07 — THE GRAND EXIT & CONTACT SANCTUARY
    -------------------------------------------------------------------------- */
 .contact-console {
-  background: linear-gradient(155deg, rgba(12, 22, 44, 0.85), rgba(4, 7, 16, 0.95)) !important;
-  border: 1px solid rgba(0, 242, 254, 0.3) !important;
-  border-radius: 24px !important;
-  padding: 2.5rem !important;
-  backdrop-filter: blur(24px) !important;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  background: rgba(5, 8, 16, 0.72) !important;
+  border: 1px solid rgba(220, 235, 255, 0.14) !important;
+  border-radius: 18px !important;
+  padding: 2.25rem !important;
+  backdrop-filter: blur(18px) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(220, 235, 255, 0.08) !important;
+  transform: perspective(1000px) translateZ(10px);
+}
+
+.contact-console input,
+.contact-console textarea,
+.contact-console select {
+  background: rgba(2, 3, 5, 0.75) !important;
+  border: 1px solid rgba(220, 235, 255, 0.12) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  padding: 12px 16px !important;
+  transition: all 250ms var(--ease-cinema) !important;
 }
 
 .contact-console input:focus,
-.contact-console textarea:focus {
-  border-color: var(--viral-cyan) !important;
-  box-shadow: 0 0 24px var(--viral-cyan-glow) !important;
+.contact-console textarea:focus,
+.contact-console select:focus {
+  border-color: var(--champagne-bright) !important;
+  outline: none !important;
+  box-shadow: 0 0 18px rgba(198, 168, 117, 0.35) !important;
+  background: rgba(5, 8, 16, 0.9) !important;
 }
 
 .contact-sanctuary__channels a {
-  border-radius: 18px !important;
-  background: rgba(6, 11, 24, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  transition: all 350ms var(--lux-ease) !important;
+  border: 1px solid rgba(220, 235, 255, 0.11) !important;
+  border-radius: 14px !important;
+  padding: 1rem 1.25rem !important;
+  background: rgba(5, 8, 16, 0.65) !important;
+  transform: translateZ(6px);
+  transition: all 300ms var(--ease-cinema) !important;
 }
 
 .contact-sanctuary__channels a:hover {
-  border-color: var(--viral-cyan) !important;
-  transform: translateX(6px) !important;
-  background: rgba(12, 24, 48, 0.95) !important;
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 30px var(--viral-cyan-glow) !important;
+  border-color: var(--border-champagne) !important;
+  transform: translateZ(18px) translateX(4px) !important;
+  background: rgba(9, 20, 38, 0.85) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(198, 168, 117, 0.18) !important;
 }
 
 /* --------------------------------------------------------------------------
-   09. MOBILE OPTIMIZATIONS
+   12. ARCHITECTURAL CONTROL SYSTEM (SPATIAL NAVIGATION)
+   -------------------------------------------------------------------------- */
+.identity-topbar {
+  position: fixed !important;
+  top: 16px !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-inline: auto !important;
+  width: min(1220px, calc(100% - 32px)) !important;
+  z-index: 1000 !important;
+  border-radius: 999px !important;
+  background: rgba(5, 8, 16, 0.72) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(220, 235, 255, 0.14) !important;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(220, 235, 255, 0.1) !important;
+  transform: perspective(1000px) translateZ(30px) !important;
+  transition: transform 300ms var(--ease-cinema), border-color 300ms ease, box-shadow 300ms ease !important;
+}
+
+.identity-topbar:hover {
+  border-color: rgba(125, 187, 255, 0.35) !important;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(125, 187, 255, 0.15),
+    inset 0 1px 0 rgba(220, 235, 255, 0.18) !important;
+}
+
+.identity-topbar__nav a {
+  position: relative;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ice);
+  opacity: 0.75;
+  transition: opacity 250ms ease, color 250ms ease, transform 250ms ease !important;
+}
+
+.identity-topbar__nav a:hover {
+  opacity: 1;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.identity-topbar__nav a.is-active {
+  opacity: 1;
+  color: var(--champagne-bright) !important;
+  font-weight: 600;
+  text-shadow: 0 0 15px rgba(229, 197, 142, 0.4);
+}
+
+.identity-topbar__nav a.is-active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--champagne-bright);
+  box-shadow: 0 0 8px rgba(229, 197, 142, 0.8);
+  border-radius: 999px;
+}
+
+/* Spatial Floor Elevation Rail */
+.elevation-rail {
+  position: fixed !important;
+  right: 24px !important;
+  top: 50% !important;
+  transform: translateY(-50%) perspective(800px) translateZ(20px) !important;
+  z-index: 100 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.elevation-rail a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.4;
+  transition: opacity 300ms ease, transform 300ms var(--ease-cinema) !important;
+}
+
+.elevation-rail a:hover {
+  opacity: 0.85;
+  transform: translateX(-4px);
+}
+
+.elevation-rail a.is-active {
+  opacity: 1;
+  transform: translateX(-6px);
+}
+
+.elevation-rail a.is-active .elevation-rail__num {
+  color: var(--champagne-bright) !important;
+  text-shadow: 0 0 10px rgba(198, 168, 117, 0.6);
+}
+
+.elevation-rail a.is-active .elevation-rail__line {
+  background: var(--champagne-bright) !important;
+  width: 24px !important;
+  box-shadow: 0 0 10px rgba(198, 168, 117, 0.8);
+}
+
+/* --------------------------------------------------------------------------
+   13. SCREENING ROOM MODAL (Spatial IMAX Projection Booth)
+   -------------------------------------------------------------------------- */
+.identity-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1.5rem !important;
+}
+
+.identity-modal__backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(2, 3, 5, 0.88) !important;
+  backdrop-filter: blur(24px) !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.identity-modal__dialog {
+  position: relative !important;
+  z-index: 2 !important;
+  width: min(960px, 100%) !important;
+  background: rgba(5, 8, 16, 0.92) !important;
+  border: 1px solid rgba(220, 235, 255, 0.16) !important;
+  border-radius: 20px !important;
+  padding: 2rem !important;
+  box-shadow:
+    0 35px 90px rgba(0, 0, 0, 0.95),
+    0 0 50px rgba(125, 187, 255, 0.15) !important;
+  transform: perspective(1200px) translateZ(40px) !important;
+  animation: modalEnter 400ms var(--ease-cinema) !important;
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: perspective(1200px) translate3d(0, 30px, -60px) scale(0.96); }
+  to { opacity: 1; transform: perspective(1200px) translate3d(0, 0, 40px) scale(1); }
+}
+
+.screening-frame {
+  position: relative !important;
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  margin: 1.25rem 0 !important;
+  background: #000000 !important;
+  border: 1px solid rgba(220, 235, 255, 0.1) !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8) !important;
+}
+
+.screening-frame iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  display: block !important;
+}
+
+/* --------------------------------------------------------------------------
+   14. MOBILE & RESPONSIVE POLISH (Strict Zero Overflow & Touch Geometry)
    -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
-  .viral-marquee-container {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+  .origin-status-badge {
+    font-size: 0.7rem;
+    padding: 6px 14px;
   }
-  .aesthetic-sticker {
-    font-size: 0.62rem;
-    padding: 4px 10px;
+
+  .origin-quote {
+    padding: 1.25rem;
   }
+
+  .origin-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .origin-actions a {
+    width: 100%;
+    justify-content: center;
+  }
+
   .auteur-skills-matrix,
-  .critical-reception {
-    padding: 1.75rem 1.25rem;
+  .contact-console {
+    padding: 1.5rem 1.25rem !important;
   }
 }

@@ -1,29 +1,54 @@
 :root {
   color-scheme: dark;
+
+  /* Sophisticated Auteur Palette — Official Castle Universe */
+  --obsidian: #020305;
   --black: #020305;
-  --obsidian: #050810;
-  --midnight: #091426;
-  --surface: rgba(5, 8, 16, 0.86);
-  --surface-elevated: rgba(9, 20, 38, 0.92);
+  --midnight: #050810;
+  --navy: #091426;
+  --graphite: #111722;
+  --graphite-light: #182232;
+
   --moonlight: #7dbbff;
-  --silver: #dcebff;
   --ice: #dcebff;
-  --gold: #c6a875;
-  --gold-soft: rgba(198, 168, 117, 0.34);
-  --velvet: #401b29;
-  --velvet-soft: rgba(64, 27, 41, 0.36);
+  --silver: #dcebff;
+  --electric: #a9d4ff;
+  --blue-soft: rgba(125, 187, 255, 0.18);
+  --blue-glow: rgba(125, 187, 255, 0.28);
+
+  /* Muted Metallic Highlights */
+  --champagne: #c6a875;
+  --champagne-bright: #e5c58e;
+  --champagne-soft: rgba(198, 168, 117, 0.22);
+  --champagne-glow: rgba(229, 197, 142, 0.28);
+
+  /* Atmospheric Glass & Translucent Architectural Materials */
+  --surface: rgba(5, 8, 16, 0.65);
+  --surface-raised: rgba(9, 20, 38, 0.74);
+  --surface-elevated: rgba(9, 20, 38, 0.82);
+  --surface-glass: rgba(5, 8, 16, 0.68);
+
   --grey: #8490a5;
-  --body-muted: #98a6bd;
-  --muted: #98a6bd;
-  --border: rgba(220, 235, 255, 0.14);
-  --border-strong: rgba(125, 187, 255, 0.44);
+  --body-muted: #9aaabe;
+  --muted: #9aaabe;
+
+  /* Brushed Metallic & Architectural Edges */
+  --border: rgba(220, 235, 255, 0.12);
+  --border-strong: rgba(125, 187, 255, 0.32);
+  --border-champagne: rgba(198, 168, 117, 0.28);
+  --border-glass: rgba(255, 255, 255, 0.1);
+
+  /* Editorial & Cinematic Typography */
   --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
   --sans: "Manrope", "Helvetica Neue", Arial, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --gutter: clamp(1.25rem, 4.5vw, 4.5rem);
-  --max-width: 1220px;
-  --ease-cinema: cubic-bezier(0.22, 1, 0.36, 1);
+  --max-width: 1240px;
+
+  /* Spatial 3D Motion Easings */
+  --ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spatial: cubic-bezier(0.19, 1, 0.22, 1);
 
   /* Compatibility aliases */
   --paper: var(--black);
