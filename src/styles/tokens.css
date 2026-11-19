@@ -1,0 +1,57 @@
+:root,
+[data-castle-theme="obsidian"] {
+  --bg-void: #020305;
+  --bg-deep: #050810;
+  --bg-chamber: #091426;
+  --accent-ice: #7dbbff;
+  --accent-glow: #a9d4ff;
+  --text-pure: #dcebff;
+  --text-muted: rgba(220, 235, 255, 0.66);
+
+  --glass-bg: linear-gradient(135deg, rgba(13, 24, 44, 0.56), rgba(5, 8, 16, 0.72));
+  --glass-bg-hover: linear-gradient(135deg, rgba(22, 42, 74, 0.68), rgba(9, 20, 38, 0.82));
+  --glass-border: rgba(169, 212, 255, 0.22);
+  --glass-border-strong: rgba(220, 235, 255, 0.48);
+  --glass-specular: rgba(220, 235, 255, 0.16);
+  --glass-shadow: 0 24px 70px rgba(2, 3, 5, 0.78), inset 0 1px 0 rgba(220, 235, 255, 0.22);
+  --glass-blur: blur(22px) saturate(165%);
+
+  --font-display: "Cinzel", "Cormorant Garamond", Georgia, serif;
+  --font-mono: "JetBrains Mono", "Space Mono", ui-monospace, monospace;
+  --font-sans: "Inter", "Hind Siliguri", system-ui, sans-serif;
+
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-theme: 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-castle-theme="glacial"] {
+  --bg-void: #040a16;
+  --bg-deep: #091830;
+  --bg-chamber: #122a4d;
+  --accent-ice: #a9d4ff;
+  --accent-glow: #dcebff;
+  --text-pure: #f0f7ff;
+  --text-muted: rgba(220, 235, 255, 0.78);
+
+  --glass-bg: linear-gradient(135deg, rgba(125, 187, 255, 0.18), rgba(9, 24, 48, 0.58));
+  --glass-bg-hover: linear-gradient(135deg, rgba(169, 212, 255, 0.28), rgba(14, 34, 66, 0.68));
+  --glass-border: rgba(220, 235, 255, 0.34);
+  --glass-border-strong: rgba(220, 235, 255, 0.65);
+  --glass-specular: rgba(255, 255, 255, 0.26);
+}
+
+[data-castle-theme="noir"] {
+  --bg-void: #010203;
+  --bg-deep: #040508;
+  --bg-chamber: #080d17;
+  --accent-ice: #5f9be0;
+  --accent-glow: #8cbff5;
+  --text-pure: #d2e4fa;
+  --text-muted: rgba(210, 228, 250, 0.56);
+
+  --glass-bg: linear-gradient(135deg, rgba(8, 12, 22, 0.72), rgba(2, 3, 5, 0.88));
+  --glass-bg-hover: linear-gradient(135deg, rgba(16, 26, 44, 0.8), rgba(4, 7, 13, 0.92));
+  --glass-border: rgba(125, 187, 255, 0.16);
+  --glass-border-strong: rgba(169, 212, 255, 0.4);
+  --glass-specular: rgba(169, 212, 255, 0.11);
+}
