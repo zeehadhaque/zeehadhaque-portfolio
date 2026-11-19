@@ -46,7 +46,15 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
     }
   };
 
-  const socialLinks = linkRegistry.filter((l) => l.category === "social" || l.category === "code");
+  const exactCredentialLinks = [
+    { name: "IMDb Profile", url: "https://www.imdb.com/user/p.gtnf5csbffkwzrbmsvkfa2pssm" },
+    { name: "FilmFreeway", url: "https://www.wikidata.org/wiki/Q142020060" },
+    { name: "Wikidata", url: "https://www.wikidata.org/wiki/Q142020060" },
+    { name: "Letterboxd", url: "https://boxd.it/onh0F" },
+    { name: "TMDB", url: "https://www.themoviedb.org/movie/1819480-shadow-iii" },
+    { name: "Instagram", url: "https://www.instagram.com/heyyfalgun/" },
+    { name: "Live Website", url: "https://zeehadhaque.zeehadhaque.workers.dev" },
+  ];
 
   return (
     <div className="contact-modal-content">
@@ -121,17 +129,17 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
             </div>
           </div>
 
-          {/* Social and Industry Registry */}
+          {/* Verified Industry Credentialing & Profiles */}
           <div className="contact-social-pills">
-            {socialLinks.map((link) => (
+            {exactCredentialLinks.map((link) => (
               <a
-                key={link.id}
-                href={link.exactUrl}
+                key={link.name}
+                href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-pill-link font-mono"
               >
-                {link.displayName} ↗
+                {link.name} ↗
               </a>
             ))}
           </div>

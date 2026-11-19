@@ -3,6 +3,7 @@ import { WaterWaveBackground, LiquidThemeId } from "./WaterWaveBackground";
 import { KineticText } from "./KineticText";
 import { LiquidImage } from "./LiquidImage";
 import { LiquidCursor } from "./LiquidCursor";
+import { UpcomingProjectsSection } from "./UpcomingProjectsSection";
 import "../../styles/liquid-glass.css";
 
 export interface LiquidFilmItem {
@@ -131,6 +132,9 @@ export const LiquidPortfolioShell: React.FC<LiquidPortfolioShellProps> = ({
           <div className="liquid-nav-actions">
             <a href="#films" className="liquid-btn" data-cursor-label="FILMS">
               Films
+            </a>
+            <a href="#upcoming" className="liquid-btn" data-cursor-label="SLATE">
+              Upcoming
             </a>
             <button
               type="button"
@@ -266,6 +270,11 @@ export const LiquidPortfolioShell: React.FC<LiquidPortfolioShellProps> = ({
             ))}
           </div>
         </section>
+
+        <WaveDivider />
+
+        {/* UPCOMING PROJECTS (11 ACTIVE IN-DEVELOPMENT SLATE TITLES) */}
+        <UpcomingProjectsSection />
 
         <WaveDivider />
 
