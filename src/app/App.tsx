@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { IglooExperience } from "../components/igloo/IglooExperience";
 import { SkipLink } from "../components/layout/SkipLink";
-import { LoadingCurtain } from "../components/motion/LoadingCurtain";
 import { CastleUniverse } from "../components/three/CastleUniverse";
 import { ZeeAIAssistant } from "../components/zee-ai/ZeeAIAssistant";
 import { useCinematicMotion } from "../hooks/useCinematicMotion";
@@ -24,12 +23,6 @@ function getPalaceScrollProgress(): number {
 export function App() {
   const reducedMotion = useReducedMotion();
 
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return new URLSearchParams(window.location.search).get("autostart") !== "1";
-  });
-  const [openingProgress, setOpeningProgress] = useState(0);
-  const [introRunKey, setIntroRunKey] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [intelligenceSignal, setIntelligenceSignal] = useState(0);
 
@@ -51,7 +44,7 @@ export function App() {
 
   const isGlitchActive = scrollProgress >= 0.15 && scrollProgress <= 0.25;
 
-  useCinematicMotion(!isLoading);
+  useCinematicMotion(true);
 
   const [liteMode, setLiteMode] = useState<boolean>(() => {
     let stored: string | null = null;
@@ -125,7 +118,7 @@ export function App() {
   return (
     <div
       className="castle-app"
-      data-opening={isLoading}
+      data-opening={false}
       data-reduced-motion={reducedMotion}
       data-lite-mode={liteMode}
       data-chamber={activeChamber}
@@ -136,8 +129,8 @@ export function App() {
         scrollProgress={scrollProgress}
         liteMode={liteMode}
         reducedMotion={reducedMotion}
-        isOpening={isLoading}
-        openingProgress={openingProgress}
+        isOpening={false}
+        openingProgress={1}
       />
 
       {/* 02. Chromatic Glitch Shift Overlay */}
@@ -148,25 +141,14 @@ export function App() {
 
       <SkipLink />
 
-      {/* 03. Cinematic Loading Curtain */}
-      <LoadingCurtain
-        key={introRunKey}
-        visible={isLoading}
-        reducedMotion={reducedMotion}
-        liteMode={liteMode}
-        progress={openingProgress}
-        onProgress={setOpeningProgress}
-        onComplete={() => setIsLoading(false)}
-      />
-
-      {/* 04. 1:1 Igloo Cyber-Brutalist HUD & Scroll Orchestrator */}
+      {/* 03. 1:1 Igloo Cyber-Brutalist HUD & Scroll Orchestrator */}
       <IglooExperience
         scrollProgress={scrollProgress}
         onScrollToStage={handleScrollToStage}
         onSummonZee={() => setIntelligenceSignal((s) => s + 1)}
       />
 
-      {/* 05. ZEE AI Interactive Assistant */}
+      {/* 04. ZEE AI Interactive Assistant */}
       <ZeeAIAssistant externalOpenSignal={intelligenceSignal} />
     </div>
   );
