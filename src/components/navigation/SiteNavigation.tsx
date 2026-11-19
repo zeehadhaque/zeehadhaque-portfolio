@@ -93,7 +93,16 @@ export function SiteNavigation({
               aria-pressed={soundActive}
               title={soundActive ? "Mute Atmospheric Audio" : "Activate Spatial Audio Design"}
             >
-              {soundActive ? <Volume2 size={13} /> : <VolumeX size={13} />}
+              {soundActive ? (
+                <span className="soundwave-bars" aria-hidden="true">
+                  <span className="soundwave-bar" />
+                  <span className="soundwave-bar" />
+                  <span className="soundwave-bar" />
+                  <span className="soundwave-bar" />
+                </span>
+              ) : (
+                <VolumeX size={13} />
+              )}
               <span>{soundActive ? "Sound: On" : "Sound: Off"}</span>
             </button>
             <button

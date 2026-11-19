@@ -164,6 +164,13 @@ export function GrandHallSection() {
             <span>Monumental Palace Halls</span>
           </div>
         </div>
+
+        {/* Igloo-inspired Centered Directive */}
+        <div className="hero-scroll-directive" aria-hidden="true">
+          <span className="hero-scroll-directive__tag">[ 01 // ENTRANCE PORTICO ]</span>
+          <span className="hero-scroll-directive__prompt">SCROLL TO DIVE INTO UNIVERSE</span>
+          <span className="hero-scroll-directive__arrow">↓</span>
+        </div>
       </div>
     </section>
   );

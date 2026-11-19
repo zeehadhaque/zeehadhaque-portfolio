@@ -112,13 +112,17 @@ export function FilmVaultSection() {
         {spotlightEntries.length > 0 && (
           <div className="filmography-spotlight">
             {spotlightEntries.map(({ film, index, meta }) => (
-              <article className="spotlight-plate" key={film.id}>
+              <article className="spotlight-plate hud-bracket-card" key={film.id}>
                 <button
                   type="button"
                   className="spotlight-plate__trigger"
                   onClick={() => setSelected({ film, index })}
                   aria-label={`Screen ${meta.title}`}
                 >
+                  <div className="spotlight-plate__telemetry" aria-hidden="true">
+                    <span>[ CO_{meta.indexLabel} // {meta.formatLabel.toUpperCase()} ]</span>
+                    <span>2.39:1 · 4K</span>
+                  </div>
                   <div className="spotlight-plate__poster">
                     {!failedThumbIds[film.id] ? (
                       <img
@@ -162,7 +166,7 @@ export function FilmVaultSection() {
                     <h3>{meta.title}</h3>
                     <p className="spotlight-plate__desc">{meta.description}</p>
                     <span className="spotlight-plate__cta">
-                      {film.label} · Enter Screening Room
+                      [ CLICK TO SCREEN // {film.label} ]
                     </span>
                   </div>
                 </button>
