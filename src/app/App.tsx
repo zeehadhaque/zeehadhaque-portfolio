@@ -1,15 +1,18 @@
-import React, { useState } from "react";
-import { CastleExperience } from "../castle/CastleExperience";
+import React from "react";
+import {
+  LiquidPortfolioShell,
+  type LiquidFilmItem,
+} from "../components/liquid/LiquidPortfolioShell";
 import { InboxApp } from "./InboxApp";
-import { FilmModal } from "../overlays/FilmModal";
+import { videoArchive } from "../data/videoArchive";
+import { siteIdentity } from "../data/site";
+import { SITE_CONFIG } from "../data/siteConfig";
 import { AcademyModal } from "../overlays/AcademyModal";
 import { ZeeAIChatModal } from "../overlays/ZeeAIChatModal";
 import { ContactModal } from "../overlays/ContactModal";
-import { LiteModeFallback } from "../overlays/LiteModeFallback";
 import { toggleSpatialAudio } from "../utils/spatialAudio";
 
-import "../styles/tokens.css";
-import "../styles/castle-hud.css";
+import "../styles/liquid-glass.css";
 import "../styles/castle-overlays.css";
 
 export function App() {
@@ -22,67 +25,32 @@ export function App() {
     return <InboxApp />;
   }
 
-  // Active overlay state for Lite Mode fallback
-  const [liteActiveModal, setLiteActiveModal] = useState<
-    "shadow" | "chakra" | "academy" | "zeeai" | "contact" | null
-  >(null);
+  // Map all 8 verified films into LiquidFilmItems
+  const liquidFilms: LiquidFilmItem[] = videoArchive.map((film) => ({
+    id: film.id,
+    title: film.displayTitle,
+    genre: film.genre,
+    year: film.year,
+    description: film.description,
+    youtubeId: film.videoId,
+    thumbnail: film.thumbnail,
+  }));
 
-  // 2. Mount CastleExperience on /
+  const manifestoText = `${siteIdentity.statement} ${siteIdentity.filmmakingApproach}`;
+
+  // 2. Mount LiquidPortfolioShell on /
   return (
-    <>
-      <CastleExperience
-        renderFilmModal={(filmKey, onClose) => (
-          <FilmModal filmKey={filmKey} onClose={onClose} />
-        )}
-        renderAcademy={(onClose) => <AcademyModal onClose={onClose} />}
-        renderZeeAI={(onClose) => <ZeeAIChatModal onClose={onClose} />}
-        renderContact={(onClose) => <ContactModal onClose={onClose} />}
-        renderLiteFallback={(onExitLite) => (
-          <>
-            <LiteModeFallback
-              onExitLite={onExitLite}
-              onOpenFilm={(key) => setLiteActiveModal(key)}
-              onOpenAcademy={() => setLiteActiveModal("academy")}
-              onOpenZeeAI={() => setLiteActiveModal("zeeai")}
-              onOpenContact={() => setLiteActiveModal("contact")}
-            />
-
-            {/* Overlays mounted when in Lite Mode */}
-            {liteActiveModal && (
-              <div
-                className="castle-overlay-backdrop"
-                role="dialog"
-                aria-modal="true"
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) setLiteActiveModal(null);
-                }}
-              >
-                <div className="glass-panel castle-overlay-card">
-                  {(liteActiveModal === "shadow" || liteActiveModal === "chakra") && (
-                    <FilmModal
-                      filmKey={liteActiveModal}
-                      onClose={() => setLiteActiveModal(null)}
-                    />
-                  )}
-                  {liteActiveModal === "academy" && (
-                    <AcademyModal onClose={() => setLiteActiveModal(null)} />
-                  )}
-                  {liteActiveModal === "zeeai" && (
-                    <ZeeAIChatModal onClose={() => setLiteActiveModal(null)} />
-                  )}
-                  {liteActiveModal === "contact" && (
-                    <ContactModal onClose={() => setLiteActiveModal(null)} />
-                  )}
-                </div>
-              </div>
-            )}
-          </>
-        )}
-        onToggleAudio={(_enabled) => {
-          toggleSpatialAudio();
-        }}
-      />
-    </>
+    <LiquidPortfolioShell
+      portraitSrc={SITE_CONFIG.cleanPortraitImage}
+      heroBio={siteIdentity.biography}
+      manifesto={manifestoText}
+      films={liquidFilms}
+      renderAcademy={(onClose) => <AcademyModal onClose={onClose} />}
+      renderZeeAI={(onClose) => <ZeeAIChatModal onClose={onClose} />}
+      renderContact={(onClose) => <ContactModal onClose={onClose} />}
+      onToggleAudio={(_enabled) => {
+        toggleSpatialAudio();
+      }}
+    />
   );
 }
-

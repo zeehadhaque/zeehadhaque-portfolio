@@ -1,5 +1,4 @@
-import "./styles/tokens.css";
-import "./styles/castle-hud.css";
+import "./styles/liquid-glass.css";
 import "./styles/castle-overlays.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
