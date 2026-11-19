@@ -21,6 +21,12 @@ export function GrandHallSection() {
         <header className="origin-header">
           <div className="origin-status-badge">
             <span className="origin-status-beacon" aria-hidden="true" />
+            <div className="soundwave-bars" aria-hidden="true">
+              <span className="soundwave-bar" />
+              <span className="soundwave-bar" />
+              <span className="soundwave-bar" />
+              <span className="soundwave-bar" />
+            </div>
             <span>Available for Direction &amp; Collaborations · 2026/2027</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", flexWrap: "wrap", gap: "0.75rem" }}>
@@ -77,6 +83,8 @@ export function GrandHallSection() {
               <span>Auteur · Founder</span>
             </div>
             <figure className="origin-portrait-frame">
+              <span className="aesthetic-sticker aesthetic-sticker--top-right">✦ 35MM CINEMA</span>
+              <span className="aesthetic-sticker aesthetic-sticker--bottom-left">⚡ DIRECTED BY ZEEHAD</span>
               {!portraitFailed ? (
                 <img
                   src={identityPortraitAsset}
@@ -96,6 +104,26 @@ export function GrandHallSection() {
                 <span>Gazipur · Bangladesh</span>
               </figcaption>
             </figure>
+          </div>
+        </div>
+
+        {/* Kinetic Infinite Marquee Ribbon */}
+        <div className="viral-marquee-container" aria-hidden="true">
+          <div className="viral-marquee-track">
+            <span>✦ ZEEHAD HAQUE</span>
+            <span>🎬 <em>AUTEUR FILMMAKER</em></span>
+            <span>⚡ 4K ANAMORPHIC</span>
+            <span>👁️ <em>VISUAL SILENCE</em></span>
+            <span>BLACKMAGIC RAW</span>
+            <span>📍 GAZIPUR · BANGLADESH</span>
+            <span>✦ <em>2026/2027 PRODUCTION SLATE</em></span>
+            <span>✦ ZEEHAD HAQUE</span>
+            <span>🎬 <em>AUTEUR FILMMAKER</em></span>
+            <span>⚡ 4K ANAMORPHIC</span>
+            <span>👁️ <em>VISUAL SILENCE</em></span>
+            <span>BLACKMAGIC RAW</span>
+            <span>📍 GAZIPUR · BANGLADESH</span>
+            <span>✦ <em>2026/2027 PRODUCTION SLATE</em></span>
           </div>
         </div>
 

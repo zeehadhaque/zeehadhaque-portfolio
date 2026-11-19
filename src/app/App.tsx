@@ -176,6 +176,11 @@ export function App() {
       <div className="cinematic-scroll-progress" aria-hidden="true">
         <span />
       </div>
+      <div className="viral-aurora-bg" aria-hidden="true">
+        <div className="viral-aurora-orb viral-aurora-orb--1" />
+        <div className="viral-aurora-orb viral-aurora-orb--2" />
+        <div className="viral-aurora-orb viral-aurora-orb--3" />
+      </div>
       <CastleUniverse
         activeChamber={activeChamber}
         scrollProgress={scrollProgress}
