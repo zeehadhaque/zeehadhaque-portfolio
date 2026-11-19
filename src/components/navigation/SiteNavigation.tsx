@@ -1,6 +1,11 @@
-import { useEffect, useRef } from "react";
-import { RotateCcw, Sparkles, Zap } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { RotateCcw, Sparkles, Volume2, VolumeX, Zap } from "lucide-react";
 import { UNIVERSE_DESTINATIONS, type DestinationId } from "../../utils/castleConfig";
+import {
+  isSoundMuted,
+  toggleSpatialAudio,
+  updateSpatialAudioScroll,
+} from "../../utils/spatialAudio";
 
 interface SiteNavigationProps {
   activeChamber: DestinationId;
@@ -26,6 +31,11 @@ export function SiteNavigation({
   onClose,
 }: SiteNavigationProps) {
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const [soundActive, setSoundActive] = useState(() => !isSoundMuted());
+
+  useEffect(() => {
+    updateSpatialAudioScroll(scrollProgress);
+  }, [scrollProgress]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -73,6 +83,19 @@ export function SiteNavigation({
           </nav>
 
           <div className="identity-topbar__actions">
+            <button
+              type="button"
+              className={`identity-topbar__control ${soundActive ? "is-sound-active" : ""}`}
+              onClick={() => {
+                const active = toggleSpatialAudio();
+                setSoundActive(active);
+              }}
+              aria-pressed={soundActive}
+              title={soundActive ? "Mute Atmospheric Audio" : "Activate Spatial Audio Design"}
+            >
+              {soundActive ? <Volume2 size={13} /> : <VolumeX size={13} />}
+              <span>{soundActive ? "Sound: On" : "Sound: Off"}</span>
+            </button>
             <button
               type="button"
               className={`identity-topbar__control ${liteMode ? "is-lite" : ""}`}
@@ -178,6 +201,18 @@ export function SiteNavigation({
           <div className="identity-drawer__controls">
             <button
               type="button"
+              className={`identity-topbar__control ${soundActive ? "is-sound-active" : ""}`}
+              onClick={() => {
+                const active = toggleSpatialAudio();
+                setSoundActive(active);
+              }}
+              aria-pressed={soundActive}
+            >
+              {soundActive ? <Volume2 size={13} /> : <VolumeX size={13} />}
+              <span>{soundActive ? "Sound: On" : "Sound: Off"}</span>
+            </button>
+            <button
+              type="button"
               className="identity-topbar__control"
               onClick={() => {
                 onToggleLiteMode();
@@ -205,6 +240,19 @@ export function SiteNavigation({
           </div>
         </div>
       </div>
+
+      {/* Igloo-inspired Monospaced Corner Telemetry HUD */}
+      <aside className="telemetry-hud telemetry-hud--bottom-left" aria-hidden="true">
+        <span className="telemetry-hud__sector">
+          <i className="telemetry-hud__dot" /> // SECTOR_{activeChamber.toUpperCase().replace(/-/g, "_")}
+        </span>
+        <span className="telemetry-hud__coord">23°59′N · 90°25′E // AUTEUR CODEX</span>
+      </aside>
+
+      <aside className="telemetry-hud telemetry-hud--bottom-right" aria-hidden="true">
+        <span className="telemetry-hud__pct">{Math.round(Math.min(1, Math.max(0, scrollProgress)) * 100)}% EXPLORED</span>
+        <span className="telemetry-hud__prompt">SCROLL TO ADVANCE ↓</span>
+      </aside>
     </>
   );
 }

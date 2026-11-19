@@ -7,10 +7,15 @@ export interface CastleProceduralAssets {
   dustPoints: THREE.Points;
   beamMeshes: THREE.Mesh[];
   heroMonoliths: THREE.Group[];
+  filmMonoliths: THREE.Group[];
+  wireframeGroup: THREE.Group;
+  portalRingGroup: THREE.Group;
+  zeeCoreGroup: THREE.Group;
   astrolabeGroup: THREE.Group;
   chandelierGroup: THREE.Group;
   updateBeams: (intensity: number, elapsed: number) => void;
   updateOpening: (shot: OpeningShotState | null, elapsed: number) => void;
+  updateScrollScene: (scrollProgress: number, elapsed: number) => void;
 }
 
 function createVaultedRibGeometry(spanX: number, apexY: number): THREE.ExtrudeGeometry {
@@ -609,6 +614,201 @@ export function buildCastleScene(
   scene.add(dustPoints);
   disposables.push(dustGeo, dustMat);
 
+  // =========================================================================
+  // 07. IGLOO-INSPIRED SCENE 01: WIREFRAME AWAKENING & COORDINATE ASSEMBLY
+  // =========================================================================
+  const wireframeGroup = new THREE.Group();
+  wireframeGroup.position.set(0, 0, 56);
+
+  // Facade cage wireframe outline
+  const cageGeo = new THREE.WireframeGeometry(new THREE.BoxGeometry(42, 22, 14));
+  const cageMesh = new THREE.LineSegments(cageGeo, mats.wireframeCyan);
+  cageMesh.position.set(0, 11, 0);
+  wireframeGroup.add(cageMesh);
+  disposables.push(cageGeo);
+
+  // Portico column wireframe rings
+  for (let c = 0; c < 8; c++) {
+    const colX = -18 + c * 5.14;
+    const colWireGeo = new THREE.WireframeGeometry(new THREE.CylinderGeometry(0.72, 0.9, 17, 8));
+    const colWire = new THREE.LineSegments(colWireGeo, mats.wireframeCyan);
+    colWire.position.set(colX, 9.8, 0.8);
+    wireframeGroup.add(colWire);
+    disposables.push(colWireGeo);
+  }
+
+  // Constellation coordinate points in space
+  const nodeCount = 160;
+  const nodePositions = new Float32Array(nodeCount * 3);
+  for (let n = 0; n < nodeCount; n++) {
+    nodePositions[n * 3] = (Math.random() - 0.5) * 36;
+    nodePositions[n * 3 + 1] = 1 + Math.random() * 20;
+    nodePositions[n * 3 + 2] = 20 - Math.random() * 40;
+  }
+  const nodeGeo = new THREE.BufferGeometry();
+  nodeGeo.setAttribute("position", new THREE.BufferAttribute(nodePositions, 3));
+  const nodeMat = new THREE.PointsMaterial({
+    size: 0.35,
+    color: 0xa9d4ff,
+    transparent: true,
+    opacity: 0.85,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const nodePoints = new THREE.Points(nodeGeo, nodeMat);
+  wireframeGroup.add(nodePoints);
+  disposables.push(nodeGeo, nodeMat);
+  scene.add(wireframeGroup);
+
+  // =========================================================================
+  // 08. IGLOO-INSPIRED SCENE 03: SHATTERED ANAMORPHIC RING PORTAL NEXUS (z = -20)
+  // =========================================================================
+  const portalRingGroup = new THREE.Group();
+  portalRingGroup.position.set(0, 8.4, -20);
+
+  // Outer Segmented Gear Ring
+  const outerRingGeo = new THREE.TorusGeometry(6.4, 0.22, 12, 60);
+  const outerRing = new THREE.Mesh(outerRingGeo, mats.goldTrim);
+  portalRingGroup.add(outerRing);
+  disposables.push(outerRingGeo);
+
+  // Middle Counter-Rotating Luminescent Ring
+  const midRingGeo = new THREE.TorusGeometry(5.1, 0.16, 12, 48);
+  const midRing = new THREE.Mesh(midRingGeo, mats.moonlightInlay);
+  portalRingGroup.add(midRing);
+  disposables.push(midRingGeo);
+
+  // Inner Anamorphic Aperture Iris (8 interlocking mechanical blades)
+  const irisGroup = new THREE.Group();
+  for (let b = 0; b < 8; b++) {
+    const bladeGeo = new THREE.BoxGeometry(2.4, 0.45, 0.08);
+    const bladeMesh = new THREE.Mesh(bladeGeo, mats.silverMetal);
+    const angle = (b / 8) * Math.PI * 2;
+    bladeMesh.position.set(Math.cos(angle) * 3.6, Math.sin(angle) * 3.6, 0);
+    bladeMesh.rotation.z = angle + 0.35;
+    irisGroup.add(bladeMesh);
+    disposables.push(bladeGeo);
+  }
+  portalRingGroup.add(irisGroup);
+
+  // Colossal Caustic Light Flare Cone shooting forward through aperture center
+  const flareConeGeo = new THREE.CylinderGeometry(0.15, 8.8, 44, 20, 1, true);
+  const flareCone = new THREE.Mesh(flareConeGeo, mats.portalFlareMat);
+  flareCone.rotation.x = Math.PI / 2;
+  flareCone.position.z = -22;
+  portalRingGroup.add(flareCone);
+  scene.add(portalRingGroup);
+  disposables.push(flareConeGeo);
+
+  // =========================================================================
+  // 09. IGLOO-INSPIRED SCENE 04: MONOLITHIC 3D FILM PRISMS (Screening Hall)
+  // =========================================================================
+  const filmMonoliths: THREE.Group[] = [];
+  const filmMonolithSpecs = [
+    { x: -9.2, y: 5.6, z: -16, rotY: 0.32 },
+    { x: 9.2, y: 5.8, z: -28, rotY: -0.32 },
+    { x: -9.5, y: 5.4, z: -40, rotY: 0.28 },
+    { x: 9.5, y: 5.9, z: -52, rotY: -0.28 },
+  ];
+
+  filmMonolithSpecs.forEach((spec) => {
+    const monoGroup = new THREE.Group();
+    monoGroup.position.set(spec.x, spec.y, spec.z);
+    monoGroup.rotation.y = spec.rotY;
+
+    // Refractive Glass Slab
+    const slabGeo = new THREE.BoxGeometry(5.2, 7.6, 0.55);
+    const slabMesh = new THREE.Mesh(slabGeo, mats.crystalGlass);
+    monoGroup.add(slabMesh);
+
+    // Glowing Wireframe Frame
+    const wireGeo = new THREE.WireframeGeometry(new THREE.BoxGeometry(5.24, 7.64, 0.58));
+    const wireMesh = new THREE.LineSegments(wireGeo, mats.monolithGlowMat);
+    monoGroup.add(wireMesh);
+
+    // 16:9 Inner Glowing Cinema Plate
+    const plateGeo = new THREE.PlaneGeometry(4.4, 2.48);
+    const plateMesh = new THREE.Mesh(plateGeo, mats.screenSurface);
+    plateMesh.position.z = 0.29;
+    monoGroup.add(plateMesh);
+
+    // Gold Top & Base Finials
+    const finialGeo = new THREE.BoxGeometry(5.3, 0.28, 0.65);
+    const topFinial = new THREE.Mesh(finialGeo, mats.goldTrim);
+    topFinial.position.y = 3.9;
+    const btmFinial = new THREE.Mesh(finialGeo, mats.goldTrim);
+    btmFinial.position.y = -3.9;
+    monoGroup.add(topFinial, btmFinial);
+
+    scene.add(monoGroup);
+    filmMonoliths.push(monoGroup);
+    disposables.push(slabGeo, wireGeo, plateGeo, finialGeo);
+  });
+
+  // =========================================================================
+  // 10. IGLOO-INSPIRED SCENE 05: PROJECTION ROOM OPTICS & WIDESCREEN GUIDES
+  // =========================================================================
+  const opticalGroup = new THREE.Group();
+  opticalGroup.position.set(0, 7.8, -74);
+
+  // 2.39:1 Cinema Aspect Wireframe Guide
+  const aspectGuideGeo = new THREE.WireframeGeometry(new THREE.PlaneGeometry(16, 6.7));
+  const aspectGuideMesh = new THREE.LineSegments(aspectGuideGeo, mats.wireframeCyan);
+  opticalGroup.add(aspectGuideMesh);
+
+  // Anamorphic Lens Flare Line
+  const flareLineGeo = new THREE.CylinderGeometry(0.04, 0.04, 24, 8);
+  const flareLineMesh = new THREE.Mesh(flareLineGeo, mats.moonlightInlay);
+  flareLineMesh.rotation.z = Math.PI / 2;
+  flareLineMesh.position.z = 0.4;
+  opticalGroup.add(flareLineMesh);
+  scene.add(opticalGroup);
+  disposables.push(aspectGuideGeo, flareLineGeo);
+
+  // =========================================================================
+  // 11. IGLOO-INSPIRED SCENE 06: ZEE AI CINEMATIC INTELLIGENCE FLOATING CORE
+  // =========================================================================
+  const zeeCoreGroup = new THREE.Group();
+  zeeCoreGroup.position.set(0, 6.2, -102);
+
+  // Glowing Octahedron Core
+  const coreOctGeo = new THREE.OctahedronGeometry(1.2, 0);
+  const coreOctMesh = new THREE.Mesh(coreOctGeo, mats.moonlightInlay);
+  zeeCoreGroup.add(coreOctMesh);
+
+  // Dual Counter-Rotating Gimbal Rings
+  const gimbalAGeo = new THREE.TorusGeometry(2.4, 0.075, 10, 48);
+  const gimbalA = new THREE.Mesh(gimbalAGeo, mats.goldTrim);
+  const gimbalBGeo = new THREE.TorusGeometry(3.1, 0.065, 10, 48);
+  const gimbalB = new THREE.Mesh(gimbalBGeo, mats.silverMetal);
+  zeeCoreGroup.add(gimbalA, gimbalB);
+  scene.add(zeeCoreGroup);
+  disposables.push(coreOctGeo, gimbalAGeo, gimbalBGeo);
+
+  // =========================================================================
+  // 12. IGLOO-INSPIRED SCENE 07: DEEP SPACE PORTAL (Infinite Topology Loop)
+  // =========================================================================
+  const starCount = 300;
+  const starPositions = new Float32Array(starCount * 3);
+  for (let s = 0; s < starCount; s++) {
+    starPositions[s * 3] = (Math.random() - 0.5) * 48;
+    starPositions[s * 3 + 1] = 0.5 + Math.random() * 26;
+    starPositions[s * 3 + 2] = -152 - Math.random() * 60;
+  }
+  const starGeo = new THREE.BufferGeometry();
+  starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+  const starMat = new THREE.PointsMaterial({
+    size: 0.32,
+    color: 0xdcebff,
+    transparent: true,
+    opacity: 0.88,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const starPoints = new THREE.Points(starGeo, starMat);
+  scene.add(starPoints);
+  disposables.push(starGeo, starMat);
+
   const updateBeams = (intensity: number, elapsed: number) => {
     beamMeshes.forEach((beam, idx) => {
       const mat = beam.material as THREE.MeshBasicMaterial;
@@ -638,14 +838,71 @@ export function buildCastleScene(
     projConeMat.opacity = 0.03 + glow * 0.055;
   };
 
+  const updateScrollScene = (scrollProgress: number, elapsed: number) => {
+    const p = THREE.MathUtils.clamp(scrollProgress, 0, 1);
+
+    // 1. Wireframe Awakening assembly (Igloo Stage 0 -> 1)
+    if (p < 0.14) {
+      const fade = 1 - p / 0.14;
+      mats.wireframeCyan.opacity = 0.85 * fade;
+      wireframeGroup.visible = true;
+    } else {
+      mats.wireframeCyan.opacity = 0;
+      wireframeGroup.visible = false;
+    }
+
+    // 2. Interlocking Ring Portal (Igloo Stage 3)
+    // Rings align mechanically from scroll 0.14 to 0.28
+    const portalLockProgress = THREE.MathUtils.clamp((p - 0.14) / (0.26 - 0.14), 0, 1);
+    const unalignedAngle = (1 - portalLockProgress) * Math.PI * 0.75;
+
+    outerRing.rotation.x = unalignedAngle;
+    outerRing.rotation.y = unalignedAngle * 0.6;
+    midRing.rotation.x = -unalignedAngle * 0.8;
+    midRing.rotation.y = -unalignedAngle * 1.2;
+    irisGroup.rotation.z = (1 - portalLockProgress) * Math.PI * 1.8 + elapsed * 0.1;
+
+    // Caustic light flare burst when rings lock
+    const flareDistance = Math.abs(p - 0.25);
+    if (flareDistance < 0.038) {
+      const flareBurst = 1 - flareDistance / 0.038;
+      mats.portalFlareMat.opacity = flareBurst * 0.52;
+    } else {
+      mats.portalFlareMat.opacity = 0;
+    }
+
+    // 3. Monoliths zero-G float & breathing tilt
+    filmMonoliths.forEach((mono, idx) => {
+      mono.position.y =
+        filmMonolithSpecs[idx].y + Math.sin(elapsed * 1.1 + idx * 1.6) * 0.18;
+      mono.rotation.z = Math.sin(elapsed * 0.7 + idx) * 0.025;
+    });
+
+    // 4. Optical group & widescreen diagram
+    opticalGroup.rotation.y = Math.sin(elapsed * 0.3) * 0.08;
+
+    // 5. ZEE AI Core floating spin & gimbal rotation
+    coreOctMesh.rotation.y += 0.02;
+    coreOctMesh.rotation.x = Math.sin(elapsed * 0.8) * 0.15;
+    gimbalA.rotation.x += 0.015;
+    gimbalA.rotation.y += 0.01;
+    gimbalB.rotation.z += 0.012;
+    gimbalB.rotation.y -= 0.018;
+  };
+
   return {
     disposables,
     dustPoints,
     beamMeshes,
     heroMonoliths,
+    filmMonoliths,
+    wireframeGroup,
+    portalRingGroup,
+    zeeCoreGroup,
     astrolabeGroup,
     chandelierGroup,
     updateBeams,
     updateOpening,
+    updateScrollScene,
   };
 }

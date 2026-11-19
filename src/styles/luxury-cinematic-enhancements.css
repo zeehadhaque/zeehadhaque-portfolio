@@ -879,3 +879,99 @@ html {
     padding: 1.5rem 1.25rem !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   15. IGLOO INC TELEMETRY HUD & SOUND CONTROLS
+   -------------------------------------------------------------------------- */
+.identity-topbar__control.is-sound-active {
+  color: var(--moonlight) !important;
+  border-color: rgba(125, 187, 255, 0.45) !important;
+  background: rgba(125, 187, 255, 0.08) !important;
+  box-shadow: 0 0 16px rgba(125, 187, 255, 0.18) !important;
+}
+
+.telemetry-hud {
+  position: fixed;
+  z-index: 45;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--mono, "Space Mono", monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(220, 235, 255, 0.65);
+  transition: opacity 300ms ease;
+  user-select: none;
+}
+
+.telemetry-hud--bottom-left {
+  bottom: 24px;
+  left: 28px;
+}
+
+.telemetry-hud--bottom-right {
+  bottom: 24px;
+  right: 28px;
+  text-align: right;
+  align-items: flex-end;
+}
+
+.telemetry-hud__sector {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ice);
+  font-weight: 600;
+}
+
+.telemetry-hud__dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--moonlight);
+  box-shadow: 0 0 8px var(--moonlight);
+  animation: telemetryPulse 2.4s ease-in-out infinite;
+}
+
+.telemetry-hud__coord {
+  color: rgba(125, 187, 255, 0.72);
+}
+
+.telemetry-hud__pct {
+  color: var(--champagne);
+  font-weight: 600;
+}
+
+.telemetry-hud__prompt {
+  font-size: 0.64rem;
+  color: rgba(220, 235, 255, 0.5);
+  animation: telemetryFloat 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes telemetryPulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes telemetryFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(3px); }
+}
+
+@media (max-width: 768px) {
+  .telemetry-hud {
+    font-size: 0.62rem;
+    gap: 2px;
+  }
+  .telemetry-hud--bottom-left {
+    bottom: 14px;
+    left: 14px;
+  }
+  .telemetry-hud--bottom-right {
+    bottom: 14px;
+    right: 14px;
+  }
+}

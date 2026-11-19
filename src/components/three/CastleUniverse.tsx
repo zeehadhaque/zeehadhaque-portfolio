@@ -278,6 +278,7 @@ export function CastleUniverse({
 
       castle.updateOpening(openingShot, elapsed);
       castle.updateBeams(pose.beamIntensity, elapsed);
+      castle.updateScrollScene(current.scrollProgress, elapsed);
       renderer.render(scene, camera);
     };
 

@@ -13,6 +13,9 @@ export interface PalaceMaterialPalette {
   crystalGlass: THREE.MeshPhysicalMaterial;
   shadowDisc: THREE.MeshBasicMaterial;
   dustTexture: THREE.CanvasTexture;
+  wireframeCyan: THREE.LineBasicMaterial;
+  portalFlareMat: THREE.MeshBasicMaterial;
+  monolithGlowMat: THREE.MeshBasicMaterial;
   disposables: Array<{ dispose: () => void }>;
 }
 
@@ -220,6 +223,29 @@ export function createPalaceMaterials(
     depthWrite: false,
   });
 
+  const wireframeCyan = new THREE.LineBasicMaterial({
+    color: 0x7dbbff,
+    transparent: true,
+    opacity: 0.85,
+    blending: THREE.AdditiveBlending,
+  });
+
+  const portalFlareMat = new THREE.MeshBasicMaterial({
+    color: 0xdcebff,
+    transparent: true,
+    opacity: 0.0,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+
+  const monolithGlowMat = new THREE.MeshBasicMaterial({
+    color: 0x7dbbff,
+    transparent: true,
+    opacity: 0.22,
+    wireframe: true,
+  });
+
   const disposables = [
     map,
     roughnessMap,
@@ -236,6 +262,9 @@ export function createPalaceMaterials(
     screenSurface,
     crystalGlass,
     shadowDisc,
+    wireframeCyan,
+    portalFlareMat,
+    monolithGlowMat,
   ];
 
   return {
@@ -251,6 +280,9 @@ export function createPalaceMaterials(
     crystalGlass,
     shadowDisc,
     dustTexture,
+    wireframeCyan,
+    portalFlareMat,
+    monolithGlowMat,
     disposables,
   };
 }
