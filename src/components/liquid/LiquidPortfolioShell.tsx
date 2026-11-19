@@ -359,11 +359,6 @@ export const LiquidPortfolioShell: React.FC<LiquidPortfolioShellProps> = ({
           onClick={(e) => e.target === e.currentTarget && setActivePanel(null)}
         >
           <div className="liquid-glass liquid-modal-sheet">
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-              <button type="button" className="liquid-btn" onClick={() => setActivePanel(null)}>
-                Close ✕
-              </button>
-            </div>
             {activePanel === "academy" && renderAcademy(() => setActivePanel(null))}
             {activePanel === "zeeai" && renderZeeAI(() => setActivePanel(null))}
             {activePanel === "contact" && renderContact(() => setActivePanel(null))}

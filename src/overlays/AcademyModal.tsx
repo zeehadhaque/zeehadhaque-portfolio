@@ -11,7 +11,7 @@ export const AcademyModal: React.FC<AcademyModalProps> = ({ onClose }) => {
       <div className="academy-modal-header">
         <div className="academy-modal-header-meta">
           <span className="modal-kicker font-mono">
-            PEDAGOGICAL ARCHIVE // 30-DAY AUTEUR CURRICULUM
+            ZEE FILMMAKING INSTITUTE // ZERO TO PRO MASTERCLASS
           </span>
           <h2 className="academy-modal-title">Zee Filmmaking Institute</h2>
         </div>

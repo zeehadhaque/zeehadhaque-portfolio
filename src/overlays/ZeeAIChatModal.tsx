@@ -2,6 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { SITE_CONFIG } from "../data/siteConfig";
 import { videoArchive } from "../data/videoArchive";
 import { siteIdentity } from "../data/site";
+import {
+  ZEE_AI_WELCOME_MESSAGE,
+  ZEE_AI_STARTER_CHIPS,
+} from "../data/zeeAiPersona";
 
 interface Message {
   id: string;
@@ -19,24 +23,28 @@ export const ZeeAIChatModal: React.FC<ZeeAIChatModalProps> = ({ onClose }) => {
     {
       id: "init",
       sender: "zee",
-      text: "Yo 👋 ami ZEE — Zeehad-er website assistant. Ki jante chaccho? Film, story, cinematography, behind-the-scenes… ba emni golpo o kora jabe 😌",
+      text: ZEE_AI_WELCOME_MESSAGE,
       time: "NOW",
     },
   ]);
   const [inputVal, setInputVal] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const quickPrompts = [
-    "Tell me about SHADOW / III",
-    "What camera does Zeehad use?",
-    "Explain the 30-Day Filmmaking Institute",
-    "How to contact Zeehad for a project?",
-  ];
+  const handleCopyText = async (id: string, textToCopy: string) => {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      /* ignore */
+    }
+  };
 
   const handleSend = async (textToSend?: string) => {
     const text = (textToSend || inputVal).trim();
@@ -63,38 +71,34 @@ export const ZeeAIChatModal: React.FC<ZeeAIChatModalProps> = ({ onClose }) => {
 
       if (res.ok) {
         const data = (await res.json()) as { reply?: string; message?: string };
-        if (data.reply) {
-          const aiMsg: Message = {
-            id: `z-${Date.now()}`,
-            sender: "zee",
-            text: data.reply,
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          };
-          setMessages((prev) => [...prev, aiMsg]);
-          setIsTyping(false);
-          return;
-        }
+        const replyText = data.reply || data.message || "No transmission received.";
+        const zeeMsg: Message = {
+          id: `z-${Date.now()}`,
+          sender: "zee",
+          text: replyText,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+        setMessages((prev) => [...prev, zeeMsg]);
+        setIsTyping(false);
+        return;
       }
-      throw new Error("Fallback required");
+      throw new Error("API chat route unavailable");
     } catch {
-      // 2. Intelligent Local Auteur Knowledge Fallback
+      // 2. Intelligent Auteur Contextual Fallback
       setTimeout(() => {
-        const lower = text.toLowerCase();
         let reply = "";
+        const lower = text.toLowerCase();
 
-        if (lower.includes("shadow") || lower.includes("iii")) {
-          const shadow = videoArchive.find((v) => v.videoId === "ZSttExMBavg");
-          reply = `SHADOW / III (2026) is Zeehad's flagship psychological horror-thriller short film (runtime: ${shadow?.runtime || "7m 21s"}). The tagline is "3 Loops. 3 Illusions. 3 Confusions." It explores temporal loops and visual dread. You can screen it right here in the Screening Hall or on IMDb (tt36423405)!`;
-        } else if (lower.includes("camera") || lower.includes("gear") || lower.includes("phone") || lower.includes("device")) {
-          reply = `Zeehad's filmmaking philosophy is strictly mobile-first: He captures 4K cinema using Blackmagic Camera on a Redmi Note 14 Pro+ 5G. Post-production is handled in CapCut Pro and color graded in DaVinci Resolve Studio.`;
-        } else if (lower.includes("institute") || lower.includes("academy") || lower.includes("30-day") || lower.includes("learn") || lower.includes("syllabus")) {
-          reply = `The Zee Filmmaking Institute provides a full 30-day curriculum split into 4 core pillars: Visual Grammar, Mobile Cinematography, Dramatic Story & Blocking, and Post-Production Rhythm. You can switch between English and বাংলা, take daily quizzes, and earn XP towards Auteur rank!`;
-        } else if (lower.includes("contact") || lower.includes("email") || lower.includes("whatsapp") || lower.includes("hire") || lower.includes("collaborate")) {
-          reply = `You can reach Zeehad directly via email at ${siteIdentity.email} or through WhatsApp at ${siteIdentity.whatsapp}. Click the Contact button in the HUD or open Chamber 06 (Grand Exit) to transmit a message instantly!`;
-        } else if (lower.includes("film") || lower.includes("movie") || lower.includes("reflect") || lower.includes("archive")) {
-          reply = `Zeehad has 8 verified video works in the archive, including REFLECT Part 1 & Part 2, SHADOW / III, FLOW : THE MYST, AUTOPSY, Lost (YouTube Shorts), and DON'T GO THERE teaser. All can be watched natively in the Screening Hall.`;
+        if (lower.includes("shayari") || lower.includes("শায়েরি")) {
+          reply = `ভিজে পিচঢালা পথ, নিভে যাওয়া শেষ বাতি,\nতুমি যাকে আলো ভাবো—সে আসলে আমার একাকীত্ব রাতি।\n\nসিনেমা হলো যা বলা যায় না, কেবল ফ্রেমে আটকে রাখা এক টুকরো দীর্ঘশ্বাস।`;
+        } else if (lower.includes("kobita") || lower.includes("কবিতা")) {
+          reply = `জানলার কাচে বৃষ্টির দাগ,\nকিছু না-বলা কথা, কিছু পুরনো রাগ।\nসময়ের লেন্সে যখন চোখ রাখি,\nদেখি—তুমি ছাড়া বাকি সব দৃশ্যের ফাঁকি।`;
+        } else if (lower.includes("shadow") || lower.includes("film")) {
+          reply = `SHADOW / III (2026) is Zeehad Haque's psychological horror thriller exploring recurring nightmare loops and spatial dread. Watch it natively right now inside the Screening Hall!`;
+        } else if (lower.includes("script") || lower.includes("screenplay") || lower.includes("স্ক্রিপ্ট")) {
+          reply = `স্ক্রিপ্ট লেখার ১ নম্বর গোল্ডেন রুল: "Show, Don't Tell।" ক্যামেরা যা দেখবে আর মাইক যা শুনবে, শুধু তাই প্রেজেন্ট টেন্সে লিখুন।\n\nউদাহরণ:\nINT. CORRIDOR - NIGHT\nARIF (22) halts. Water drips from the ceiling. His phone screen pulses 03:03 AM.`;
         } else {
-          reply = `Ami Zeehad-er creative universe, films, screenplays, and institute niye shob jani! You can ask about his upcoming film DON'T GO THERE, his 8 screenplays in the Writer's Room, or his mobile cinema workflow.`;
+          reply = `আমি ZEE AI — শায়েরি, কবিতা, মানুষের না-বলা মনস্তত্ত্ব, গল্পের প্লট থেকে শুরু করে প্রোপার হলিউড স্ক্রিনপ্লে ফর্ম্যাট—যেকোনো বিষয় নিয়ে কথা বলতে পারো। বলো, কী নিয়ে কাজ করব?`;
         }
 
         const fallbackMsg: Message = {
@@ -117,9 +121,9 @@ export const ZeeAIChatModal: React.FC<ZeeAIChatModalProps> = ({ onClose }) => {
         <div className="zee-chat-header-meta">
           <div className="zee-ai-status-dot font-mono">
             <span className="live-indicator"></span>
-            <span>INTELLIGENCE // ZEE AI CORE TERMINAL</span>
+            <span>INTELLIGENCE // ZEE AI DIRECTOR &amp; SCRIPT DOCTOR</span>
           </div>
-          <h2 className="zee-chat-title">Conversational Auteur Assistant</h2>
+          <h2 className="zee-chat-title">Creative Director &amp; Human Companion</h2>
         </div>
         <button
           type="button"
@@ -156,7 +160,19 @@ export const ZeeAIChatModal: React.FC<ZeeAIChatModalProps> = ({ onClose }) => {
                 <span>{m.sender === "user" ? "YOU" : "ZEE AI"}</span>
                 <span>{m.time}</span>
               </div>
-              <p className="zee-bubble-text">{m.text}</p>
+              <p className="zee-bubble-text" style={{ whiteSpace: "pre-wrap", lineHeight: 1.78 }}>
+                {m.text}
+              </p>
+              {m.sender === "zee" && (
+                <button
+                  type="button"
+                  className="zee-ai-msg-copy-btn"
+                  onClick={() => handleCopyText(m.id, m.text)}
+                  style={{ marginTop: "8px" }}
+                >
+                  {copiedId === m.id ? "Copied ✓" : "Copy"}
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -172,15 +188,15 @@ export const ZeeAIChatModal: React.FC<ZeeAIChatModalProps> = ({ onClose }) => {
 
       {/* Suggestion Prompts */}
       <div className="zee-chat-prompts">
-        {quickPrompts.map((q) => (
+        {ZEE_AI_STARTER_CHIPS.map((chip) => (
           <button
-            key={q}
+            key={chip.id}
             type="button"
             className="zee-prompt-chip font-mono"
-            onClick={() => handleSend(q)}
+            onClick={() => handleSend(chip.prompt)}
             disabled={isTyping}
           >
-            {q}
+            {chip.label}
           </button>
         ))}
       </div>
@@ -198,7 +214,7 @@ export const ZeeAIChatModal: React.FC<ZeeAIChatModalProps> = ({ onClose }) => {
           className="zee-chat-input"
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
-          placeholder="Ask ZEE about films, cinematography, scripts, or institute..."
+          placeholder="Ask ZEE about poetry, storytelling, camera craft, or screenplays…"
           maxLength={1000}
         />
         <button

@@ -1,0 +1,696 @@
+/* =========================================================
+   ZEE FILMMAKING INSTITUTE — ZERO-TO-PRO CINEMA STUDIO UI
+   ========================================================= */
+
+.academy-studio {
+  --ac-bg: rgba(4, 9, 18, 0.92);
+  --ac-panel: linear-gradient(145deg, rgba(13, 25, 46, 0.72), rgba(5, 10, 20, 0.88));
+  --ac-border: rgba(169, 212, 255, 0.18);
+  --ac-border-strong: rgba(220, 235, 255, 0.42);
+  --ac-ice: #7dbbff;
+  --ac-gold: #f2c97d;
+  --ac-violet: #c09bff;
+  --ac-emerald: #6ee7b7;
+  --ac-text: #eff6ff;
+  --ac-muted: rgba(214, 230, 252, 0.72);
+  --ac-mono: "JetBrains Mono", ui-monospace, monospace;
+  --ac-display: "Cinzel", Georgia, serif;
+  --ac-sans: "Inter", "Hind Siliguri", system-ui, sans-serif;
+
+  font-family: var(--ac-sans);
+  color: var(--ac-text);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Studio Command Header */
+.academy-studio-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(125, 187, 255, 0.16), transparent 48%),
+    radial-gradient(circle at 100% 0%, rgba(242, 201, 125, 0.12), transparent 44%),
+    var(--ac-panel);
+  border: 1px solid var(--ac-border);
+  box-shadow: 0 20px 54px rgba(2, 3, 5, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.academy-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ac-gold);
+  margin-bottom: 8px;
+}
+
+.academy-title {
+  margin: 0 0 8px;
+  font-family: var(--ac-display);
+  font-size: clamp(22px, 2.8vw, 34px);
+  letter-spacing: 0.08em;
+  background: linear-gradient(110deg, #ffffff 10%, #dcebff 55%, #f2c97d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.academy-subtitle {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ac-muted);
+}
+
+/* Mastery Progress & XP Strip */
+.academy-mastery-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(6, 13, 26, 0.78);
+  border: 1px solid var(--ac-border);
+}
+
+.academy-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(242, 201, 125, 0.18), rgba(125, 187, 255, 0.1));
+  border: 1px solid rgba(242, 201, 125, 0.45);
+  font-family: var(--ac-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ac-gold);
+  text-transform: uppercase;
+}
+
+.academy-progress-track {
+  flex: 1;
+  min-width: 180px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(169, 212, 255, 0.12);
+  overflow: hidden;
+  border: 1px solid rgba(169, 212, 255, 0.16);
+}
+
+.academy-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--ac-ice), var(--ac-gold));
+  box-shadow: 0 0 18px rgba(125, 187, 255, 0.6);
+  transition: width 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Segmented Controls (EN / বাংলা & Tabs & Act Filters) */
+.academy-tabs-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.academy-segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(5, 11, 22, 0.8);
+  border: 1px solid var(--ac-border);
+}
+
+.academy-seg-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ac-muted);
+  font-family: var(--ac-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 240ms ease;
+}
+
+.academy-seg-btn:hover {
+  color: #fff;
+}
+
+.academy-seg-btn[data-active="true"],
+.academy-seg-btn.active {
+  background: linear-gradient(135deg, rgba(125, 187, 255, 0.28), rgba(14, 34, 66, 0.9));
+  border-color: rgba(169, 212, 255, 0.55);
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(125, 187, 255, 0.28);
+}
+
+/* Split Masterclass Workspace */
+.academy-workspace {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+/* Left 30-Day Syllabus Rail */
+.academy-day-rail {
+  max-height: 760px;
+  overflow-y: auto;
+  padding-right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 187, 255, 0.35) transparent;
+}
+
+.academy-day-card {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 15px;
+  border: 1px solid var(--ac-border);
+  background: rgba(7, 15, 29, 0.64);
+  color: var(--ac-text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 240ms ease, border-color 240ms ease, background 240ms ease;
+}
+
+.academy-day-card:hover {
+  transform: translateX(4px);
+  border-color: var(--ac-border-strong);
+  background: rgba(14, 29, 54, 0.82);
+}
+
+.academy-day-card[data-active="true"],
+.academy-day-card.active {
+  border-color: var(--ac-ice);
+  background: linear-gradient(135deg, rgba(125, 187, 255, 0.2), rgba(8, 18, 36, 0.92));
+  box-shadow: 0 0 24px rgba(125, 187, 255, 0.2), inset 3px 0 0 var(--ac-ice);
+}
+
+.academy-day-card[data-act="2"] { --act-color: var(--ac-gold); }
+.academy-day-card[data-act="3"] { --act-color: var(--ac-violet); }
+.academy-day-card[data-act="4"] { --act-color: var(--ac-emerald); }
+
+.academy-day-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--act-color, var(--ac-ice));
+  text-transform: uppercase;
+}
+
+.academy-day-name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+.academy-day-goal {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ac-muted);
+}
+
+/* Right Main Cinema Lesson Stage */
+.academy-lesson-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 26px;
+  border-radius: 22px;
+  background: var(--ac-panel);
+  border: 1px solid var(--ac-border);
+  box-shadow: 0 24px 64px rgba(2, 3, 5, 0.7);
+}
+
+.academy-lesson-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(169, 212, 255, 0.14);
+}
+
+.academy-lesson-day-pill {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(125, 187, 255, 0.14);
+  border: 1px solid rgba(125, 187, 255, 0.4);
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--ac-ice);
+}
+
+.academy-lesson-title {
+  margin: 0;
+  font-family: var(--ac-display);
+  font-size: clamp(24px, 2.8vw, 34px);
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.academy-lesson-objective {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ac-muted);
+}
+
+/* Structured 3-Block Director Breakdown */
+.academy-block {
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: rgba(5, 11, 22, 0.72);
+  border: 1px solid rgba(169, 212, 255, 0.15);
+}
+
+.academy-block--directive {
+  border-left: 3px solid var(--ac-ice);
+}
+
+.academy-block--exercise {
+  border-left: 3px solid var(--ac-emerald);
+  background: linear-gradient(135deg, rgba(110, 231, 183, 0.06), rgba(5, 11, 22, 0.8));
+}
+
+.academy-block--reflection {
+  position: relative;
+  border-left: 3px solid var(--ac-gold);
+  background: linear-gradient(135deg, rgba(242, 201, 125, 0.08), rgba(5, 11, 22, 0.82));
+}
+
+.academy-block-label {
+  display: block;
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ac-ice);
+  margin-bottom: 10px;
+}
+
+.academy-block--exercise .academy-block-label { color: var(--ac-emerald); }
+.academy-block--reflection .academy-block-label { color: var(--ac-gold); }
+
+.academy-block p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ac-text);
+}
+
+.academy-reflection-quote {
+  font-family: var(--ac-display);
+  font-size: clamp(17px, 1.8vw, 22px);
+  font-style: italic;
+  line-height: 1.55;
+  color: #fff6e3;
+}
+
+/* =========================================================
+   COMPREHENSION CHECK (TACTILE A/B/C/D QUIZ ARENA)
+   ========================================================= */
+.academy-quiz-box {
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(4, 10, 20, 0.88);
+  border: 1px solid rgba(125, 187, 255, 0.24);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.academy-quiz-question {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.academy-quiz-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.academy-quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(169, 212, 255, 0.2);
+  background: rgba(10, 20, 38, 0.72);
+  color: var(--ac-text);
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: transform 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+}
+
+.academy-quiz-option:hover {
+  transform: translateY(-2px);
+  border-color: var(--ac-ice);
+  background: rgba(18, 36, 68, 0.85);
+}
+
+.academy-quiz-option[data-selected="true"],
+.academy-quiz-option.selected {
+  border-color: var(--ac-gold);
+  background: rgba(242, 201, 125, 0.14);
+  box-shadow: 0 0 22px rgba(242, 201, 125, 0.22);
+}
+
+.academy-quiz-option[data-correct="true"] {
+  border-color: var(--ac-emerald);
+  background: rgba(110, 231, 183, 0.16);
+}
+
+.academy-quiz-letter {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ac-mono);
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(125, 187, 255, 0.16);
+  border: 1px solid rgba(169, 212, 255, 0.35);
+  color: var(--ac-ice);
+}
+
+.academy-quiz-option[data-selected="true"] .academy-quiz-letter {
+  background: var(--ac-gold);
+  color: #050810;
+  border-color: var(--ac-gold);
+}
+
+/* =========================================================
+   INTERACTIVE DIRECTOR'S VIEWFINDER LAB
+   ========================================================= */
+.vf-lab-card {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(3, 7, 14, 0.92);
+  border: 1px solid rgba(125, 187, 255, 0.26);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vf-lab-header,
+.vf-lab-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vf-lab-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #ffffff;
+  margin-right: 12px;
+}
+
+.vf-rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff4d6d;
+  box-shadow: 0 0 10px #ff4d6d;
+  animation: vf-blink 1.4s ease-in-out infinite;
+}
+
+@keyframes vf-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.28; }
+}
+
+.vf-lab-act {
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ac-gold);
+}
+
+.vf-pill-group {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.vf-pill-btn {
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(169, 212, 255, 0.22);
+  background: rgba(9, 20, 38, 0.65);
+  color: var(--ac-muted);
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.vf-pill-btn[data-active="true"] {
+  border-color: var(--ac-ice);
+  background: rgba(125, 187, 255, 0.24);
+  color: #ffffff;
+}
+
+.vf-stage-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  border-radius: 14px;
+  background: #010204;
+  border: 1px solid rgba(169, 212, 255, 0.12);
+}
+
+.vf-monitor {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(220, 235, 255, 0.25);
+  transition: aspect-ratio 360ms ease, max-width 360ms ease;
+}
+
+.vf-monitor--239-1 { aspect-ratio: 2.39 / 1; max-width: 100%; }
+.vf-monitor--16-9 { aspect-ratio: 16 / 9; max-width: 560px; }
+.vf-monitor--9-16 { aspect-ratio: 9 / 16; max-width: 210px; }
+
+.vf-bg-layer,
+.vf-contrast-mask,
+.vf-grid-thirds,
+.vf-grid-center {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.vf-corridor-lines {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(169, 212, 255, 0.05) 0px,
+      rgba(169, 212, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 44px
+    );
+  opacity: 0.6;
+}
+
+.vf-subject {
+  position: absolute;
+  bottom: 0;
+  width: 68px;
+  height: 112px;
+  transform-origin: bottom center;
+  transition: left 120ms linear, transform 180ms ease;
+}
+
+.vf-subject-head {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 26px;
+  height: 30px;
+  margin-left: -13px;
+  border-radius: 50% 50% 45% 45%;
+  background: #04070e;
+  border: 1px solid rgba(220, 235, 255, 0.45);
+}
+
+.vf-subject-shoulders {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 66px;
+  height: 68px;
+  margin-left: -33px;
+  border-radius: 34px 34px 4px 4px;
+  background: linear-gradient(180deg, #0b162a 0%, #020408 100%);
+  border: 1px solid rgba(220, 235, 255, 0.35);
+}
+
+.vf-subject-rim {
+  position: absolute;
+  inset: 8px 6px 0;
+  border-radius: 30px 30px 0 0;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.vf-line-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(220, 235, 255, 0.26);
+}
+
+.vf-line-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(220, 235, 255, 0.26);
+}
+
+.vf-hud-top,
+.vf-hud-bottom {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--ac-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: rgba(220, 235, 255, 0.78);
+  text-shadow: 0 1px 6px #000;
+  pointer-events: none;
+}
+
+.vf-hud-top { top: 8px; }
+.vf-hud-bottom { bottom: 8px; }
+
+.vf-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: rgba(242, 201, 125, 0.75);
+  border-style: solid;
+  pointer-events: none;
+}
+.vf-corner--tl { top: 6px; left: 6px; border-width: 1.5px 0 0 1.5px; }
+.vf-corner--tr { top: 6px; right: 6px; border-width: 1.5px 1.5px 0 0; }
+.vf-corner--bl { bottom: 6px; left: 6px; border-width: 0 0 1.5px 1.5px; }
+.vf-corner--br { bottom: 6px; right: 6px; border-width: 0 1.5px 1.5px 0; }
+
+.vf-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.vf-slider-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vf-slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--ac-mono);
+  font-size: 10px;
+  color: var(--ac-muted);
+}
+
+.vf-slider-label strong {
+  color: var(--ac-ice);
+}
+
+.vf-slider-item input[type="range"] {
+  width: 100%;
+  accent-color: var(--ac-ice);
+  cursor: pointer;
+}
+
+.vf-tip {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ac-muted);
+}
+
+/* Mobile Responsive */
+@media (max-width: 920px) {
+  .academy-workspace {
+    grid-template-columns: 1fr;
+  }
+  .academy-day-rail {
+    max-height: 230px;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+  }
+  .academy-day-card {
+    flex: 0 0 235px;
+  }
+  .academy-quiz-options {
+    grid-template-columns: 1fr;
+  }
+  .academy-lesson-stage {
+    padding: 18px;
+  }
+}

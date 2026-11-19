@@ -1,0 +1,661 @@
+/* =========================================================
+   STORY-TO-SCRIPT STUDIO + CINE-ARCADE PRO + ZEE AI CONSOLE
+   ========================================================= */
+
+.script-studio,
+.arcade-pro {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 5-Stage Pipeline Stepper */
+.script-stepper {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.script-step-btn {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(169, 212, 255, 0.18);
+  background: rgba(6, 13, 26, 0.72);
+  color: rgba(214, 230, 252, 0.74);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  transition: all 240ms ease;
+}
+
+.script-step-btn[data-active="true"] {
+  border-color: #7dbbff;
+  background: linear-gradient(135deg, rgba(125, 187, 255, 0.24), rgba(9, 20, 38, 0.92));
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(125, 187, 255, 0.24);
+}
+
+.script-step-btn[data-done="true"] .script-step-num {
+  color: #6ee7b7;
+}
+
+.script-step-num {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #f2c97d;
+}
+
+.script-step-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.script-rule-card,
+.script-work-panel,
+.arcade-stage-card {
+  padding: 22px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(12, 24, 44, 0.76), rgba(4, 9, 18, 0.9));
+  border: 1px solid rgba(169, 212, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.script-rule-kicker {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #f2c97d;
+}
+
+.script-rule-text {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: #eef6ff;
+}
+
+.script-formula-pill {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(125, 187, 255, 0.1);
+  border: 1px dashed rgba(125, 187, 255, 0.42);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  color: #dcebff;
+}
+
+.script-two-col,
+.script-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.script-acts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.script-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.script-field-label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a9d4ff;
+}
+
+.script-input,
+.script-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(169, 212, 255, 0.24);
+  background: rgba(3, 7, 15, 0.85);
+  color: #f4f9ff;
+  font-family: "Inter", "Hind Siliguri", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.script-input:focus,
+.script-textarea:focus {
+  border-color: #7dbbff;
+  box-shadow: 0 0 0 3px rgba(125, 187, 255, 0.18);
+}
+
+.script-logline-preview {
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(242, 201, 125, 0.08);
+  border: 1px solid rgba(242, 201, 125, 0.35);
+}
+
+.script-logline-preview p {
+  margin: 8px 0 0;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 18px;
+  line-height: 1.55;
+  color: #fff5df;
+}
+
+.script-act-card {
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(4, 9, 18, 0.72);
+  border: 1px solid rgba(169, 212, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.script-act-tag {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: #7dbbff;
+}
+
+.script-compare-card {
+  padding: 18px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.script-compare--bad {
+  background: rgba(255, 82, 110, 0.08);
+  border: 1px solid rgba(255, 82, 110, 0.35);
+}
+
+.script-compare--good {
+  background: rgba(110, 231, 183, 0.08);
+  border: 1px solid rgba(110, 231, 183, 0.38);
+}
+
+.script-compare-badge {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.script-anatomy-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.script-anatomy-pills span {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(9, 20, 38, 0.75);
+  border: 1px solid rgba(169, 212, 255, 0.2);
+  font-size: 12px;
+  color: #dcebff;
+}
+
+.script-action-row,
+.script-export-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.studio-cta-btn {
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 201, 125, 0.55);
+  background: linear-gradient(135deg, rgba(125, 187, 255, 0.28), rgba(242, 201, 125, 0.22));
+  color: #ffffff;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.studio-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 26px rgba(125, 187, 255, 0.36);
+}
+
+.studio-cta-btn--lg {
+  padding: 15px 34px;
+  font-size: 13px;
+}
+
+/* Stage 05: Real Industry Screenplay Page Preview */
+.script-builder-layout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.script-controls-col {
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(5, 11, 22, 0.85);
+  border: 1px solid rgba(169, 212, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.script-type-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.script-page-sheet {
+  padding: 28px 34px;
+  border-radius: 14px;
+  background: #f5f3ec;
+  color: #14161a;
+  font-family: "Courier Prime", "Courier New", Courier, monospace;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  min-height: 440px;
+}
+
+.script-page-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #555;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #d8d3c5;
+}
+
+.script-page-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.sp-line {
+  position: relative;
+  padding-right: 26px;
+}
+
+.sp-line--slugline {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+.sp-line--character {
+  text-transform: uppercase;
+  font-weight: 700;
+  padding-left: 34%;
+  margin-top: 6px;
+}
+
+.sp-line--parenthetical {
+  padding-left: 27%;
+  color: #3a3f4a;
+}
+
+.sp-line--dialogue {
+  padding-left: 18%;
+  padding-right: 18%;
+}
+
+.sp-line--transition {
+  text-align: right;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+.sp-remove-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 15px;
+  opacity: 0;
+  transition: opacity 150ms ease, color 150ms ease;
+}
+
+.sp-line:hover .sp-remove-btn {
+  opacity: 1;
+}
+
+.sp-remove-btn:hover {
+  color: #c92a2a;
+}
+
+/* =========================================================
+   CINE-ARCADE PRO STYLES
+   ========================================================= */
+.arcade-hud-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(5, 10, 20, 0.85);
+  border: 1px solid rgba(169, 212, 255, 0.2);
+}
+
+.arcade-game-tabs,
+.arcade-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.arcade-stat-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(125, 187, 255, 0.14);
+  border: 1px solid rgba(125, 187, 255, 0.35);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: #dcebff;
+}
+
+.arcade-stat-pill--gold {
+  background: rgba(242, 201, 125, 0.16);
+  border-color: rgba(242, 201, 125, 0.45);
+  color: #f2c97d;
+}
+
+.arcade-question {
+  margin: 0;
+  font-size: clamp(17px, 2vw, 22px);
+  line-height: 1.5;
+  color: #ffffff;
+}
+
+.arcade-options-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.arcade-feedback {
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.arcade-feedback--ok {
+  background: rgba(110, 231, 183, 0.14);
+  border: 1px solid rgba(110, 231, 183, 0.45);
+  color: #d3fce8;
+}
+
+.arcade-feedback--warn {
+  background: rgba(242, 201, 125, 0.14);
+  border: 1px solid rgba(242, 201, 125, 0.4);
+  color: #f2c97d;
+}
+
+.arcade-feedback--bad {
+  background: rgba(255, 82, 110, 0.12);
+  border: 1px solid rgba(255, 82, 110, 0.42);
+  color: #ffd6de;
+}
+
+/* Cut on Action Rhythm Bar */
+.cut-timeline-wrap {
+  position: relative;
+  height: 58px;
+  border-radius: 14px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(169, 212, 255, 0.08) 0px,
+      rgba(169, 212, 255, 0.08) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    rgba(2, 5, 10, 0.95);
+  border: 1px solid rgba(169, 212, 255, 0.25);
+  overflow: hidden;
+}
+
+.cut-timeline-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cut-sweet-zone,
+.cut-gold-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(242, 201, 125, 0.26);
+  border-left: 2px solid #f2c97d;
+  border-right: 2px solid #f2c97d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: #fff3d1;
+}
+
+.cut-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  margin-left: -2px;
+  background: #7dbbff;
+  box-shadow: 0 0 18px #7dbbff, 0 0 8px #ffffff;
+}
+
+.cut-action-row {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.cut-strike-btn {
+  padding: 16px 42px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff4d6d, #d90429);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 32px rgba(255, 77, 109, 0.5);
+  transition: all 180ms ease;
+}
+
+.cut-strike-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 44px rgba(255, 77, 109, 0.7);
+}
+
+/* Light Preview */
+.light-preview-monitor {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(220, 235, 255, 0.25);
+}
+
+.light-preview-canvas {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+}
+
+.light-preview-shadow {
+  position: absolute;
+  inset: 0;
+}
+
+.light-preview-hud {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  color: rgba(220, 235, 255, 0.8);
+  letter-spacing: 0.14em;
+}
+
+.light-sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.light-preview-strip {
+  height: 130px;
+  border-radius: 14px;
+  border: 1px solid rgba(220, 235, 255, 0.22);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: #dcebff;
+  transition: background 180ms ease;
+}
+
+/* =========================================================
+   ZEE AI DIRECTOR & SCRIPT DOCTOR CONSOLE
+   ========================================================= */
+.zee-ai-console {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(150deg, rgba(11, 22, 42, 0.86), rgba(3, 7, 15, 0.94));
+  border: 1px solid rgba(125, 187, 255, 0.26);
+}
+
+.zee-ai-core-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(4, 9, 18, 0.85);
+  border: 1px solid rgba(125, 187, 255, 0.22);
+}
+
+.zee-ai-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #7dbbff;
+  text-transform: uppercase;
+}
+
+.zee-ai-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6ee7b7;
+  box-shadow: 0 0 10px #6ee7b7;
+  animation: vf-blink 1.4s ease-in-out infinite;
+}
+
+.zee-ai-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.zee-ai-chip {
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(169, 212, 255, 0.26);
+  background: rgba(9, 20, 38, 0.72);
+  color: #dcebff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.zee-ai-chip:hover {
+  border-color: #f2c97d;
+  background: rgba(242, 201, 125, 0.14);
+  transform: translateY(-1px);
+}
+
+.zee-ai-msg-copy-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(125, 187, 255, 0.12);
+  border: 1px solid rgba(125, 187, 255, 0.25);
+  color: #7dbbff;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 9.5px;
+  cursor: pointer;
+}
+
+.zee-ai-msg-copy-btn:hover {
+  background: rgba(125, 187, 255, 0.25);
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  .script-stepper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .script-two-col,
+  .script-acts-grid,
+  .script-compare-grid,
+  .script-builder-layout {
+    grid-template-columns: 1fr;
+  }
+  .script-page-sheet {
+    padding: 18px;
+  }
+}

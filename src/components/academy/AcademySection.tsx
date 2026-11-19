@@ -41,7 +41,12 @@ import {
   type AdminStudentEntitlement,
 } from "./AcademyAdminPanel";
 import { AdvancedLab } from "./AdvancedLab";
+import { DirectorsViewfinderLab } from "./DirectorsViewfinderLab";
+import { StoryToScriptStudio } from "./StoryToScriptStudio";
+import { CineArcadePro } from "./CineArcadePro";
 import "../../styles/academy.css";
+import "../../styles/academy-pro.css";
+import "../../styles/cinema-studio-addons.css";
 
 type Session = {
   access_token: string;
@@ -434,7 +439,7 @@ export function AcademySection() {
   const [authNotice, setAuthNotice] = useState("");
   const [apiError, setApiError] = useState("");
   const [view, setView] = useState<
-    "roadmap" | "exam" | "arcade" | "advanced" | "admin"
+    "roadmap" | "script" | "exam" | "arcade" | "advanced" | "admin"
   >("roadmap");
   const [roadmapTab, setRoadmapTab] = useState<"topics" | "calendar">("topics");
   const [moduleFilter, setModuleFilter] = useState("all");
@@ -952,7 +957,22 @@ export function AcademySection() {
             onClick={() => setView("roadmap")}
           >
             <span>01</span>
-            {copy("Roadmap & Lessons", "Roadmap ও Lesson")}
+            {copy("30-Day Curriculum", "৩০ দিনের সিলেবাস")}
+          </button>
+          <button
+            className={view === "script" ? "is-active" : ""}
+            type="button"
+            onClick={() => setView("script")}
+          >
+            <span>02</span>
+            {copy("Script Studio", "স্ক্রিপ্ট স্টুডিও")}
+          </button>
+          <button
+            className={view === "arcade" ? "is-active" : ""}
+            type="button"
+            onClick={() => setView("arcade")}
+          >
+            <span>03</span>Cine-Arcade
           </button>
           <button
             className={view === "exam" ? "is-active" : ""}
@@ -962,15 +982,8 @@ export function AcademySection() {
               setExamSubmitted(false);
             }}
           >
-            <span>02</span>
+            <span>04</span>
             {copy("Examinations", "পরীক্ষা")}
-          </button>
-          <button
-            className={view === "arcade" ? "is-active" : ""}
-            type="button"
-            onClick={() => setView("arcade")}
-          >
-            <span>03</span>Cine-Arcade
           </button>
           <button
             className={view === "advanced" ? "is-active" : ""}
@@ -1439,6 +1452,8 @@ export function AcademySection() {
                     {text(language, selectedLesson.objective)}
                   </p>
 
+                  <DirectorsViewfinderLab dayNumber={selectedLesson.day} language={language} />
+
                   <article className="academy-lesson__reading">
                     <span className="academy-eyebrow">
                       {copy("The Principle", "মূল ধারণা")}
@@ -1565,6 +1580,12 @@ export function AcademySection() {
           </div>
         )}
 
+        {view === "script" && (
+          <section className="academy-script-studio">
+            <StoryToScriptStudio language={language} />
+          </section>
+        )}
+
         {view === "exam" && (
           <section className="academy-exam">
             <div className="academy-section-intro">
@@ -1681,6 +1702,9 @@ export function AcademySection() {
                   "ছোট decision-making challenge। খেলো, সঙ্গে সঙ্গে feedback নাও, visual judgement উন্নত করো।",
                 )}
               </p>
+            </div>
+            <div style={{ marginBottom: "24px" }}>
+              <CineArcadePro language={language} onEarnXP={() => recordArcadeCompletion()} />
             </div>
             {!currentGame ? (
               <div className="academy-game-grid">

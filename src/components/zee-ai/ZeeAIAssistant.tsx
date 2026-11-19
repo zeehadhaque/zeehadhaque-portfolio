@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowUpRight, RotateCcw, X } from "lucide-react";
-import { zeeWelcome } from "../../data/site";
+import { ArrowUpRight, RotateCcw, X, Copy, Check } from "lucide-react";
+import {
+  ZEE_AI_STARTER_CHIPS,
+  ZEE_AI_WELCOME_MESSAGE,
+} from "../../data/zeeAiPersona";
 
 interface ChatMessage {
+  id: string;
   role: "user" | "assistant";
   text: string;
 }
@@ -10,13 +14,6 @@ interface ChatMessage {
 interface ZeeAIAssistantProps {
   externalOpenSignal?: number;
 }
-
-const quickPrompts = [
-  "Tell me about Zeehad Haque",
-  "Guide me through The Filmography",
-  "How does The Academy work?",
-  "Share a framing note",
-];
 
 function IntelligenceCoreSvg({ active }: { active: boolean }) {
   return (
@@ -62,8 +59,9 @@ export function ZeeAIAssistant({ externalOpenSignal = 0 }: ZeeAIAssistantProps) 
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "assistant", text: zeeWelcome },
+    { id: "init", role: "assistant", text: ZEE_AI_WELCOME_MESSAGE },
   ]);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -93,7 +91,8 @@ export function ZeeAIAssistant({ externalOpenSignal = 0 }: ZeeAIAssistantProps) 
     const text = (preset ?? input).trim();
     if (!text || isSending) return;
     setInput("");
-    setMessages((current) => [...current, { role: "user", text }]);
+    const userMsgId = `u-${Date.now()}`;
+    setMessages((current) => [...current, { id: userMsgId, role: "user", text }]);
     setIsSending(true);
 
     try {
@@ -112,12 +111,17 @@ export function ZeeAIAssistant({ externalOpenSignal = 0 }: ZeeAIAssistantProps) 
       }
       setMessages((current) => [
         ...current,
-        { role: "assistant", text: result.reply ?? "I do not have that verified note yet." },
+        {
+          id: `a-${Date.now()}`,
+          role: "assistant",
+          text: result.reply ?? "I do not have that verified note yet.",
+        },
       ]);
     } catch (error) {
       setMessages((current) => [
         ...current,
         {
+          id: `err-${Date.now()}`,
           role: "assistant",
           text:
             error instanceof Error
@@ -130,8 +134,18 @@ export function ZeeAIAssistant({ externalOpenSignal = 0 }: ZeeAIAssistantProps) 
     }
   };
 
+  const handleCopyText = async (id: string, textToCopy: string) => {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      /* ignore */
+    }
+  };
+
   const resetChat = () => {
-    setMessages([{ role: "assistant", text: zeeWelcome }]);
+    setMessages([{ id: "init", role: "assistant", text: ZEE_AI_WELCOME_MESSAGE }]);
     setInput("");
   };
 
@@ -142,15 +156,16 @@ export function ZeeAIAssistant({ externalOpenSignal = 0 }: ZeeAIAssistantProps) 
     >
       {isOpen && (
         <div
-          className="zee-intelligence__panel"
+          className="zee-intelligence__panel zee-ai-console"
           role="dialog"
           aria-label="ZEE Intelligence"
         >
+          {/* Header */}
           <div className="zee-intelligence__header">
             <div className="zee-intelligence__identity">
               <IntelligenceCoreSvg active={isSending} />
               <div>
-                <span className="identity-kicker">Embedded Intelligence</span>
+                <span className="identity-kicker">Director &amp; Script Doctor Console</span>
                 <h2>ZEE AI</h2>
               </div>
             </div>
@@ -173,41 +188,80 @@ export function ZeeAIAssistant({ externalOpenSignal = 0 }: ZeeAIAssistantProps) 
             </div>
           </div>
 
+          {/* Neural Core Status Bar */}
+          <div className="zee-ai-core-bar">
+            <span className="zee-ai-status-tag">
+              <span className="zee-ai-pulse-dot" />
+              ZEE AI // DIRECTOR &amp; SCRIPT DOCTOR · ONLINE
+            </span>
+            <span style={{ fontSize: "10px", color: "rgba(214, 230, 252, 0.6)", fontFamily: "monospace" }}>
+              24 FPS CINEMA NEURAL CORE
+            </span>
+          </div>
+
+          {/* Messages Feed */}
           <div className="zee-intelligence__messages" aria-live="polite">
-            {messages.map((message, index) => (
-              <p
-                key={`${message.role}-${index}`}
+            {messages.map((message) => (
+              <div
+                key={message.id}
                 className={`zee-msg zee-msg--${message.role}`}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  whiteSpace: "pre-wrap",
+                  lineHeight: 1.78,
+                }}
               >
-                {message.text}
-              </p>
+                <div>{message.text}</div>
+                {message.role === "assistant" && (
+                  <button
+                    type="button"
+                    className="zee-ai-msg-copy-btn"
+                    onClick={() => handleCopyText(message.id, message.text)}
+                    title="Copy text"
+                  >
+                    {copiedId === message.id ? (
+                      <>
+                        <Check size={11} style={{ marginRight: "4px" }} />
+                        Copied ✓
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={11} style={{ marginRight: "4px" }} />
+                        Copy
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
             ))}
             {isSending && (
               <div
                 className="zee-msg zee-msg--assistant zee-msg--typing"
                 aria-label="ZEE is composing a reply"
               >
-                <span>Composing response through the archive…</span>
+                <span>Composing cinematic response through the archive…</span>
               </div>
             )}
             <div ref={endRef} />
           </div>
 
-          {messages.length <= 2 && (
-            <div className="zee-intelligence__prompts">
-              {quickPrompts.map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  disabled={isSending}
-                  onClick={() => void sendMessage(undefined, prompt)}
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* 6 One-Click Human Starter Chips */}
+          <div className="zee-ai-chips" role="group" aria-label="Creative Prompts">
+            {ZEE_AI_STARTER_CHIPS.map((chip) => (
+              <button
+                key={chip.id}
+                type="button"
+                className="zee-ai-chip"
+                disabled={isSending}
+                onClick={() => void sendMessage(undefined, chip.prompt)}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
 
+          {/* Input Form */}
           <form
             className="zee-intelligence__form"
             onSubmit={(event) => void sendMessage(event)}
@@ -217,7 +271,7 @@ export function ZeeAIAssistant({ externalOpenSignal = 0 }: ZeeAIAssistantProps) 
               aria-label="Ask ZEE AI a question"
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask about films, camera craft, or Academy…"
+              placeholder="Ask about poetry, storytelling, camera craft, or screenplays…"
               maxLength={1000}
             />
             <button
