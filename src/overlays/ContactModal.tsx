@@ -48,10 +48,10 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
 
   const exactCredentialLinks = [
     { name: "IMDb Profile", url: "https://www.imdb.com/user/p.gtnf5csbffkwzrbmsvkfa2pssm" },
-    { name: "FilmFreeway", url: "https://www.wikidata.org/wiki/Q142020060" },
+    { name: "FilmFreeway", url: "https://filmfreeway.com/ZeehadHaque" },
     { name: "Wikidata", url: "https://www.wikidata.org/wiki/Q142020060" },
-    { name: "Letterboxd", url: "https://boxd.it/onh0F" },
-    { name: "TMDB", url: "https://www.themoviedb.org/movie/1819480-shadow-iii" },
+    { name: "Letterboxd", url: "https://letterboxd.com/zeehadhaque/" },
+    { name: "TMDB", url: "https://www.themoviedb.org/person/6603477-zeehad-haque" },
     { name: "Instagram", url: "https://www.instagram.com/heyyfalgun/" },
     { name: "Live Website", url: "https://zeehadhaque.zeehadhaque.workers.dev" },
   ];
