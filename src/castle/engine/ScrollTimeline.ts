@@ -43,8 +43,8 @@ export const CASTLE_STAGES: StageDefinition[] = [
   {
     id: 5,
     code: "STAGE 05 // MONOLITH CO_02",
-    title: "CHAKRA & ARCHIVE",
-    subtitle: "Second crystalline monolith housing CHAKRA and the complete filmography.",
+    title: "COMPLETE FILM ARCHIVE",
+    subtitle: "Second crystalline monolith housing the complete filmography archive.",
     start: 0.58,
     end: 0.74,
   },

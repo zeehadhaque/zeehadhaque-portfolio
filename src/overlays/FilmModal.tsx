@@ -3,13 +3,13 @@ import { videoArchive, type VideoRecord } from "../data/videoArchive";
 import { linkRegistry } from "../data/linkRegistry";
 
 interface FilmModalProps {
-  filmKey: "shadow" | "chakra";
+  filmKey?: "shadow" | "archive";
   onClose: () => void;
 }
 
-export const FilmModal: React.FC<FilmModalProps> = ({ filmKey, onClose }) => {
-  // Default to SHADOW / III if filmKey === "shadow", else CHAKRA
-  const initialVideoId = filmKey === "chakra" ? "jcZx3QuT16g" : "ZSttExMBavg";
+export const FilmModal: React.FC<FilmModalProps> = ({ filmKey = "shadow", onClose }) => {
+  // Default to SHADOW / III (2026)
+  const initialVideoId = "ZSttExMBavg";
   const [activeVideo, setActiveVideo] = useState<VideoRecord>(() => {
     return (
       videoArchive.find((v) => v.videoId === initialVideoId) ??

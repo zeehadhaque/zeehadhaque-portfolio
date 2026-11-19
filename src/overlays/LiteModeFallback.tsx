@@ -6,7 +6,7 @@ import { linkRegistry } from "../data/linkRegistry";
 
 interface LiteModeFallbackProps {
   onExitLite: () => void;
-  onOpenFilm: (filmKey: "shadow" | "chakra") => void;
+  onOpenFilm: (filmKey: "shadow" | "archive") => void;
   onOpenAcademy: () => void;
   onOpenZeeAI: () => void;
   onOpenContact: () => void;
@@ -107,9 +107,7 @@ export const LiteModeFallback: React.FC<LiteModeFallbackProps> = ({
                     <button
                       type="button"
                       className="glass-btn"
-                      onClick={() =>
-                        onOpenFilm(film.videoId === "jcZx3QuT16g" ? "chakra" : "shadow")
-                      }
+                      onClick={() => onOpenFilm("archive")}
                     >
                       <span>Screen Film ↗</span>
                     </button>

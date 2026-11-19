@@ -33,7 +33,6 @@ export const siteIdentity: SiteIdentity = {
   ],
   creativeProjects: [
     { title: "SHADOW / III", category: "Psychological thriller · Short film", description: "A psychological and supernatural suspense experiment built around visual silence, repetition, loops and uncertainty.", status: "Short film" },
-    { title: "CHAKRA", category: "Silent thriller · Short film", description: "A no-dialogue visual narrative using stillness, location transitions and match-cut thinking to carry the story.", status: "Short film" },
     { title: "TUKRE: THE TRAGIC TERRITORIES", category: "Poetic tragedy · Short film", description: "A personal, introspective piece shaped by memory, fragmented emotion, visual motifs and carefully designed sound.", status: "Short film" },
     { title: "DON'T GO THERE", category: "Mystery · Survival · Action · Psychological suspense", description: "A suspense-driven project introduced through its teaser.", status: "Teaser", href: "https://youtu.be/Zoqn6CyBIzU" },
     { title: "AUTOPSY", category: "Psychological · Supernatural thriller", description: "A morgue-and-corridor setting explored through atmosphere, psychological tension and visual unease.", status: "Teaser / project" },

@@ -12,7 +12,7 @@ import "../styles/tokens.css";
 import "../styles/castle-hud.css";
 
 interface CastleExperienceProps {
-  renderFilmModal: (filmKey: "shadow" | "chakra", onClose: () => void) => React.ReactNode;
+  renderFilmModal: (filmKey: "shadow" | "archive", onClose: () => void) => React.ReactNode;
   renderAcademy: (onClose: () => void) => React.ReactNode;
   renderZeeAI: (onClose: () => void) => React.ReactNode;
   renderContact: (onClose: () => void) => React.ReactNode;
@@ -22,7 +22,7 @@ interface CastleExperienceProps {
 
 const TARGET_LABELS: Record<CastleInteractiveTarget, string> = {
   "monolith-shadow": "OPEN FILM // SHADOW / III",
-  "monolith-chakra": "OPEN FILM // CHAKRA",
+  "monolith-archive": "OPEN // FILM ARCHIVE",
   "portal-academy": "ENTER // FILMMAKING INSTITUTE",
   "portal-zeeai": "CONNECT // ZEE AI CORE",
   "portal-contact": "OPEN // DIRECT CONTACT",
@@ -207,8 +207,8 @@ export const CastleExperience: React.FC<CastleExperienceProps> = ({
           <div className="glass-panel castle-overlay-card">
             {activeOverlay === "monolith-shadow" &&
               renderFilmModal("shadow", () => setActiveOverlay(null))}
-            {activeOverlay === "monolith-chakra" &&
-              renderFilmModal("chakra", () => setActiveOverlay(null))}
+            {activeOverlay === "monolith-archive" &&
+              renderFilmModal("archive", () => setActiveOverlay(null))}
             {activeOverlay === "portal-academy" && renderAcademy(() => setActiveOverlay(null))}
             {activeOverlay === "portal-zeeai" && renderZeeAI(() => setActiveOverlay(null))}
             {activeOverlay === "portal-contact" && renderContact(() => setActiveOverlay(null))}

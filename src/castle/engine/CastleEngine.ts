@@ -5,7 +5,7 @@ export type CastleThemeId = "obsidian" | "glacial" | "noir";
 
 export type CastleInteractiveTarget =
   | "monolith-shadow"
-  | "monolith-chakra"
+  | "monolith-archive"
   | "portal-academy"
   | "portal-zeeai"
   | "portal-contact";
@@ -122,7 +122,7 @@ export class CastleEngine {
   private blockSeeds: BlockSeed[] = [];
   private ringGroups: THREE.Group[] = [];
   private monolithShadow!: THREE.Group;
-  private monolithChakra!: THREE.Group;
+  private monolithArchive!: THREE.Group;
   private terminalPortals: THREE.Mesh[] = [];
   private particles!: THREE.Points;
 
@@ -212,7 +212,7 @@ export class CastleEngine {
       new THREE.Vector3(0, 1.6, -12),   // Stage 02 Entrance Transit
       new THREE.Vector3(0, 1.5, -38),   // Stage 03 Segmented Ring Gate
       new THREE.Vector3(-2.6, 1.7, -64),// Stage 04 Monolith CO_01 (SHADOW / III)
-      new THREE.Vector3(2.8, 1.7, -92), // Stage 05 Monolith CO_02 (CHAKRA)
+      new THREE.Vector3(2.8, 1.7, -92), // Stage 05 Monolith CO_02 (ARCHIVE)
       new THREE.Vector3(0, 2.0, -122),  // Stage 06 Circular Terminal Chamber
       new THREE.Vector3(0, 2.2, -152),  // Stage 07 Grand Exit
     ]);
@@ -417,9 +417,9 @@ export class CastleEngine {
       "monolith-shadow",
       0x7dbbff
     );
-    this.monolithChakra = this.createCrystallineMonolith(
+    this.monolithArchive = this.createCrystallineMonolith(
       new THREE.Vector3(-1.6, 1.8, -102),
-      "monolith-chakra",
+      "monolith-archive",
       0xa9d4ff
     );
   }
@@ -583,7 +583,7 @@ export class CastleEngine {
     });
 
     // Stage 04 & 05 cursor-responsive crystalline monoliths
-    [this.monolithShadow, this.monolithChakra].forEach((m, idx) => {
+    [this.monolithShadow, this.monolithArchive].forEach((m, idx) => {
       m.rotation.y = elapsed * 0.28 + this.smoothPointer.x * 0.85 + idx;
       m.rotation.x = this.smoothPointer.y * 0.42;
       m.position.y = 1.8 + Math.sin(elapsed * 1.1 + idx * 2) * 0.16;
