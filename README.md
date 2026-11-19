@@ -148,36 +148,6 @@ graph LR
 
 ---
 
-## 💻 Local Development & Exploration
-
-### Prerequisites
-- [Node.js](https://nodejs.org/) `v18+` or `v20+`
-- `npm` package manager
-
-### Quick Start
-```bash
-# 1. Clone the repository
-git clone https://github.com/zeehadhaque/zeehadhaque-portfolio.git
-
-# 2. Enter project directory
-cd zeehadhaque-portfolio
-
-# 3. Install dependencies
-npm install
-
-# 4. Launch development server with HMR
-npm run dev
-```
-
-### Production Build & Typecheck
-```bash
-npm run build
-```
-
-<br/>
-
----
-
 ## ✉️ Direct Inquiries & Studio Line
 
 <div align="center">
