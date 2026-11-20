@@ -1,0 +1,760 @@
+/* =====================================================================
+   SCENIC VALLEY & MIRROR LAKE CINEMA — COMPLETE ANIMATED DESIGN SYSTEM
+   ===================================================================== */
+
+:root,
+[data-scenic-mood="frost"] {
+  --s-void: #030916;
+  --s-accent: #9bd8ff;
+  --s-prism: #dcf2ff;
+  --s-amber: #f5c37b;
+  --s-text: #f3f9ff;
+  --s-soft: rgba(226, 240, 255, 0.80);
+  --s-dim: rgba(176, 214, 250, 0.58);
+
+  --s-glass: linear-gradient(
+    145deg,
+    rgba(165, 218, 255, 0.14) 0%,
+    rgba(9, 24, 46, 0.56) 55%,
+    rgba(4, 11, 24, 0.74) 100%
+  );
+  --s-glass-hi: linear-gradient(
+    145deg,
+    rgba(205, 238, 255, 0.24) 0%,
+    rgba(18, 42, 74, 0.72) 60%,
+    rgba(245, 195, 123, 0.08) 100%
+  );
+  --s-border: rgba(206, 236, 255, 0.28);
+  --s-border-hi: rgba(255, 255, 255, 0.72);
+  --s-shadow:
+    0 24px 64px rgba(2, 5, 12, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    inset 0 -1px 0 rgba(155, 216, 255, 0.12);
+
+  --font-display: "Cinzel", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", "Hind Siliguri", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-scenic-mood="ember"] {
+  --s-void: #0c0812;
+  --s-accent: #ffbf7a;
+  --s-prism: #ffe5c4;
+  --s-amber: #ff9c55;
+  --s-glass: linear-gradient(
+    145deg,
+    rgba(255, 178, 112, 0.14) 0%,
+    rgba(30, 16, 28, 0.58) 55%,
+    rgba(12, 8, 18, 0.78) 100%
+  );
+  --s-glass-hi: linear-gradient(
+    145deg,
+    rgba(255, 196, 134, 0.24) 0%,
+    rgba(48, 22, 34, 0.76) 100%
+  );
+  --s-border: rgba(255, 206, 158, 0.32);
+  --s-border-hi: rgba(255, 238, 214, 0.78);
+}
+
+[data-scenic-mood="moonlight"] {
+  --s-void: #02050d;
+  --s-accent: #82beff;
+  --s-prism: #cfe7ff;
+  --s-amber: #f2cf8d;
+  --s-glass: linear-gradient(
+    145deg,
+    rgba(130, 190, 255, 0.12) 0%,
+    rgba(6, 14, 30, 0.66) 100%
+  );
+  --s-border: rgba(170, 212, 255, 0.24);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--s-void);
+  color: var(--s-text);
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--s-void);
+  color: var(--s-text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Circular Water-Ripple Mood Transition */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: scenic-mood-ripple 780ms var(--ease-cinematic) forwards;
+}
+
+@keyframes scenic-mood-ripple {
+  from { clip-path: circle(0% at var(--ripple-x, 85%) var(--ripple-y, 6%)); }
+  to { clip-path: circle(155% at var(--ripple-x, 85%) var(--ripple-y, 6%)); }
+}
+
+/* =====================================================================
+   FIXED SCENIC LAYERS (WEBGL WORLD + PARALLAX PINES + DRIFTING LEAVES)
+   ===================================================================== */
+.scenic-webgl-canvas,
+.scenic-fallback-bg,
+.scenic-parallax-stage,
+.scenic-drift-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.scenic-webgl-canvas { z-index: 0; display: block; }
+.scenic-fallback-bg {
+  z-index: 0;
+  background:
+    radial-gradient(circle at 70% 18%, rgba(155, 216, 255, 0.22), transparent 46%),
+    linear-gradient(180deg, #061327 0%, #0d223c 48%, #040b18 100%);
+}
+.scenic-parallax-stage { z-index: 1; overflow: hidden; }
+.scenic-drift-canvas { z-index: 2; display: block; }
+
+.scenic-valley-mist {
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  bottom: -4vh;
+  height: 40vh;
+  background: radial-gradient(
+    ellipse at 50% 90%,
+    rgba(204, 234, 255, 0.16) 0%,
+    rgba(130, 190, 255, 0.05) 48%,
+    transparent 76%
+  );
+  will-change: transform;
+}
+
+.scenic-pine-cluster {
+  position: absolute;
+  bottom: -16px;
+  width: clamp(160px, 21vw, 310px);
+  height: auto;
+  will-change: transform;
+  opacity: 0.72;
+}
+.scenic-pine-cluster--left { left: -24px; }
+.scenic-pine-cluster--right { right: -24px; }
+
+/* Hardware-Accelerated Top Scroll Ray */
+.scenic-scroll-ray {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 75;
+  background: linear-gradient(90deg, var(--s-accent), #ffffff, var(--s-amber), var(--s-accent));
+  box-shadow: 0 0 18px var(--s-accent), 0 0 8px #ffffff;
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* Right-Side Silent Chapter Elevation Rail (Desktop) */
+.scenic-chapter-rail {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 42;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 9px;
+  border-radius: 999px;
+  background: rgba(5, 12, 24, 0.45);
+  border: 1px solid rgba(206, 236, 255, 0.2);
+}
+
+.scenic-chapter-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(206, 236, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: transform 280ms var(--ease-spring), background 260ms ease, box-shadow 260ms ease;
+}
+
+.scenic-chapter-dot[data-active="true"] {
+  transform: scale(1.55);
+  background: #ffffff;
+  box-shadow: 0 0 14px var(--s-accent), 0 0 6px var(--s-amber);
+}
+
+/* =====================================================================
+   FROSTED ALPINE CRYSTAL GLASS CARDS & BUTTONS
+   ===================================================================== */
+.crystal-card {
+  position: relative;
+  background: var(--s-glass);
+  backdrop-filter: blur(11px) saturate(150%);
+  -webkit-backdrop-filter: blur(11px) saturate(150%);
+  border: 1px solid var(--s-border);
+  border-radius: 24px;
+  box-shadow: var(--s-shadow);
+  overflow: hidden;
+  contain: layout style paint;
+  transition:
+    transform 440ms var(--ease-cinematic),
+    border-color 280ms ease,
+    box-shadow 440ms var(--ease-cinematic),
+    background 360ms ease;
+}
+
+.crystal-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72) 45%, var(--s-amber) 70%, transparent);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.crystal-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    360px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(210, 240, 255, 0.2),
+    rgba(245, 195, 123, 0.06) 38%,
+    transparent 66%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+}
+
+.crystal-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--s-border-hi);
+  background: var(--s-glass-hi);
+  box-shadow:
+    0 32px 84px rgba(1, 5, 14, 0.8),
+    0 0 42px rgba(155, 216, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.56);
+}
+
+.crystal-card:hover::after { opacity: 1; }
+
+.crystal-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 19px;
+  border-radius: 999px;
+  border: 1px solid var(--s-border);
+  background: rgba(10, 24, 46, 0.68);
+  color: var(--s-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: transform 300ms var(--ease-spring), border-color 240ms ease, box-shadow 280ms ease, background 260ms ease;
+}
+
+.crystal-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(112deg, transparent 22%, rgba(255, 255, 255, 0.36) 50%, transparent 78%);
+  transform: translateX(-135%);
+  transition: transform 640ms var(--ease-cinematic);
+}
+
+.crystal-btn:hover::before { transform: translateX(135%); }
+.crystal-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: #ffffff;
+  background: rgba(24, 52, 92, 0.84);
+  box-shadow: 0 0 26px rgba(155, 216, 255, 0.36);
+}
+
+.crystal-btn--prism {
+  border-color: rgba(235, 246, 255, 0.6);
+  background: linear-gradient(135deg, rgba(155, 216, 255, 0.34), rgba(245, 195, 123, 0.2), rgba(9, 22, 42, 0.84));
+}
+
+/* Vivid Reactive Atmosphere / Mood Button */
+.scenic-mood-btn {
+  border-color: rgba(210, 238, 255, 0.58);
+  background: linear-gradient(125deg, rgba(155, 216, 255, 0.24), rgba(14, 34, 62, 0.84));
+  box-shadow: 0 0 18px rgba(155, 216, 255, 0.24);
+}
+
+.scenic-mood-orb {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, var(--s-accent));
+  box-shadow: 0 0 12px var(--s-accent), 0 0 4px #ffffff;
+  transition: transform 320ms var(--ease-spring), box-shadow 300ms ease;
+}
+
+.scenic-mood-btn:hover,
+.scenic-mood-btn:focus-visible {
+  transform: translateY(-2px) scale(1.07);
+  border-color: #ffffff;
+  background: linear-gradient(125deg, rgba(215, 244, 255, 0.45), rgba(245, 195, 123, 0.32), rgba(20, 50, 88, 0.92));
+  box-shadow: 0 0 34px rgba(155, 216, 255, 0.72), 0 0 14px rgba(255, 255, 255, 0.55);
+}
+
+.scenic-mood-btn:hover .scenic-mood-orb {
+  transform: scale(1.65);
+  box-shadow: 0 0 22px #ffffff, 0 0 34px var(--s-amber);
+}
+
+/* =====================================================================
+   FLOATING NAVIGATION & SCROLLABLE EXPLORATION SECTIONS
+   ===================================================================== */
+.scenic-nav-dock {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  width: min(1180px, calc(100vw - 24px));
+}
+
+.scenic-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  backdrop-filter: blur(16px) saturate(165%);
+  -webkit-backdrop-filter: blur(16px) saturate(165%);
+}
+
+.scenic-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-decoration: none;
+  color: var(--s-text);
+}
+
+.scenic-brand-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.24em;
+  font-weight: 600;
+}
+
+.scenic-brand-role {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--s-dim);
+  text-transform: uppercase;
+}
+
+.scenic-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.scenic-main {
+  position: relative;
+  z-index: 4;
+}
+
+/* Generous atmospheric breathing room between sections so the live landscape breathes as you scroll */
+.scenic-section {
+  width: min(1160px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: clamp(110px, 14vh, 175px) 0 clamp(60px, 9vh, 110px);
+}
+
+.scenic-offscreen {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 760px;
+}
+
+.scenic-hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  align-items: center;
+  gap: clamp(28px, 5vw, 64px);
+  padding-top: 120px;
+}
+
+.scenic-chapter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--s-border);
+  background: rgba(7, 18, 36, 0.56);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--s-prism);
+  margin-bottom: 18px;
+}
+
+.scenic-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, var(--s-accent));
+  box-shadow: 0 0 14px var(--s-accent);
+  animation: scenic-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes scenic-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 0.45; }
+}
+
+.scenic-headline {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5.8vw, 78px);
+  line-height: 1.04;
+  letter-spacing: 0.08em;
+  background: linear-gradient(118deg, #ffffff 0%, #d4eeff 36%, var(--s-accent) 62%, var(--s-amber) 86%, #ffffff 100%);
+  background-size: 240% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: scenic-shimmer 7.5s ease-in-out infinite;
+}
+
+.scenic-section-title {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4.2vw, 54px);
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  background: linear-gradient(115deg, #ffffff 10%, var(--s-prism) 56%, var(--s-amber) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes scenic-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.scenic-lead {
+  margin: 0 0 28px;
+  font-size: clamp(15px, 1.35vw, 18px);
+  line-height: 1.78;
+  color: var(--s-soft);
+  max-width: 58ch;
+  text-shadow: 0 2px 14px rgba(2, 6, 14, 0.7);
+}
+
+.scenic-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.scenic-portrait-vessel {
+  padding: 14px;
+  animation: scenic-float 6.8s ease-in-out infinite;
+}
+
+@keyframes scenic-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.scenic-portrait-frame {
+  aspect-ratio: 4 / 5;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(225, 244, 255, 0.3);
+}
+
+.scenic-portrait-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 760ms var(--ease-cinematic);
+}
+
+.scenic-portrait-vessel:hover .scenic-portrait-frame img {
+  transform: scale(1.06);
+}
+
+.scenic-portrait-caption {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 6px 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--s-prism);
+  text-transform: uppercase;
+}
+
+/* Grids */
+.scenic-film-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 24px;
+}
+
+.scenic-film-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.scenic-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(206, 236, 255, 0.22);
+}
+
+.scenic-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 720ms var(--ease-cinematic);
+}
+
+.scenic-film-card:hover .scenic-thumb img { transform: scale(1.08); }
+
+.scenic-play-orb {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 18, 34, 0.8);
+  border: 1px solid rgba(235, 246, 255, 0.58);
+  color: #ffffff;
+  box-shadow: 0 0 24px rgba(155, 216, 255, 0.44);
+  transition: transform 280ms var(--ease-spring), background 240ms ease;
+}
+
+.scenic-film-card:hover .scenic-play-orb {
+  transform: scale(1.16);
+  background: rgba(245, 195, 123, 0.42);
+}
+
+.scenic-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s-prism);
+}
+
+.scenic-card-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 21px;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+}
+
+.scenic-card-desc {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.68;
+  color: var(--s-soft);
+}
+
+.scenic-slate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.scenic-slate-card {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 158px;
+}
+
+.scenic-slate-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(18px, 1.5vw, 21px);
+  font-weight: 600;
+  line-height: 1.65;
+  color: #ffffff;
+}
+
+.scenic-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.scenic-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(206, 236, 255, 0.24);
+  background: rgba(7, 17, 34, 0.62);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--s-soft);
+}
+
+.scenic-portal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.scenic-portal-card {
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--s-text);
+}
+
+.scenic-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.scenic-link-tile {
+  padding: 16px 18px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: var(--s-text);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Modals */
+.scenic-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: rgba(2, 6, 14, 0.78);
+  backdrop-filter: blur(18px) saturate(155%);
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vw, 34px);
+}
+
+.scenic-modal-sheet {
+  width: min(1100px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: clamp(18px, 3vw, 34px);
+}
+
+.scenic-footer {
+  width: min(1160px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 32px 0 60px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(206, 236, 255, 0.16);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--s-dim);
+}
+
+/* Mobile Smoothness & Zero Horizontal Overflow */
+@media (max-width: 920px) {
+  .scenic-hero {
+    grid-template-columns: 1fr;
+    padding-top: 132px;
+  }
+  .scenic-portal-grid { grid-template-columns: 1fr; }
+  .scenic-chapter-rail { display: none; }
+  .scenic-nav-inner {
+    border-radius: 22px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .scenic-pine-cluster { opacity: 0.45; }
+}
+
+@media (max-width: 600px) {
+  .crystal-card {
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+  }
+}
+
+@media (pointer: coarse), (hover: none) {
+  .drop-cursor-ring,
+  .drop-cursor-core,
+  .drop-cursor-tag,
+  .drop-splash-ring {
+    display: none !important;
+  }
+}

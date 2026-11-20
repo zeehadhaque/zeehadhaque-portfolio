@@ -1,16 +1,16 @@
 import React, { Suspense, lazy } from "react";
 import {
-  LiquidCrystalWebsite,
-  type CrystalFilm,
-  type CrystalUpcoming,
-  type CrystalLink,
-} from "../components/crystal/LiquidCrystalWebsite";
+  ScenicCinemaWebsite,
+  type ScenicFilm,
+  type ScenicUpcoming,
+  type ScenicLink,
+} from "../components/scenic/ScenicCinemaWebsite";
 import { InboxApp } from "./InboxApp";
 import { videoArchive } from "../data/videoArchive";
 import { siteIdentity } from "../data/site";
 import { toggleSpatialAudio } from "../utils/spatialAudio";
 
-import "../styles/crystal-cinema.css";
+import "../styles/scenic-cinema.css";
 import "../styles/castle-overlays.css";
 
 // Lazy-load heavy overlay panels to ensure initial bundle loads in milliseconds
@@ -24,7 +24,7 @@ const ContactModal = lazy(() =>
   import("../overlays/ContactModal").then((m) => ({ default: m.ContactModal }))
 );
 
-const UPCOMING_PROJECTS: CrystalUpcoming[] = [
+const UPCOMING_PROJECTS: ScenicUpcoming[] = [
   {
     number: "01",
     title: "GHURPAK (ঘুরপাক)",
@@ -82,7 +82,7 @@ const UPCOMING_PROJECTS: CrystalUpcoming[] = [
   },
 ];
 
-const SANCTUARY_LINKS: CrystalLink[] = [
+const SANCTUARY_LINKS: ScenicLink[] = [
   {
     id: "website",
     label: "Official Website",
@@ -149,8 +149,8 @@ export function App() {
     return <InboxApp />;
   }
 
-  // Map all 8 verified films into CrystalFilm items
-  const crystalFilms: CrystalFilm[] = videoArchive.map((film) => ({
+  // Map all 8 verified films into ScenicFilm items
+  const scenicFilms: ScenicFilm[] = videoArchive.map((film) => ({
     id: film.id,
     title: film.displayTitle,
     genre: film.genre,
@@ -164,27 +164,27 @@ export function App() {
 
   const manifestoText = `${siteIdentity.statement} ${siteIdentity.filmmakingApproach}`;
 
-  // 2. Mount LiquidCrystalWebsite on /
+  // 2. Mount ScenicCinemaWebsite on /
   return (
-    <LiquidCrystalWebsite
+    <ScenicCinemaWebsite
       portraitSrc="/assets/images/profile/zeehad-obsidian-portrait.jpg"
       bio={siteIdentity.biography}
       manifesto={manifestoText}
-      films={crystalFilms}
+      films={scenicFilms}
       upcoming={UPCOMING_PROJECTS}
       links={SANCTUARY_LINKS}
       renderAcademy={(onClose) => (
-        <Suspense fallback={<div className="crystal-modal-backdrop" aria-busy="true" />}>
+        <Suspense fallback={<div className="scenic-modal-backdrop" aria-busy="true" />}>
           <AcademyModal onClose={onClose} />
         </Suspense>
       )}
       renderZeeAI={(onClose) => (
-        <Suspense fallback={<div className="crystal-modal-backdrop" aria-busy="true" />}>
+        <Suspense fallback={<div className="scenic-modal-backdrop" aria-busy="true" />}>
           <ZeeAIChatModal onClose={onClose} />
         </Suspense>
       )}
       renderContact={(onClose) => (
-        <Suspense fallback={<div className="crystal-modal-backdrop" aria-busy="true" />}>
+        <Suspense fallback={<div className="scenic-modal-backdrop" aria-busy="true" />}>
           <ContactModal onClose={onClose} />
         </Suspense>
       )}
