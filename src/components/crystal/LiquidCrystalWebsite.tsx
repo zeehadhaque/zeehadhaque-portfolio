@@ -3,6 +3,7 @@ import { LiquidCrystalRayCanvas, CrystalThemeId } from "./LiquidCrystalRayCanvas
 import { WaterDropCursor } from "./WaterDropCursor";
 import { CrystalReveal, CrystalText } from "./CrystalReveal";
 import "../../styles/crystal-cinema.css";
+import "../../styles/winter-vibes.css";
 
 export interface CrystalFilm {
   id: string;
@@ -42,7 +43,7 @@ interface LiquidCrystalWebsiteProps {
   onToggleAudio?: (enabled: boolean) => void;
 }
 
-const THEMES: CrystalThemeId[] = ["abyss", "glacier", "noir"];
+const THEMES: CrystalThemeId[] = ["winter", "aurora", "blizzard"];
 
 const CrystalWaveDivider: React.FC = () => (
   <div className="crystal-wave-divider" aria-hidden="true">
@@ -74,13 +75,24 @@ export const LiquidCrystalWebsite: React.FC<LiquidCrystalWebsiteProps> = ({
   onToggleAudio,
 }) => {
   const scrollRayRef = useRef<HTMLDivElement>(null);
-  const [theme, setTheme] = useState<CrystalThemeId>("abyss");
+  const [theme, setTheme] = useState<CrystalThemeId>("winter");
   const [audioOn, setAudioOn] = useState(false);
   const [liteMode, setLiteMode] = useState(false);
   const [activeFilm, setActiveFilm] = useState<CrystalFilm | null>(null);
   const [activePortal, setActivePortal] = useState<"academy" | "zeeai" | "contact" | null>(null);
 
   const modalOpen = Boolean(activeFilm || activePortal);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-crystal-theme", "winter");
+  }, []);
+
+  const handleThemeHover = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (rect.left + rect.width / 2) / window.innerWidth;
+    const y = 1.0 - (rect.top + rect.height / 2) / window.innerHeight;
+    window.dispatchEvent(new CustomEvent("crystal-theme-hover", { detail: { x, y } }));
+  };
 
   // Zero-re-render hardware-accelerated scroll progress ray
   useEffect(() => {
@@ -183,11 +195,14 @@ export const LiquidCrystalWebsite: React.FC<LiquidCrystalWebsiteProps> = ({
             </button>
             <button
               type="button"
-              className="crystal-btn"
-              data-cursor-label="PRISM"
+              className="crystal-btn crystal-theme-btn"
+              data-theme={theme}
+              data-cursor-label="WINTER WAVE"
+              onMouseEnter={handleThemeHover}
               onClick={cycleTheme}
             >
-              Ray: {theme}
+              <span className="theme-orb" aria-hidden="true" />
+              <span>❄ {theme}</span>
             </button>
             <button
               type="button"

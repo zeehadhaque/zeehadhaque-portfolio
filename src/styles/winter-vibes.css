@@ -1,0 +1,171 @@
+/* =====================================================================
+   WINTER VIBES — FROSTED CRYSTAL PALETTE, MIST & REACTIVE THEME BUTTON
+   ===================================================================== */
+
+:root,
+[data-crystal-theme="winter"] {
+  --c-void: #030812;
+  --c-deep: #071529;
+  --c-ocean: #0e2849;
+  --c-ice: #9ad8ff;
+  --c-prism: #d9f0ff;
+  --c-crystal: #ffffff;
+  --c-violet: #b6d4ff;
+  --c-glass: linear-gradient(
+    140deg,
+    rgba(165, 218, 255, 0.16) 0%,
+    rgba(10, 26, 52, 0.56) 55%,
+    rgba(5, 13, 28, 0.72) 100%
+  );
+  --c-glass-hi: linear-gradient(
+    140deg,
+    rgba(200, 236, 255, 0.26) 0%,
+    rgba(16, 40, 76, 0.72) 100%
+  );
+  --c-border: rgba(206, 236, 255, 0.32);
+  --c-border-hi: rgba(255, 255, 255, 0.76);
+}
+
+[data-crystal-theme="aurora"] {
+  --c-void: #020a10;
+  --c-deep: #061c28;
+  --c-ocean: #0b3442;
+  --c-ice: #7ef2df;
+  --c-prism: #c8fff4;
+  --c-violet: #95d5ff;
+  --c-glass: linear-gradient(
+    140deg,
+    rgba(126, 242, 223, 0.14) 0%,
+    rgba(7, 28, 40, 0.62) 100%
+  );
+  --c-border: rgba(154, 245, 230, 0.34);
+  --c-border-hi: rgba(226, 255, 249, 0.78);
+}
+
+[data-crystal-theme="blizzard"] {
+  --c-void: #020308;
+  --c-deep: #070d1c;
+  --c-ocean: #0f1d38;
+  --c-ice: #8cb8ff;
+  --c-prism: #cfe2ff;
+  --c-violet: #b4c2ff;
+  --c-glass: linear-gradient(
+    140deg,
+    rgba(130, 175, 255, 0.14) 0%,
+    rgba(6, 11, 24, 0.74) 100%
+  );
+  --c-border: rgba(174, 206, 255, 0.26);
+}
+
+/* Soft Drifting Cold Winter Mist at Bottom of Screen */
+.winter-frost-mist {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -6vh;
+  height: 36vh;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(186, 228, 255, 0.18) 0%,
+    rgba(125, 187, 255, 0.06) 45%,
+    transparent 75%
+  );
+  pointer-events: none;
+  animation: winter-mist-drift 12s ease-in-out infinite alternate;
+}
+
+@keyframes winter-mist-drift {
+  from { transform: translateX(-3%) scaleY(0.95); opacity: 0.65; }
+  to { transform: translateX(3%) scaleY(1.08); opacity: 1; }
+}
+
+/* Stronger Volumetric Winter Light Rays */
+.crystal-ray-beam {
+  background: linear-gradient(
+    180deg,
+    rgba(225, 245, 255, 0.22) 0%,
+    rgba(154, 216, 255, 0.09) 42%,
+    transparent 85%
+  );
+}
+
+/* Frosted Ice Rim on Crystal Cards */
+.crystal-card {
+  box-shadow:
+    0 24px 64px rgba(1, 5, 14, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 0 24px rgba(180, 226, 255, 0.06);
+}
+
+.crystal-card:hover {
+  box-shadow:
+    0 32px 84px rgba(1, 6, 16, 0.8),
+    0 0 46px rgba(154, 216, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset 0 0 32px rgba(185, 232, 255, 0.14);
+}
+
+/* =====================================================================
+   INTERACTIVE WINTER THEME BUTTON (VIVID HOVER LIGHTING & FROST WAVE)
+   ===================================================================== */
+.crystal-theme-btn {
+  border-color: rgba(190, 232, 255, 0.56);
+  background: linear-gradient(
+    125deg,
+    rgba(154, 216, 255, 0.24),
+    rgba(14, 38, 72, 0.82)
+  );
+  box-shadow: 0 0 18px rgba(154, 216, 255, 0.22);
+}
+
+.crystal-theme-btn .theme-orb {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, var(--c-ice));
+  box-shadow: 0 0 12px var(--c-ice), 0 0 4px #ffffff;
+  transition: transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 320ms ease;
+}
+
+.crystal-theme-btn:hover,
+.crystal-theme-btn:focus-visible {
+  transform: translateY(-2px) scale(1.07);
+  border-color: #ffffff;
+  background: linear-gradient(
+    125deg,
+    rgba(210, 242, 255, 0.45),
+    rgba(126, 242, 223, 0.28),
+    rgba(22, 58, 108, 0.92)
+  );
+  box-shadow:
+    0 0 34px rgba(154, 216, 255, 0.72),
+    0 0 14px rgba(255, 255, 255, 0.55),
+    inset 0 0 16px rgba(255, 255, 255, 0.35);
+}
+
+.crystal-theme-btn:hover .theme-orb {
+  transform: scale(1.65);
+  box-shadow: 0 0 22px #ffffff, 0 0 34px var(--c-ice);
+}
+
+/* Luminous Icy Cursor Halo */
+.drop-cursor-ring {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border: 1.5px solid rgba(220, 244, 255, 0.82);
+  background: radial-gradient(
+    circle at 35% 35%,
+    rgba(255, 255, 255, 0.34),
+    rgba(154, 216, 255, 0.14) 55%,
+    transparent 78%
+  );
+  box-shadow:
+    0 0 32px rgba(154, 216, 255, 0.52),
+    inset 0 0 14px rgba(255, 255, 255, 0.28);
+}
+
+.drop-splash-ring {
+  border: 2px solid #e4f5ff;
+  box-shadow: 0 0 22px var(--c-ice), inset 0 0 12px rgba(255, 255, 255, 0.5);
+}
