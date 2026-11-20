@@ -1,4 +1,6 @@
 import {
+  Suspense,
+  lazy,
   useEffect,
   useMemo,
   useState,
@@ -42,8 +44,12 @@ import {
 } from "./AcademyAdminPanel";
 import { AdvancedLab } from "./AdvancedLab";
 import { DirectorsViewfinderLab } from "./DirectorsViewfinderLab";
-import { StoryToScriptStudio } from "./StoryToScriptStudio";
-import { CineArcadePro } from "./CineArcadePro";
+const StoryToScriptStudio = lazy(() =>
+  import("./StoryToScriptStudio").then((m) => ({ default: m.StoryToScriptStudio }))
+);
+const CineArcadePro = lazy(() =>
+  import("./CineArcadePro").then((m) => ({ default: m.CineArcadePro }))
+);
 import {
   AcademyAuthGate,
   type AcademyEmailAuthPayload,
@@ -1870,7 +1876,9 @@ export function AcademySection({ onClose }: { onClose?: () => void } = {}) {
 
         {view === "script" && (
           <section className="academy-script-studio">
-            <StoryToScriptStudio language={language} />
+            <Suspense fallback={<div className="academy-studio-loading"><div className="academy-spin-disc" /></div>}>
+              <StoryToScriptStudio language={language} />
+            </Suspense>
           </section>
         )}
 
@@ -1992,7 +2000,9 @@ export function AcademySection({ onClose }: { onClose?: () => void } = {}) {
               </p>
             </div>
             <div style={{ marginBottom: "24px" }}>
-              <CineArcadePro language={language} onEarnXP={() => recordArcadeCompletion()} />
+              <Suspense fallback={<div className="academy-studio-loading"><div className="academy-spin-disc" /></div>}>
+                <CineArcadePro language={language} onEarnXP={() => recordArcadeCompletion()} />
+              </Suspense>
             </div>
             {!currentGame ? (
               <div className="academy-game-grid">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import {
   LiquidPortfolioShell,
   type LiquidFilmItem,
@@ -6,14 +6,21 @@ import {
 import { InboxApp } from "./InboxApp";
 import { videoArchive } from "../data/videoArchive";
 import { siteIdentity } from "../data/site";
-import { SITE_CONFIG } from "../data/siteConfig";
-import { AcademyModal } from "../overlays/AcademyModal";
-import { ZeeAIChatModal } from "../overlays/ZeeAIChatModal";
-import { ContactModal } from "../overlays/ContactModal";
 import { toggleSpatialAudio } from "../utils/spatialAudio";
 
 import "../styles/liquid-glass.css";
 import "../styles/castle-overlays.css";
+
+// Lazy-load heavy overlay panels to ensure initial bundle loads in milliseconds
+const AcademyModal = lazy(() =>
+  import("../overlays/AcademyModal").then((m) => ({ default: m.AcademyModal }))
+);
+const ZeeAIChatModal = lazy(() =>
+  import("../overlays/ZeeAIChatModal").then((m) => ({ default: m.ZeeAIChatModal }))
+);
+const ContactModal = lazy(() =>
+  import("../overlays/ContactModal").then((m) => ({ default: m.ContactModal }))
+);
 
 export function App() {
   // 1. Strict Zero-Touch Inbox Route Protection
@@ -41,13 +48,25 @@ export function App() {
   // 2. Mount LiquidPortfolioShell on /
   return (
     <LiquidPortfolioShell
-      portraitSrc={SITE_CONFIG.cleanPortraitImage}
+      portraitSrc="/assets/images/profile/zeehad-obsidian-portrait.jpg"
       heroBio={siteIdentity.biography}
       manifesto={manifestoText}
       films={liquidFilms}
-      renderAcademy={(onClose) => <AcademyModal onClose={onClose} />}
-      renderZeeAI={(onClose) => <ZeeAIChatModal onClose={onClose} />}
-      renderContact={(onClose) => <ContactModal onClose={onClose} />}
+      renderAcademy={(onClose) => (
+        <Suspense fallback={<div className="liquid-modal-backdrop" aria-busy="true" />}>
+          <AcademyModal onClose={onClose} />
+        </Suspense>
+      )}
+      renderZeeAI={(onClose) => (
+        <Suspense fallback={<div className="liquid-modal-backdrop" aria-busy="true" />}>
+          <ZeeAIChatModal onClose={onClose} />
+        </Suspense>
+      )}
+      renderContact={(onClose) => (
+        <Suspense fallback={<div className="liquid-modal-backdrop" aria-busy="true" />}>
+          <ContactModal onClose={onClose} />
+        </Suspense>
+      )}
       onToggleAudio={(_enabled) => {
         toggleSpatialAudio();
       }}

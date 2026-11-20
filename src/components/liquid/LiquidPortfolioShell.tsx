@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { WaterWaveBackground, LiquidThemeId } from "./WaterWaveBackground";
 import { KineticText } from "./KineticText";
 import { LiquidImage } from "./LiquidImage";
 import { LiquidCursor } from "./LiquidCursor";
 import { UpcomingProjectsSection } from "./UpcomingProjectsSection";
 import "../../styles/liquid-glass.css";
+import "../../styles/liquid-performance.css";
 
 export interface LiquidFilmItem {
   id: string;
@@ -59,35 +60,28 @@ export const LiquidPortfolioShell: React.FC<LiquidPortfolioShellProps> = ({
   const [theme, setTheme] = useState<LiquidThemeId>("abyss");
   const [audioOn, setAudioOn] = useState(false);
   const [liteMode, setLiteMode] = useState(false);
-  const [scrollPct, setScrollPct] = useState(0);
   const [activeFilm, setActiveFilm] = useState<LiquidFilmItem | null>(null);
   const [activePanel, setActivePanel] = useState<"academy" | "zeeai" | "contact" | null>(null);
+  const scrollBarRef = useRef<HTMLDivElement>(null);
 
-  // Track scroll progress bar + scroll-velocity CSS skew variable
+  // Hardware-accelerated scroll bar transform (Zero React re-renders during scroll)
   useEffect(() => {
-    let lastY = window.scrollY;
-    let raf = 0;
-
-    const onScroll = () => {
+    let ticking = false;
+    const updateBar = () => {
+      ticking = false;
+      if (!scrollBarRef.current) return;
       const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const y = window.scrollY;
-      setScrollPct((y / max) * 100);
-
-      const vel = Math.max(-5, Math.min(5, (y - lastY) * 0.14));
-      lastY = y;
-      document.documentElement.style.setProperty("--scroll-vel", vel.toFixed(2));
-
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        document.documentElement.style.setProperty("--scroll-vel", "0");
-      });
+      const ratio = Math.min(1, Math.max(0, window.scrollY / max));
+      scrollBarRef.current.style.transform = `scaleX(${ratio.toFixed(4)})`;
     };
-
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateBar);
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const cycleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -116,10 +110,14 @@ export const LiquidPortfolioShell: React.FC<LiquidPortfolioShellProps> = ({
 
   return (
     <>
-      <WaterWaveBackground theme={theme} liteMode={liteMode} />
+      <WaterWaveBackground
+        theme={theme}
+        liteMode={liteMode}
+        paused={Boolean(activeFilm || activePanel)}
+      />
       {!liteMode && <LiquidCursor />}
 
-      <div className="liquid-scroll-bar" style={{ width: `${scrollPct}%` }} aria-hidden="true" />
+      <div ref={scrollBarRef} className="liquid-scroll-bar" aria-hidden="true" />
 
       {/* Floating Frosted Glass Navigation */}
       <header className="liquid-nav-wrap">
@@ -230,6 +228,7 @@ export const LiquidPortfolioShell: React.FC<LiquidPortfolioShellProps> = ({
               alt="Zeehad Haque — Filmmaker"
               aspectRatio="4 / 5"
               cursorLabel="DIRECTOR"
+              priority={true}
             />
           </div>
         </section>

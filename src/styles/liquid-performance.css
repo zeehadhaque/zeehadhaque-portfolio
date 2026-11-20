@@ -1,0 +1,75 @@
+/* =========================================================
+   60 FPS GPU PERFORMANCE OVERRIDES (KEEP GLASS, KILL LAG)
+   ========================================================= */
+
+/* 1. Hardware-accelerated scroll bar (zero React re-renders) */
+.liquid-scroll-bar {
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+  animation: none;
+}
+
+/* 2. Stop spinning 20+ conic-gradient borders offscreen; animate only on hover */
+.liquid-glass {
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  contain: layout style paint;
+}
+
+.liquid-glass::before {
+  animation-play-state: paused;
+}
+
+.liquid-glass:hover::before {
+  animation-play-state: running;
+}
+
+/* Keep top floating navbar & modals crisp without nested button blur lag */
+.liquid-nav,
+.liquid-modal-sheet {
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
+}
+
+.liquid-nav .liquid-btn,
+.liquid-glass .liquid-btn {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(14, 28, 52, 0.62);
+}
+
+/* 3. Remove backdrop-filter from moving cursor halo (huge FPS gain) */
+.liq-cursor-halo {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 4. Remove scroll-velocity skew thrashing on large grids */
+.liquid-grid {
+  transform: none !important;
+}
+
+/* 5. Skip painting offscreen sections until scrolled near them */
+#films,
+#upcoming,
+#channels {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 680px;
+}
+
+/* 6. Mobile ultra-smooth glass mode */
+@media (max-width: 768px) {
+  .liquid-glass {
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+  }
+  .liquid-glass::before,
+  .liquid-glass::after {
+    display: none;
+  }
+  .wave-divider svg {
+    animation-duration: 18s;
+  }
+}
