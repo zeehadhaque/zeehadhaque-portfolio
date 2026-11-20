@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ScenicMoodId } from "./ScenicValleyCanvas";
+import { ScenicMoodId } from "./ScenicPureCode3DWorld";
 
 interface AtmosphericDriftLayerProps {
   mood: ScenicMoodId;
@@ -24,7 +24,6 @@ interface DriftParticle {
 
 const LEAF_COLORS = ["#d64933", "#e87a3e", "#f2b04d", "#b52d26", "#f4c974"];
 
-// Draws a graceful 5-lobed pointed autumn leaf silhouette
 const drawAutumnLeaf = (ctx: CanvasRenderingContext2D, r: number, color: string) => {
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -38,7 +37,6 @@ const drawAutumnLeaf = (ctx: CanvasRenderingContext2D, r: number, color: string)
   ctx.closePath();
   ctx.fill();
 
-  // Delicate center vein
   ctx.strokeStyle = "rgba(255, 232, 185, 0.35)";
   ctx.lineWidth = 0.7;
   ctx.beginPath();
@@ -68,7 +66,7 @@ export const AtmosphericDriftLayer: React.FC<AtmosphericDriftLayerProps> = ({
     let w = window.innerWidth;
     let h = window.innerHeight;
     const isMobile = w < 768;
-    const count = isMobile ? 16 : 32;
+    const count = isMobile ? 16 : 34;
 
     const resize = () => {
       w = window.innerWidth;
@@ -80,26 +78,29 @@ export const AtmosphericDriftLayer: React.FC<AtmosphericDriftLayerProps> = ({
     };
     resize();
 
-    const createParticle = (index: number): DriftParticle => {
+    const particles: DriftParticle[] = Array.from({ length: count }, (_, i) => {
       const kind: DriftParticle["kind"] =
-        index < count * 0.42 ? "leaf" : index < count * 0.8 ? "snow" : "ember";
+        i < count * 0.38 ? "leaf" : i < count * 0.82 ? "snow" : "ember";
       return {
         kind,
         x: Math.random() * w,
         y: Math.random() * h,
         vx: kind === "leaf" ? -0.45 - Math.random() * 0.55 : (Math.random() - 0.5) * 0.4,
         vy: kind === "ember" ? -0.25 - Math.random() * 0.35 : 0.45 + Math.random() * 0.85,
-        size: kind === "leaf" ? 7 + Math.random() * 6 : kind === "snow" ? 1.8 + Math.random() * 2.5 : 2 + Math.random() * 2.2,
+        size:
+          kind === "leaf"
+            ? 7 + Math.random() * 6
+            : kind === "snow"
+            ? 1.6 + Math.random() * 2.4
+            : 2 + Math.random() * 2.2,
         rot: Math.random() * Math.PI * 2,
         vRot: (Math.random() - 0.5) * 0.025,
         flip: Math.random() * Math.PI * 2,
         vFlip: 0.02 + Math.random() * 0.03,
-        alpha: 0.35 + Math.random() * 0.5,
-        hue: LEAF_COLORS[index % LEAF_COLORS.length],
+        alpha: 0.36 + Math.random() * 0.52,
+        hue: LEAF_COLORS[i % LEAF_COLORS.length],
       };
-    };
-
-    const particles: DriftParticle[] = Array.from({ length: count }, (_, i) => createParticle(i));
+    });
 
     let mx = -999;
     let my = -999;
@@ -126,24 +127,23 @@ export const AtmosphericDriftLayer: React.FC<AtmosphericDriftLayerProps> = ({
       const scrollRatio = Math.min(1, Math.max(0, window.scrollY / maxScroll));
       const curMood = moodRef.current;
 
-      // Leaves shine strongest in mid-scroll valley & ember mood; embers glow near twilight lake
       const leafWeight =
         curMood === "ember"
           ? 1.0
-          : 0.32 + Math.sin(Math.min(1, scrollRatio * 1.35) * Math.PI) * 0.72;
+          : 0.30 + Math.sin(Math.min(1, scrollRatio * 1.4) * Math.PI) * 0.72;
       const emberWeight = curMood === "ember" ? 0.95 : 0.25 + scrollRatio * 0.85;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // Gentle wind push away from cursor
         const dx = p.x - mx;
         const dy = p.y - my;
         const dSq = dx * dx + dy * dy;
         if (dSq < 26000 && dSq > 1) {
-          const force = (1 - Math.sqrt(dSq) / 160) * 0.55;
-          p.x += (dx / Math.sqrt(dSq)) * force * 2.2;
-          p.y += (dy / Math.sqrt(dSq)) * force * 1.4;
+          const dist = Math.sqrt(dSq);
+          const force = (1 - dist / 162) * 0.55;
+          p.x += (dx / dist) * force * 2.2;
+          p.y += (dy / dist) * force * 1.4;
         }
 
         p.x += p.vx + Math.sin(now * 0.0008 + i) * 0.35;
@@ -151,7 +151,6 @@ export const AtmosphericDriftLayer: React.FC<AtmosphericDriftLayerProps> = ({
         p.rot += p.vRot;
         p.flip += p.vFlip;
 
-        // Wrap cleanly around viewport edges
         if (p.y > h + 24) { p.y = -20; p.x = Math.random() * w; }
         if (p.y < -24) { p.y = h + 20; p.x = Math.random() * w; }
         if (p.x < -24) p.x = w + 20;
@@ -169,7 +168,7 @@ export const AtmosphericDriftLayer: React.FC<AtmosphericDriftLayerProps> = ({
           ctx.restore();
         } else if (p.kind === "snow") {
           ctx.save();
-          ctx.globalAlpha = p.alpha * (curMood === "ember" ? 0.45 : 0.85);
+          ctx.globalAlpha = p.alpha * (curMood === "ember" ? 0.45 : 0.88);
           ctx.fillStyle = "#eef7ff";
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);

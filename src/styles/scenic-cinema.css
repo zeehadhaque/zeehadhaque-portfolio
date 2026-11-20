@@ -758,3 +758,31 @@ body {
     display: none !important;
   }
 }
+
+
+/* =====================================================================
+   TRUE 3D SPATIAL DEPTH-MAP FLY-THROUGH STAGE
+   ===================================================================== */
+.scenic-3d-stage,
+.scenic-3d-fallback {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #030916;
+}
+
+.scenic-3d-canvas,
+.scenic-3d-fallback img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.scenic-3d-fallback img {
+  filter: brightness(0.75) contrast(1.08);
+}

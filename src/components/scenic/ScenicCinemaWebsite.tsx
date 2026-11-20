@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ScenicValleyCanvas, ScenicMoodId } from "./ScenicValleyCanvas";
-import { AtmosphericDriftLayer } from "./AtmosphericDriftLayer";
-import { ValleyParallaxLayers } from "./ValleyParallaxLayers";
-import { WaterDropCursor } from "../crystal/WaterDropCursor";
+import { ScenicMoodId } from "./ScenicPureCode3DWorld";
+import {
+  ScenicAnimationRig,
+  triggerMoodHoverBurst,
+  transitionScenicMood,
+} from "./ScenicAnimationRig";
 import { CrystalReveal, CrystalText } from "../crystal/CrystalReveal";
 import "../../styles/scenic-cinema.css";
+import "../../styles/scenic-animations.css";
 
 export interface ScenicFilm {
   id: string;
@@ -70,9 +73,8 @@ export const ScenicCinemaWebsite: React.FC<ScenicCinemaWebsiteProps> = ({
   renderContact,
   onToggleAudio,
 }) => {
-  const scrollRayRef = useRef<HTMLDivElement>(null);
   const [mood, setMood] = useState<ScenicMoodId>("frost");
-  const [activeChapter, setActiveChapter] = useState<string>("top");
+  const [activeChapter, setActiveChapter] = useState<"top" | "films" | "upcoming" | "horizon">("top");
   const [audioOn, setAudioOn] = useState(false);
   const [liteMode, setLiteMode] = useState(false);
   const [activeFilm, setActiveFilm] = useState<ScenicFilm | null>(null);
@@ -83,31 +85,6 @@ export const ScenicCinemaWebsite: React.FC<ScenicCinemaWebsiteProps> = ({
   useEffect(() => {
     document.documentElement.setAttribute("data-scenic-mood", mood);
   }, [mood]);
-
-  // Zero-re-render hardware-accelerated scroll ray + lightweight chapter tracking
-  useEffect(() => {
-    let ticking = false;
-    const syncScroll = () => {
-      ticking = false;
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const ratio = Math.min(1, Math.max(0, window.scrollY / max));
-      if (scrollRayRef.current) {
-        scrollRayRef.current.style.transform = `scaleX(${ratio.toFixed(4)})`;
-      }
-      const nextChapter =
-        ratio < 0.22 ? "top" : ratio < 0.52 ? "films" : ratio < 0.78 ? "upcoming" : "horizon";
-      setActiveChapter((prev) => (prev === nextChapter ? prev : nextChapter));
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(syncScroll);
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Lock body scroll & close modal on Escape
   useEffect(() => {
@@ -128,29 +105,13 @@ export const ScenicCinemaWebsite: React.FC<ScenicCinemaWebsiteProps> = ({
   }, [modalOpen]);
 
   const handleMoodHover = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (rect.left + rect.width / 2) / window.innerWidth;
-    const y = 1.0 - (rect.top + rect.height / 2) / window.innerHeight;
-    window.dispatchEvent(new CustomEvent("scenic-theme-hover", { detail: { x, y } }));
+    triggerMoodHoverBurst(e);
   };
 
   const cycleMood = (e: React.MouseEvent<HTMLButtonElement>) => {
     const next = MOODS[(MOODS.indexOf(mood) + 1) % MOODS.length];
-    document.documentElement.style.setProperty("--ripple-x", `${(e.clientX / window.innerWidth) * 100}%`);
-    document.documentElement.style.setProperty("--ripple-y", `${(e.clientY / window.innerHeight) * 100}%`);
-    handleMoodHover(e);
-
-    const apply = () => {
-      document.documentElement.setAttribute("data-scenic-mood", next);
-      setMood(next);
-    };
-
-    const doc = document as Document & { startViewTransition?: (cb: () => void) => void };
-    if (doc.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      doc.startViewTransition(apply);
-    } else {
-      apply();
-    }
+    triggerMoodHoverBurst(e);
+    transitionScenicMood(next, e.clientX, e.clientY, setMood);
   };
 
   const toggleSound = () => {
@@ -161,11 +122,12 @@ export const ScenicCinemaWebsite: React.FC<ScenicCinemaWebsiteProps> = ({
 
   return (
     <>
-      <ScenicValleyCanvas mood={mood} liteMode={liteMode} paused={modalOpen} />
-      <ValleyParallaxLayers liteMode={liteMode} />
-      <AtmosphericDriftLayer mood={mood} liteMode={liteMode} paused={modalOpen} />
-      {!liteMode && <WaterDropCursor />}
-      <div ref={scrollRayRef} className="scenic-scroll-ray" aria-hidden="true" />
+      <ScenicAnimationRig
+        mood={mood}
+        liteMode={liteMode}
+        paused={modalOpen}
+        onChapterChange={setActiveChapter}
+      />
 
       {/* Silent Right-Edge Elevation Chapter Rail */}
       <aside className="scenic-chapter-rail" aria-label="Visual Chapters">

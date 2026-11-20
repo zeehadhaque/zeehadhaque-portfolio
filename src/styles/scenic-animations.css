@@ -1,0 +1,239 @@
+/* =====================================================================
+   COMPLETE 3D SCENIC & LIQUID CRYSTAL ANIMATION STYLESHEET (60 FPS)
+   ===================================================================== */
+
+:root {
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 1. 3D WebGL Stage & Atmospheric Particle Canvas */
+.scenic-3d-stage,
+.scenic-3d-fallback,
+.scenic-drift-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.scenic-3d-stage,
+.scenic-3d-fallback {
+  z-index: 0;
+  overflow: hidden;
+  background: #030916;
+}
+
+.scenic-3d-canvas,
+.scenic-3d-fallback img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.scenic-3d-fallback img {
+  filter: brightness(0.76) contrast(1.08);
+}
+
+.scenic-drift-canvas {
+  z-index: 2;
+  display: block;
+}
+
+/* 2. Circular Water-Ripple View Transition (Mood Switching) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: scenic-mood-ripple 780ms var(--ease-cinematic) forwards;
+}
+
+@keyframes scenic-mood-ripple {
+  from { clip-path: circle(0% at var(--ripple-x, 85%) var(--ripple-y, 6%)); }
+  to { clip-path: circle(155% at var(--ripple-x, 85%) var(--ripple-y, 6%)); }
+}
+
+/* 3. Top Scroll Progress Ray */
+.scenic-scroll-ray {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 75;
+  background: linear-gradient(90deg, var(--s-accent, #9bd8ff), #ffffff, var(--s-amber, #f5c37b), var(--s-accent, #9bd8ff));
+  box-shadow: 0 0 18px var(--s-accent, #9bd8ff), 0 0 8px #ffffff;
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* 4. Keyframe Animations (Shimmer, Float, Pulse, Modal Drop) */
+@keyframes scenic-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes scenic-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes scenic-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.65); opacity: 0.45; }
+}
+
+@keyframes modal-drop-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 5. Scroll Reveal Choreography */
+.cr-reveal {
+  opacity: 0;
+  will-change: transform, opacity;
+  transition:
+    opacity 720ms var(--ease-cinematic),
+    transform 820ms var(--ease-cinematic),
+    filter 720ms var(--ease-cinematic);
+  transition-delay: var(--cr-delay, 0ms);
+}
+
+.cr-reveal--rise { transform: translateY(34px); }
+.cr-reveal--drop { transform: translateY(-28px) scale(0.95); }
+.cr-reveal--prism { transform: translateY(26px) scale(0.94); filter: blur(6px); }
+.cr-reveal--ray { transform: translateX(-28px); }
+
+.cr-reveal[data-visible="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: none;
+}
+
+.cr-text-unit {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 640ms var(--ease-cinematic), transform 740ms var(--ease-cinematic);
+  transition-delay: var(--cr-delay, 0ms);
+}
+
+.cr-text-wrap[data-visible="true"] .cr-text-unit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 6. Water-Drop Magnetic Cursor & Click Shockwaves (Desktop Only) */
+@media (pointer: fine) {
+  body.has-crystal-cursor,
+  body.has-crystal-cursor * {
+    cursor: none !important;
+  }
+}
+
+.drop-cursor-ring,
+.drop-cursor-core,
+.drop-cursor-tag {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+.drop-cursor-ring {
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(220, 244, 255, 0.82);
+  background: radial-gradient(
+    circle at 35% 35%,
+    rgba(255, 255, 255, 0.34),
+    rgba(154, 216, 255, 0.14) 55%,
+    transparent 78%
+  );
+  box-shadow: 0 0 28px rgba(154, 216, 255, 0.46), inset 0 0 12px rgba(255, 255, 255, 0.25);
+  transition:
+    width 260ms var(--ease-spring),
+    height 260ms var(--ease-spring),
+    margin 260ms var(--ease-spring),
+    border-color 200ms ease;
+}
+
+.drop-cursor-ring[data-hover="true"] {
+  width: 66px;
+  height: 66px;
+  margin: -33px 0 0 -33px;
+  border-color: #ffffff;
+}
+
+.drop-cursor-core {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 12px var(--s-accent, #9bd8ff);
+}
+
+.drop-cursor-tag {
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(220, 240, 255, 0.52);
+  background: rgba(4, 9, 18, 0.86);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: #eef7ff;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.drop-cursor-tag[data-visible="true"] {
+  opacity: 1;
+}
+
+.drop-splash-ring {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 2px solid #e4f5ff;
+  box-shadow: 0 0 20px var(--s-accent, #9bd8ff), inset 0 0 10px rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+  z-index: 9998;
+  animation: water-splash-expand 680ms var(--ease-cinematic) forwards;
+}
+
+@keyframes water-splash-expand {
+  from { transform: scale(0.5); opacity: 0.94; }
+  to { transform: scale(6.4); opacity: 0; }
+}
+
+/* 7. Touch Suppression & Accessibility */
+@media (pointer: coarse), (hover: none) {
+  .drop-cursor-ring,
+  .drop-cursor-core,
+  .drop-cursor-tag,
+  .drop-splash-ring {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
