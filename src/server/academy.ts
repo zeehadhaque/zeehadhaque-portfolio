@@ -80,15 +80,29 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
     const user = await verifiedUser(config, token);
     if (!user) return json({ message: "Your session has expired or your email is not verified. Please sign in again." }, 401);
 
-    const [profileRes, progressRes, attemptsRes, entitlementsRes] = await Promise.all([
-      supabaseFetch(config, `/rest/v1/academy_profiles?select=user_id,display_name,email,created_at&user_id=eq.${encodeURIComponent(user.id)}&limit=1`, {}, token),
+    let profileRes = await supabaseFetch(config, `/rest/v1/academy_profiles?select=user_id,display_name,email,created_at,phone,age,primary_interest,experience_level,enquiry_goal&user_id=eq.${encodeURIComponent(user.id)}&limit=1`, {}, token);
+    if (!profileRes.ok) {
+      profileRes = await supabaseFetch(config, `/rest/v1/academy_profiles?select=user_id,display_name,email,created_at&user_id=eq.${encodeURIComponent(user.id)}&limit=1`, {}, token);
+    }
+
+    const [progressRes, attemptsRes, entitlementsRes] = await Promise.all([
       supabaseFetch(config, `/rest/v1/academy_day_progress?select=day,xp_earned,reflection,completed_at&user_id=eq.${encodeURIComponent(user.id)}&order=day.asc`, {}, token),
       supabaseFetch(config, `/rest/v1/academy_attempts?select=id,day,is_correct,xp_awarded,attempted_at&user_id=eq.${encodeURIComponent(user.id)}&order=attempted_at.desc&limit=100`, {}, token),
       supabaseFetch(config, `/rest/v1/academy_entitlements?select=entitlement_key,expires_at,granted_at&user_id=eq.${encodeURIComponent(user.id)}`, {}, token),
     ]);
 
     const [profiles, progress, attempts, entitlements] = await Promise.all([
-      restJson<Array<{user_id:string;display_name:string;email:string;created_at:string}>>(profileRes),
+      restJson<Array<{
+        user_id: string;
+        display_name: string;
+        email: string;
+        created_at: string;
+        phone?: string | null;
+        age?: number | null;
+        primary_interest?: string | null;
+        experience_level?: string | null;
+        enquiry_goal?: string | null;
+      }>>(profileRes),
       restJson<Array<{day:number;xp_earned:number;reflection:string;completed_at:string}>>(progressRes),
       restJson<Array<{id:number;day:number;is_correct:boolean;xp_awarded:number;attempted_at:string}>>(attemptsRes),
       restJson<Array<{entitlement_key:string;expires_at:string|null;granted_at:string}>>(entitlementsRes),
@@ -100,28 +114,46 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
     let students: unknown[] | undefined;
     let studentEntitlements: unknown[] | undefined;
     if (isAdmin(user)) {
-      const [studentResponse, entitlementResponse] = await Promise.all([
-        supabaseFetch(
+      let studentResponse = await supabaseFetch(
+        config,
+        "/rest/v1/academy_profiles?select=user_id,display_name,email,created_at,phone,age,primary_interest,experience_level,enquiry_goal&order=created_at.desc&limit=100",
+        {},
+        token,
+      );
+      if (!studentResponse.ok) {
+        studentResponse = await supabaseFetch(
           config,
           "/rest/v1/academy_profiles?select=user_id,display_name,email,created_at&order=created_at.desc&limit=100",
           {},
           token,
-        ),
-        supabaseFetch(
-          config,
-          "/rest/v1/academy_entitlements?select=user_id,entitlement_key,expires_at,granted_at&order=granted_at.desc",
-          {},
-          token,
-        ),
-      ]);
+        );
+      }
+      const entitlementResponse = await supabaseFetch(
+        config,
+        "/rest/v1/academy_entitlements?select=user_id,entitlement_key,expires_at,granted_at&order=granted_at.desc",
+        {},
+        token,
+      );
       students = await restJson<unknown[]>(studentResponse) ?? [];
       studentEntitlements = await restJson<unknown[]>(entitlementResponse) ?? [];
     }
 
+    const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+    const userProfile = profiles[0];
+
     return json({
       configured: true,
       signedIn: true,
-      user: { id: user.id, email: user.email, displayName: profiles[0]?.display_name ?? user.user_metadata?.display_name ?? "Filmmaker" },
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: userProfile?.display_name ?? meta.full_name ?? meta.display_name ?? "Filmmaker",
+        phone: userProfile?.phone ?? (typeof meta.phone === "string" ? meta.phone : null),
+        age: userProfile?.age ?? (typeof meta.age === "number" ? meta.age : null),
+        primaryInterest: userProfile?.primary_interest ?? (typeof meta.primary_interest === "string" ? meta.primary_interest : null),
+        experienceLevel: userProfile?.experience_level ?? (typeof meta.experience_level === "string" ? meta.experience_level : null),
+        enquiryGoal: userProfile?.enquiry_goal ?? (typeof meta.enquiry_goal === "string" ? meta.enquiry_goal : null),
+      },
       isAdmin: isAdmin(user),
       progress,
       attempts,
@@ -145,10 +177,11 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
   if (action === "signup" || action === "login" || action === "refresh") {
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body.password === "string" ? body.password : "";
-    if (action === "signup" && (!email || password.length < 8 || typeof body.displayName !== "string" || body.displayName.trim().length < 2)) {
-      return json({ message: "Enter a name, valid email and password with at least 8 characters." }, 400);
+    const rawName = String(body.displayName || body.name || "").trim();
+    if (action === "signup" && (!email || password.length < 6 || rawName.length < 2)) {
+      return json({ message: "Enter a name, valid email and password with at least 6 characters." }, 400);
     }
-    if (action === "login" && (!email || password.length < 8)) {
+    if (action === "login" && (!email || password.length < 6)) {
       return json({ message: "Enter your email and password." }, 400);
     }
 
@@ -159,7 +192,21 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
       // Supabase will honor this only after the origin is added to Auth URL allowlists.
       const redirectTo = new URL(request.url).origin;
       path = `/auth/v1/signup?redirect_to=${encodeURIComponent(redirectTo)}`;
-      payload = { email, password, data: { display_name: String(body.displayName).trim().slice(0, 80) } };
+      payload = {
+        email,
+        password,
+        data: {
+          display_name: rawName.slice(0, 80),
+          full_name: rawName.slice(0, 80),
+          name: rawName.slice(0, 80),
+          phone: typeof body.phone === "string" ? body.phone.trim().slice(0, 30) : undefined,
+          age: typeof body.age === "number" ? body.age : undefined,
+          primary_interest: typeof body.primaryInterest === "string" ? body.primaryInterest.trim().slice(0, 80) : undefined,
+          experience_level: typeof body.experienceLevel === "string" ? body.experienceLevel.trim().slice(0, 80) : undefined,
+          enquiry_goal: typeof body.enquiryGoal === "string" ? body.enquiryGoal.trim().slice(0, 1000) : undefined,
+          role: "student",
+        },
+      };
     } else if (action === "refresh") {
       if (typeof body.refreshToken !== "string" || !body.refreshToken) return json({ message: "Session refresh token is missing. Sign in again." }, 401);
       path = "/auth/v1/token?grant_type=refresh_token";
@@ -206,6 +253,52 @@ export async function handleAcademyRequest(request: Request, env: AcademyWorkerE
   if (!token) return json({ message: "Sign in to save progress or manage access." }, 401);
   const user = await verifiedUser(config, token);
   if (!user) return json({ message: "A verified sign-in is required. Please sign in again." }, 401);
+
+  if (action === "update_profile") {
+    const displayName = typeof body.displayName === "string" ? body.displayName.trim().slice(0, 80) : "";
+    const phone = typeof body.phone === "string" ? body.phone.trim().slice(0, 30) : "";
+    const age = typeof body.age === "number" ? body.age : null;
+    const primaryInterest = typeof body.primaryInterest === "string" ? body.primaryInterest.trim().slice(0, 80) : "";
+    const experienceLevel = typeof body.experienceLevel === "string" ? body.experienceLevel.trim().slice(0, 80) : "";
+    const enquiryGoal = typeof body.enquiryGoal === "string" ? body.enquiryGoal.trim().slice(0, 1000) : "";
+
+    try {
+      await supabaseFetch(config, "/auth/v1/user", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            display_name: displayName,
+            full_name: displayName,
+            name: displayName,
+            phone: phone || undefined,
+            age: age || undefined,
+            primary_interest: primaryInterest || undefined,
+            experience_level: experienceLevel || undefined,
+            enquiry_goal: enquiryGoal || undefined,
+            role: "student",
+          },
+        }),
+      }, token);
+    } catch { /* metadata update best-effort */ }
+
+    try {
+      await supabaseFetch(config, `/rest/v1/academy_profiles?user_id=eq.${encodeURIComponent(user.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          display_name: displayName || undefined,
+          phone: phone || undefined,
+          age: age || undefined,
+          primary_interest: primaryInterest || undefined,
+          experience_level: experienceLevel || undefined,
+          enquiry_goal: enquiryGoal || undefined,
+        }),
+      }, token);
+    } catch { /* table update best-effort */ }
+
+    return json({ ok: true, message: "Profile updated successfully." });
+  }
 
   if (action === "complete_day") {
     const day = Number(body.day);

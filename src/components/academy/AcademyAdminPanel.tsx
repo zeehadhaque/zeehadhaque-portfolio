@@ -11,6 +11,11 @@ export interface AdminStudent {
   display_name: string;
   email: string;
   created_at: string;
+  phone?: string | null;
+  age?: number | null;
+  primary_interest?: string | null;
+  experience_level?: string | null;
+  enquiry_goal?: string | null;
 }
 
 export interface AdminStudentEntitlement {
@@ -230,6 +235,19 @@ export function AcademyAdminPanel({
               <div>
                 <strong>{student.display_name}</strong>
                 <span>{student.email}</span>
+                {(student.phone || student.age || student.primary_interest || student.experience_level) && (
+                  <div className="academy-admin__intake-details">
+                    {student.phone && <span className="academy-admin__tag">📞 {student.phone}</span>}
+                    {student.age && <span className="academy-admin__tag">🎂 {student.age} yrs</span>}
+                    {student.primary_interest && <span className="academy-admin__tag">🎬 {student.primary_interest}</span>}
+                    {student.experience_level && <span className="academy-admin__tag">⚡ {student.experience_level}</span>}
+                  </div>
+                )}
+                {student.enquiry_goal && (
+                  <div className="academy-admin__goal">
+                    &ldquo;{student.enquiry_goal}&rdquo;
+                  </div>
+                )}
               </div>
               <div className="academy-admin__badges">
                 {keys.map((entry) => (

@@ -44,6 +44,12 @@ import { AdvancedLab } from "./AdvancedLab";
 import { DirectorsViewfinderLab } from "./DirectorsViewfinderLab";
 import { StoryToScriptStudio } from "./StoryToScriptStudio";
 import { CineArcadePro } from "./CineArcadePro";
+import {
+  AcademyAuthGate,
+  type AcademyEmailAuthPayload,
+  type AcademyStudentProfile,
+} from "./AcademyAuthGate";
+import { supabase } from "../../lib/supabase";
 import "../../styles/academy.css";
 import "../../styles/academy-pro.css";
 import "../../styles/cinema-studio-addons.css";
@@ -55,7 +61,16 @@ type Session = {
   expires_at?: number;
 };
 
-type AcademyUser = { id: string; email: string; displayName: string };
+type AcademyUser = {
+  id: string;
+  email: string;
+  displayName: string;
+  phone?: string | null;
+  age?: number | null;
+  primaryInterest?: string | null;
+  experienceLevel?: string | null;
+  enquiryGoal?: string | null;
+};
 type EntitlementRow = {
   entitlement_key: string;
   expires_at: string | null;
@@ -420,7 +435,7 @@ function QuestionCard({
   );
 }
 
-export function AcademySection() {
+export function AcademySection({ onClose }: { onClose?: () => void } = {}) {
   const [language, setLanguage] = useState<AcademyLanguage>(() => {
     try {
       return localStorage.getItem("zee-academy-language") === "bn" ? "bn" : "en";
@@ -559,13 +574,20 @@ export function AcademySection() {
   const loadSnapshot = async (token: string) => {
     const result = (await academyApi(undefined, token)) as unknown as Snapshot;
     setSnapshot(result);
-    setUser(result.user ?? null);
+    if (result.user) {
+      setUser(result.user);
+    }
     return result;
   };
 
-  const activateSession = async (value: Session, authUser?: AcademyUser) => {
-    const stored = {
-      ...value,
+  const activateSession = async (
+    value: { access_token: string; refresh_token: string; expires_in?: number; expires_at?: number },
+    authUser?: AcademyUser,
+  ) => {
+    const stored: Session = {
+      access_token: value.access_token,
+      refresh_token: value.refresh_token,
+      expires_in: value.expires_in,
       expires_at:
         value.expires_at ??
         Math.floor(Date.now() / 1000) + (value.expires_in ?? 3600),
@@ -573,11 +595,163 @@ export function AcademySection() {
     setSession(stored);
     storeSession(stored);
     if (authUser) setUser(authUser);
-    const result = await loadSnapshot(stored.access_token);
+    try {
+      const result = await loadSnapshot(stored.access_token);
+      setAuthNotice(
+        result.user
+          ? copy("Progress sync is on.", "Progress account-এ sync হচ্ছে।")
+          : "",
+      );
+    } catch {
+      /* handled gracefully */
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      /* ignore */
+    }
+    storeSession(null);
+    setSession(null);
+    setUser(null);
+    setSnapshot({ configured: snapshot.configured, signedIn: false });
     setAuthNotice(
-      result.user
-        ? copy("Progress sync is on.", "Progress account-এ sync হচ্ছে।")
-        : "",
+      copy(
+        "Signed out successfully.",
+        "সফলভাবে সাইন আউট হয়েছে।",
+      ),
+    );
+    setView("roadmap");
+  };
+
+  const handleGoogleAuth = async () => {
+    const redirectTo = window.location.origin;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+    if (error) throw error;
+  };
+
+  const handleEmailAuth = async (payload: AcademyEmailAuthPayload) => {
+    if (payload.mode === "login") {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: payload.email,
+        password: payload.password,
+      });
+      if (error) throw error;
+      if (data.session) {
+        await activateSession(data.session, {
+          id: data.user.id,
+          email: data.user.email ?? payload.email,
+          displayName:
+            data.user.user_metadata?.full_name ||
+            data.user.user_metadata?.display_name ||
+            "Filmmaker",
+          phone: data.user.user_metadata?.phone ?? null,
+          age: data.user.user_metadata?.age ?? null,
+          primaryInterest: data.user.user_metadata?.primary_interest ?? null,
+          experienceLevel: data.user.user_metadata?.experience_level ?? null,
+          enquiryGoal: data.user.user_metadata?.enquiry_goal ?? null,
+        });
+      }
+    } else {
+      const { data, error } = await supabase.auth.signUp({
+        email: payload.email,
+        password: payload.password,
+        options: {
+          data: {
+            full_name: payload.profile?.name,
+            display_name: payload.profile?.name,
+            name: payload.profile?.name,
+            phone: payload.profile?.phone,
+            age: payload.profile?.age,
+            primary_interest: payload.profile?.primaryInterest,
+            experience_level: payload.profile?.experienceLevel,
+            enquiry_goal: payload.profile?.enquiryGoal,
+            role: "student",
+          },
+        },
+      });
+      if (error) throw error;
+      if (data.session) {
+        await activateSession(data.session, {
+          id: data.user?.id ?? "",
+          email: data.user?.email ?? payload.email,
+          displayName: payload.profile?.name ?? "Filmmaker",
+          phone: payload.profile?.phone ?? null,
+          age: payload.profile?.age ?? null,
+          primaryInterest: payload.profile?.primaryInterest ?? null,
+          experienceLevel: payload.profile?.experienceLevel ?? null,
+          enquiryGoal: payload.profile?.enquiryGoal ?? null,
+        });
+        try {
+          await academyApi(
+            {
+              action: "update_profile",
+              displayName: payload.profile?.name,
+              phone: payload.profile?.phone,
+              age: payload.profile?.age,
+              primaryInterest: payload.profile?.primaryInterest,
+              experienceLevel: payload.profile?.experienceLevel,
+              enquiryGoal: payload.profile?.enquiryGoal,
+            },
+            data.session.access_token,
+          );
+        } catch {
+          /* background profile sync */
+        }
+      }
+    }
+  };
+
+  const handleCompleteProfile = async (profile: AcademyStudentProfile) => {
+    const token = session?.access_token;
+    const { error: authErr } = await supabase.auth.updateUser({
+      data: {
+        full_name: profile.name,
+        display_name: profile.name,
+        name: profile.name,
+        phone: profile.phone,
+        age: profile.age,
+        primary_interest: profile.primaryInterest,
+        experience_level: profile.experienceLevel,
+        enquiry_goal: profile.enquiryGoal,
+        role: "student",
+      },
+    });
+    if (authErr) throw authErr;
+
+    if (token) {
+      await academyApi(
+        {
+          action: "update_profile",
+          displayName: profile.name,
+          phone: profile.phone,
+          age: profile.age,
+          primaryInterest: profile.primaryInterest,
+          experienceLevel: profile.experienceLevel,
+          enquiryGoal: profile.enquiryGoal,
+        },
+        token,
+      );
+      await loadSnapshot(token);
+    }
+
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            displayName: profile.name,
+            phone: profile.phone,
+            age: profile.age,
+            primaryInterest: profile.primaryInterest,
+            experienceLevel: profile.experienceLevel,
+            enquiryGoal: profile.enquiryGoal,
+          }
+        : null,
     );
   };
 
@@ -591,42 +765,70 @@ export function AcademySection() {
 
   useEffect(() => {
     let active = true;
-    const boot = async () => {
+
+    const initAuth = async () => {
       try {
+        // 1. Supabase getSession handles OAuth callback hash in URL automatically
+        const {
+          data: { session: sbSession },
+        } = await supabase.auth.getSession();
+        if (sbSession && active) {
+          const snap = await loadSnapshot(sbSession.access_token);
+          const meta = (sbSession.user?.user_metadata ?? {}) as Record<string, unknown>;
+          setSession({
+            access_token: sbSession.access_token,
+            refresh_token: sbSession.refresh_token,
+            expires_at: sbSession.expires_at,
+          });
+          setUser(
+            snap.user ?? {
+              id: sbSession.user.id,
+              email: sbSession.user.email ?? "",
+              displayName:
+                (meta.full_name as string) ||
+                (meta.display_name as string) ||
+                "Filmmaker",
+              phone: (meta.phone as string) ?? null,
+              age: (meta.age as number) ?? null,
+              primaryInterest: (meta.primary_interest as string) ?? null,
+              experienceLevel: (meta.experience_level as string) ?? null,
+              enquiryGoal: (meta.enquiry_goal as string) ?? null,
+            },
+          );
+          setBooting(false);
+          return;
+        }
+
+        // 2. Check stored session
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
+        if (raw && active) {
           let stored = JSON.parse(raw) as Session;
           if (
             stored.refresh_token &&
             (stored.expires_at ?? 0) < Math.floor(Date.now() / 1000) + 60
           ) {
-            const refreshed = (await academyApi({
-              action: "refresh",
-              refreshToken: stored.refresh_token,
-            })) as unknown as Session;
-            stored = {
-              ...refreshed,
-              expires_at:
-                Math.floor(Date.now() / 1000) + (refreshed.expires_in ?? 3600),
-            };
-            storeSession(stored);
+            try {
+              const refreshed = (await academyApi({
+                action: "refresh",
+                refreshToken: stored.refresh_token,
+              })) as unknown as Session;
+              stored = {
+                ...refreshed,
+                expires_at:
+                  Math.floor(Date.now() / 1000) + (refreshed.expires_in ?? 3600),
+              };
+              storeSession(stored);
+            } catch {
+              storeSession(null);
+            }
           }
           if (stored.access_token) {
-            const result = (await academyApi(
-              undefined,
-              stored.access_token,
-            )) as unknown as Snapshot;
+            const snap = await loadSnapshot(stored.access_token);
             if (active) {
               setSession(stored);
-              setSnapshot(result);
-              setUser(result.user ?? null);
+              setUser(snap.user ?? null);
             }
-          } else if (active) {
-            storeSession(null);
           }
-        } else {
-          const result = (await academyApi()) as unknown as Snapshot;
-          if (active) setSnapshot(result);
         }
       } catch (cause) {
         if (active) {
@@ -638,20 +840,54 @@ export function AcademySection() {
               ? cause.message
               : "Academy service unavailable.";
           setApiError(message);
-          try {
-            const result = await academyApi();
-            if (active) setSnapshot(result as unknown as Snapshot);
-          } catch {
-            /* handled by notice */
-          }
         }
       } finally {
         if (active) setBooting(false);
       }
     };
-    void boot();
+
+    void initAuth();
+
+    // 3. Listen to auth state changes (e.g. from Google OAuth redirect)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      if (!active) return;
+      if (event === "SIGNED_IN" && currentSession) {
+        const snap = await loadSnapshot(currentSession.access_token);
+        const meta = (currentSession.user?.user_metadata ?? {}) as Record<string, unknown>;
+        setSession({
+          access_token: currentSession.access_token,
+          refresh_token: currentSession.refresh_token,
+          expires_at: currentSession.expires_at,
+        });
+        setUser(
+          snap.user ?? {
+            id: currentSession.user.id,
+            email: currentSession.user.email ?? "",
+            displayName:
+              (meta.full_name as string) ||
+              (meta.display_name as string) ||
+              "Filmmaker",
+            phone: (meta.phone as string) ?? null,
+            age: (meta.age as number) ?? null,
+            primaryInterest: (meta.primary_interest as string) ?? null,
+            experienceLevel: (meta.experience_level as string) ?? null,
+            enquiryGoal: (meta.enquiry_goal as string) ?? null,
+          },
+        );
+        setBooting(false);
+      } else if (event === "SIGNED_OUT") {
+        storeSession(null);
+        setSession(null);
+        setUser(null);
+        setSnapshot({ configured: true, signedIn: false });
+      }
+    });
+
     return () => {
       active = false;
+      subscription.unsubscribe();
     };
   }, []);
 
@@ -679,20 +915,6 @@ export function AcademySection() {
     } catch {
       /* ignore */
     }
-  };
-
-  const signOut = () => {
-    storeSession(null);
-    setSession(null);
-    setUser(null);
-    setSnapshot({ configured: snapshot.configured, signedIn: false });
-    setAuthNotice(
-      copy(
-        "Signed out. Guest practice remains available.",
-        "Sign out হয়েছে। Guest practice চালু থাকবে।",
-      ),
-    );
-    setView("roadmap");
   };
 
   const completeAnswer = async () => {
@@ -843,6 +1065,68 @@ export function AcademySection() {
     }
   };
 
+  // 1. Sleek Frosted Glass Loading Screen
+  if (booting) {
+    return (
+      <section className="academy-experience" aria-labelledby="academy-title">
+        <div className="academy-shell">
+          <div className="academy-studio-loading">
+            <div className="academy-spin-disc" />
+            <span>
+              {language === "bn"
+                ? "স্টুডেন্ট পাস যাচাই হচ্ছে..."
+                : "Verifying student credentials..."}
+            </span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // 2. Mandatory Login Gate (Do NOT mount or expose curriculum, arcade, viewfinder, etc.)
+  if (!session || !user) {
+    return (
+      <section className="academy-experience" aria-labelledby="academy-title">
+        <div className="academy-shell">
+          <AcademyAuthGate
+            language={language}
+            onToggleLanguage={() =>
+              setLanguage((prev) => (prev === "bn" ? "en" : "bn"))
+            }
+            onGoogleAuth={handleGoogleAuth}
+            onEmailAuth={handleEmailAuth}
+            needsProfileCompletion={false}
+            onClose={onClose}
+          />
+        </div>
+      </section>
+    );
+  }
+
+  // 3. Profile Completion Gate (for Google OAuth users missing phone or age)
+  const isProfileIncomplete = !user.phone || !user.age;
+  if (isProfileIncomplete) {
+    return (
+      <section className="academy-experience" aria-labelledby="academy-title">
+        <div className="academy-shell">
+          <AcademyAuthGate
+            language={language}
+            onToggleLanguage={() =>
+              setLanguage((prev) => (prev === "bn" ? "en" : "bn"))
+            }
+            onGoogleAuth={handleGoogleAuth}
+            onEmailAuth={handleEmailAuth}
+            needsProfileCompletion={true}
+            prefillEmail={user.email}
+            prefillName={user.displayName}
+            onCompleteProfile={handleCompleteProfile}
+            onClose={onClose}
+          />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       className="academy-experience"
@@ -879,27 +1163,31 @@ export function AcademySection() {
                 বাংলা
               </button>
             </div>
-            {user ? (
-              <div className="academy-user-menu">
-                <span className="academy-user-avatar">
-                  {user.displayName.slice(0, 1).toUpperCase()}
-                </span>
-                <span>{user.displayName}</span>
-                <button
-                  type="button"
-                  className="academy-text-button"
-                  onClick={signOut}
-                >
-                  {copy("Sign out", "Sign out")}
-                </button>
+
+            <div className="academy-student-pill">
+              <span className="academy-student-avatar">🎬</span>
+              <div className="academy-student-meta">
+                <strong>{user.displayName || "Filmmaker"}</strong>
+                <span>{user.email}</span>
               </div>
-            ) : (
               <button
-                className="academy-outline-button"
                 type="button"
-                onClick={() => setAuthOpen(true)}
+                className="academy-logout-btn"
+                onClick={handleSignOut}
+                title={language === "bn" ? "সাইন আউট" : "Sign out"}
               >
-                {copy("Sign in / Join free", "Sign in / বিনামূল্যে যোগ দাও")} ↗
+                {language === "bn" ? "লগআউট" : "Logout"}
+              </button>
+            </div>
+
+            {onClose && (
+              <button
+                type="button"
+                className="vf-pill-btn"
+                onClick={onClose}
+                aria-label="Close Academy"
+              >
+                {language === "bn" ? "বন্ধ ✕" : "Close ✕"}
               </button>
             )}
           </div>
