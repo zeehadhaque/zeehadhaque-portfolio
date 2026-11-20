@@ -308,6 +308,14 @@ body {
   box-shadow: 0 10px 30px rgba(125, 187, 255, 0.2);
 }
 
+/* Eliminate nested backdrop-filter lag on buttons inside glass containers */
+.crystal-card .crystal-btn,
+.crystal-nav-inner .crystal-btn,
+.crystal-modal-sheet .crystal-btn {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 /* =====================================================================
    FLOATING CRYSTAL NAVIGATION BAR
    ===================================================================== */
@@ -368,6 +376,19 @@ body {
 body.has-crystal-cursor,
 body.has-crystal-cursor * {
   cursor: none !important;
+}
+
+@media (pointer: coarse), (hover: none) {
+  body.has-crystal-cursor,
+  body.has-crystal-cursor * {
+    cursor: auto !important;
+  }
+  .drop-cursor-ring,
+  .drop-cursor-core,
+  .drop-cursor-tag,
+  .drop-splash-ring {
+    display: none !important;
+  }
 }
 
 .drop-cursor-ring {
@@ -864,6 +885,10 @@ body.has-crystal-cursor * {
 
 /* 09 // MOBILE RESPONSIVENESS */
 @media (max-width: 960px) {
+  .crystal-card {
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+  }
   .crystal-hero {
     grid-template-columns: 1fr;
     text-align: center;
@@ -894,4 +919,29 @@ body.has-crystal-cursor * {
     padding: 8px 12px;
     font-size: 10px;
   }
+}
+
+@media (max-width: 600px) {
+  .crystal-card {
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+    border-radius: 18px;
+  }
+  .crystal-nav-inner {
+    justify-content: center;
+  }
+}
+
+/* Bangla Typography Crispness & Ligatures */
+.crystal-slate-title,
+.crystal-card-title,
+.crystal-lead,
+.crystal-headline,
+.cr-text-wrap {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.crystal-slate-title {
+  line-height: 1.65;
 }

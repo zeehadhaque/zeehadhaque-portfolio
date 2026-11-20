@@ -535,13 +535,6 @@ export const LiquidCrystalWebsite: React.FC<LiquidCrystalWebsiteProps> = ({
           onClick={(e) => e.target === e.currentTarget && setActivePortal(null)}
         >
           <div className="crystal-card crystal-modal-sheet">
-            {activePortal !== "academy" && (
-              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-                <button type="button" className="crystal-btn" onClick={() => setActivePortal(null)}>
-                  Close ✕
-                </button>
-              </div>
-            )}
             {activePortal === "academy" && renderAcademy(() => setActivePortal(null))}
             {activePortal === "zeeai" && renderZeeAI(() => setActivePortal(null))}
             {activePortal === "contact" && renderContact(() => setActivePortal(null))}

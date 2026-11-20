@@ -216,7 +216,7 @@ export const LiquidCrystalRayCanvas: React.FC<LiquidCrystalRayCanvasProps> = ({
     let height = 0;
     const resize = () => {
       const isMobile = window.innerWidth < 768;
-      const scale = liteRef.current ? 0.35 : isMobile ? 0.45 : 0.6;
+      const scale = liteRef.current ? 0.35 : isMobile ? 0.42 : 0.55;
       width = Math.max(1, Math.floor(window.innerWidth * scale));
       height = Math.max(1, Math.floor(window.innerHeight * scale));
       if (canvas.width !== width || canvas.height !== height) {
@@ -227,6 +227,12 @@ export const LiquidCrystalRayCanvas: React.FC<LiquidCrystalRayCanvasProps> = ({
     };
     resize();
     window.addEventListener("resize", resize, { passive: true });
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      cancelAnimationFrame(rafId);
+    };
+    canvas.addEventListener("webglcontextlost", onContextLost, false);
 
     let mx = 0.5;
     let my = 0.5;
@@ -315,6 +321,7 @@ export const LiquidCrystalRayCanvas: React.FC<LiquidCrystalRayCanvasProps> = ({
 
     return () => {
       cancelAnimationFrame(rafId);
+      canvas.removeEventListener("webglcontextlost", onContextLost);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onPointerMove);
       window.removeEventListener("mousedown", onPointerDown);
