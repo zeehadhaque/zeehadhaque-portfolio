@@ -47,13 +47,15 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
   };
 
   const exactCredentialLinks = [
-    { name: "IMDb Profile", url: "https://www.imdb.com/user/p.gtnf5csbffkwzrbmsvkfa2pssm" },
+    { name: "IMDb Profile", url: "https://www.imdb.com/name/nm19082308/" },
+    { name: "Letterboxd", url: "https://letterboxd.com/director/zeehad-haque/" },
+    { name: "TMDB", url: "https://www.themoviedb.org/person/6603477-zeehad-haque" },
+    { name: "Moviefone", url: "https://www.moviefone.com/celebrity/zeehad-haque/MOhuPZ93XNEPeyMAzAhNn4/main/" },
     { name: "FilmFreeway", url: "https://filmfreeway.com/ZeehadHaque" },
     { name: "Wikidata", url: "https://www.wikidata.org/wiki/Q142020060" },
-    { name: "Letterboxd", url: "https://letterboxd.com/zeehadhaque/" },
-    { name: "TMDB", url: "https://www.themoviedb.org/person/6603477-zeehad-haque" },
+    { name: "YouTube", url: "https://www.youtube.com/@zeehadhaque" },
     { name: "Instagram", url: "https://www.instagram.com/heyyfalgun/" },
-    { name: "Live Website", url: "https://zeehadhaque.zeehadhaque.workers.dev" },
+    { name: "Official Website", url: "https://zeehadhaque.zeehadhaque.workers.dev/" },
   ];
 
   return (
