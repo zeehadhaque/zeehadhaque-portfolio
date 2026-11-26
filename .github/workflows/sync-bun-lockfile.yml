@@ -1,0 +1,34 @@
+name: Sync Bun Lockfile
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Regenerate and validate lockfile
+        run: bun install
+
+      - name: Commit updated lockfile
+        run: |
+          if git diff --quiet -- bun.lock; then
+            echo "bun.lock is already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bun.lock
+          git commit -m "fix: synchronize Bun lockfile"
+          git push origin HEAD:main
