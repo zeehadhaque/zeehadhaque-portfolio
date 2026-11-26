@@ -163,20 +163,11 @@ export const linkRegistry: readonly RegisteredLink[] = [
   {
     id: "github-current-repo",
     displayName: "Current GitHub Repository",
-    exactUrl: "https://github.com/zeehadhaque/zeehaque-portfolio",
-    category: "code",
-    isExternal: true,
-    openBehavior: "_blank",
-    description: "Authoritative active GitHub repository source for the portfolio project."
-  },
-  {
-    id: "github-exact-repo",
-    displayName: "GitHub Repository",
     exactUrl: "https://github.com/zeehadhaque/zeehadhaque-portfolio",
     category: "code",
     isExternal: true,
     openBehavior: "_blank",
-    description: "Direct canonical GitHub repository URL for zeehadhaque-portfolio."
+    description: "Authoritative active GitHub repository source for the portfolio project."
   },
   {
     id: "github-older-repo",
