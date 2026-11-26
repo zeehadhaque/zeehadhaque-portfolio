@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ScenicPureCode3DWorld, ScenicMoodId } from "./ScenicPureCode3DWorld";
 import { AtmosphericDriftLayer } from "./AtmosphericDriftLayer";
-import { WaterDropCursor } from "../crystal/WaterDropCursor";
 import "../../styles/scenic-animations.css";
 
 interface ScenicAnimationRigProps {
@@ -87,7 +86,6 @@ export const ScenicAnimationRig: React.FC<ScenicAnimationRigProps> = ({
     <>
       <ScenicPureCode3DWorld mood={mood} liteMode={liteMode} paused={paused} />
       <AtmosphericDriftLayer mood={mood} liteMode={liteMode} paused={paused} />
-      {!liteMode && <WaterDropCursor />}
       <div ref={scrollRayRef} className="scenic-scroll-ray" aria-hidden="true" />
     </>
   );
