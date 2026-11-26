@@ -76,7 +76,10 @@ export const ScenicCinemaWebsite: React.FC<ScenicCinemaWebsiteProps> = ({
   const [mood, setMood] = useState<ScenicMoodId>("frost");
   const [activeChapter, setActiveChapter] = useState<"top" | "films" | "upcoming" | "horizon">("top");
   const [audioOn, setAudioOn] = useState(false);
-  const [liteMode, setLiteMode] = useState(false);
+  const [liteMode, setLiteMode] = useState(() =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse), (max-width: 768px)").matches
+  );
   const [activeFilm, setActiveFilm] = useState<ScenicFilm | null>(null);
   const [activePortal, setActivePortal] = useState<"academy" | "zeeai" | "contact" | null>(null);
 
