@@ -71,12 +71,11 @@ export const linkRegistry: readonly RegisteredLink[] = [
   {
     id: "imdb-profile",
     displayName: "IMDb Profile",
-    exactUrl: "https://www.imdb.com/title/tt50571306/",
+    exactUrl: "https://www.imdb.com/name/nm19082308/",
     category: "film",
     isExternal: true,
     openBehavior: "_blank",
-    associatedProject: "SHADOW / III",
-    description: "Verified IMDb listing for Zeehad Haque's accredited filmography."
+    description: "Official IMDb name profile for filmmaker Zeehad Haque (nm19082308)."
   },
   {
     id: "imdb-contributor",
@@ -86,6 +85,15 @@ export const linkRegistry: readonly RegisteredLink[] = [
     isExternal: true,
     openBehavior: "_blank",
     description: "IMDb contributor profile verification ID."
+  },
+  {
+    id: "letterboxd-profile",
+    displayName: "Letterboxd Director Profile",
+    exactUrl: "https://letterboxd.com/director/zeehad-haque/",
+    category: "film",
+    isExternal: true,
+    openBehavior: "_blank",
+    description: "Official Letterboxd director profile for Zeehad Haque."
   },
   {
     id: "tmdb-profile",
