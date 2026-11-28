@@ -96,7 +96,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
         <div className="contact-identity-col">
           <div className="contact-photo-card glass-panel">
             <img
-              src="/assets/images/profile/zeehad-haque-filmmaker.jpg"
+              src="/assets/images/profile/zeehad-obsidian-portrait.jpg"
               alt="Zeehad Haque — Filmmaker Identity On Location"
               className="contact-director-img"
               loading="lazy"
