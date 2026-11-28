@@ -163,6 +163,13 @@ export const ScenicCinemaWebsite: React.FC<ScenicCinemaWebsiteProps> = ({
               Upcoming
             </a>
             <a
+              href="/about/"
+              className="crystal-btn"
+              data-cursor-label="ABOUT"
+            >
+              About
+            </a>
+            <a
               href="/epk/"
               className="crystal-btn"
               data-cursor-label="PRESS KIT"
