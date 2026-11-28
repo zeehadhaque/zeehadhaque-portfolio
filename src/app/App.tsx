@@ -179,7 +179,7 @@ export function App() {
   // 2. Mount ScenicCinemaWebsite on /
   return (
     <ScenicCinemaWebsite
-      portraitSrc="/assets/images/profile/zeehad-haque-filmmaker.jpg"
+      portraitSrc="/assets/images/profile/zeehad-obsidian-portrait.jpg"
       bio={siteIdentity.biography}
       manifesto={manifestoText}
       films={scenicFilms}
