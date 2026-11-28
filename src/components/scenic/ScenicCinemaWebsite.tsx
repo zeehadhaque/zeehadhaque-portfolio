@@ -162,6 +162,15 @@ export const ScenicCinemaWebsite: React.FC<ScenicCinemaWebsiteProps> = ({
             <a href="#upcoming" className="crystal-btn" data-cursor-label="SLATE">
               Upcoming
             </a>
+            <a
+              href="/epk/"
+              className="crystal-btn"
+              data-cursor-label="PRESS KIT"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Press Kit
+            </a>
             <button
               type="button"
               className="crystal-btn"
